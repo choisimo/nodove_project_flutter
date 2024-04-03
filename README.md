@@ -8,7 +8,9 @@
     환경 변수 추가
     /sdk/platform-tools (android studio)
     /flutter/bin
-
+### dart location
+flutter\bin\cache\dart-sdk
+    
     fluttor doctor
     fluttor doctor --android-licenses 
     (android studio -> shift+shift -> Android sdk -> SDK tools -> Command-line Tools(latest) )
