@@ -14,9 +14,9 @@ class Feed{
   final String updatedAt;
   final int likeCount;
   final int commentCount;
-  final Array? hashtags;
-  final Array? imageLinks;
-  final Bool private;
+  final List<dynamic>? hashtags;
+  final List<dynamic>? imageLinks;
+  final bool private;
 
   Feed({
     required this.id,
