@@ -36,8 +36,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   webview_flutter: ^4.7.0
-  flutter_svg : ^2.0.10+1
+  flutter_svg : 
   dio : 
+  get : 
+  carousel_slider:
 
 dev_dependencies:
   flutter_test:
@@ -60,7 +62,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  
+
+  assets:
+    - assets/
+    - assets/images/
+    - assets/icons/common/
+    - assets/icons/navbar/
+    - assets/icons/post/
+    - assets/icons/user/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

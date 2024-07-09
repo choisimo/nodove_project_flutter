@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/foundation.dart';
 
 class Feed{
@@ -14,8 +12,8 @@ class Feed{
   final String updatedAt;
   final int likeCount;
   final int commentCount;
-  final List<dynamic>? hashtags;
-  final List<dynamic>? imageLinks;
+  final List<dynamic> hashtags;
+  final List<dynamic> imageLinks;
   final bool private;
 
   Feed({
@@ -30,8 +28,8 @@ class Feed{
     required this.updatedAt,
     required this.likeCount,
     required this.commentCount,
-    this.hashtags,
-    this.imageLinks,
+    required this.hashtags,
+    required this.imageLinks,
     required this.private,
   });
 

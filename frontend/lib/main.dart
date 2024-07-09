@@ -1,7 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/UI/Feed/feedlist.dart';
+import 'package:nodove_flutter/UI/Feed/feedrow.dart';
+import 'package:nodove_flutter/UI/navbar.dart';
+
 import 'package:nodove_flutter/model/feed.dart';
+import 'package:nodove_flutter/state/color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
@@ -14,7 +19,10 @@ class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
-      home : MyHome()
+      home : const MyHome(),
+      theme : Themes.light,
+      darkTheme: Themes.dark,
+      themeMode: ThemeMode.system,
     );
   }
 }
@@ -27,87 +35,36 @@ class MyHome extends StatefulWidget{
 }
 
 class _MyHomeState extends State<MyHome>{
-  //var 
-  late Future<List<Feed>> feedList;
-  Dio dio = Dio();
-
-  @override
-  void initState(){
-    super.initState();
-    feedList = getFeedData();
-  }
-  
-  Future<List<Feed>> getFeedData() async{
-    late List<Feed> list;
-    try{
-      var response = await dio.get("https://gcp.nodove.com/api/getPostByList/0?pageSize=5&categoryId=3");
-      list =  response.data
-                .map<Feed>((json)=> Feed.fromJson(json))
-                .toList();
-    } catch (e){
-      print(e);
-    }
-
-    return list;
-  }
-
-  Future<void> refreshData() async{
-    feedList = getFeedData();
-    setState((){});
-  }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        title : const Text("야발"),
-        backgroundColor: Colors.blue,
-      ),
-      body : RefreshIndicator(
-        onRefresh: () => refreshData(),
-        child : SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child : FutureBuilder<List<Feed>>(
-            future: feedList,
-            builder: (BuildContext con, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData){
-                return const Center(child: Text("로딩중"));
-              } else{
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext cont,int index){
-                    var data = snapshot.data[index];
-                    return feedrow(props : data);
-                  }
-                );
-              }
-            },
-          )
-        )
-        )
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: navbarTop(context),
+      bottomNavigationBar: navbarBottom(context),
+      body : const MainPage(key : Key('fuck'))
     );
   }
-  Widget feedrow({required Feed props}){
-    final maxwidth = MediaQuery.of(context).size.width;
+}
+//FeedList(categoryId: 3,)
+/*
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          width : maxwidth,
-          height :300,
-          child: Column(
-            children: [
-              SizedBox(
-                width : maxwidth,
-                height : 150 ,
-                child : Text("제목 : ${props.title}"))
-            ],
-          ),
+*/
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: ()=>Navigator.of(context).push(
+        MaterialPageRoute(builder: (_)=>const FeedPage()
         ),
-      ],
+      ), child: Text("이동"),
     );
   }
 }
