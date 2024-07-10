@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nodove_flutter/UI/Slider/carousel.dart';
-import 'package:nodove_flutter/UI/tagrow.dart';
+import 'package:nodove_flutter/menu/button.dart';
+import 'package:nodove_flutter/Slider/carousel.dart';
+import 'package:nodove_flutter/tag/tagrow.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
-import 'package:nodove_flutter/model/feed.dart';
+import 'package:nodove_flutter/Feed/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class FeedRow extends StatelessWidget {
@@ -39,12 +40,25 @@ class FeedRow extends StatelessWidget {
             children: [
               Column(
                 children:[
-                  SizedBox(
-                    width : maxwidth,
-                    height : 22 ,
-                    child : Text("${props.title}",style : TextStyle(fontSize : 18))
+                  Container(
+                    padding : EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width : maxwidth,
+                          height : 22 ,
+                          child : Text(
+                            props.title,
+                            style : const TextStyle(
+                              fontSize : 18,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        TagRow(hashtags: props.hashtags),
+                      ],
+                    ),
                   ),
-                  TagRow(hashtags: props.hashtags),
                   Carousel(imageLinks : props.imageLinks),
                   SizedBox(
                     width : maxwidth,
@@ -97,7 +111,7 @@ class FeedRow extends StatelessWidget {
                     )
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children : <Widget>[
                       Row(
                         children: [
@@ -157,7 +171,12 @@ class FeedRow extends StatelessWidget {
                         },
                         child: Text(
                           '•••',
-                          style : TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onBackground)
+                          textDirection: TextDirection.ltr,
+                          style : TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onBackground
+
+                          )
                         )
                       ),
                     ]
@@ -207,18 +226,30 @@ class FeedRow extends StatelessWidget {
     );
   }
   Widget sharemodal(context){
-    return DraggableScrollableSheet(
-      builder: (BuildContext builder,ScrollController scroll){
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children : <Widget>[
-              Text('모달창임 믿어주셈'),
-            ]
+    return Container(
+      width : MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children : [
+          Text("이 작성자.."),
+          MenuBtn(
+            context : context,
+            cb : (){},
+            iconSrc : "assets/icons/navbar/certification.svg",
+            title : "신고",
+            tcolor : Theme.of(context).colorScheme.onSurface
           ),
-        );
-      }
+          MenuBtn(
+            context : context,
+            cb : (){},
+            iconSrc : "assets/icons/navbar/certification.svg",
+            title : "삭제",
+            tcolor : Theme.of(context).colorScheme.error
+          ),
+        ]
+      ),
     );
   }
+  
+  
 }

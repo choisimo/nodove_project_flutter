@@ -39,7 +39,9 @@ dependencies:
   flutter_svg : 
   dio : 
   get : 
-  carousel_slider:
+  carousel_slider :
+  provider :
+  infinite_scroll_pagination : 
 
 dev_dependencies:
   flutter_test:

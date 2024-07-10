@@ -20,9 +20,14 @@ class TagRow extends StatelessWidget {
         for(int i = 0;i < hashtags!.length;i++)
           TextButton(
             onPressed: (){},
+            style : TextButton.styleFrom(
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             child: Text(
               "#${hashtags![i]}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize : 16,
                 color : CommonStyle.first,
               ),

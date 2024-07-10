@@ -73,25 +73,18 @@ class _CarouselState extends State<Carousel> {
         child : Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children : imageLinks.asMap().entries.map((entry){
-            return Container(
+            return TextButton(
+              onPressed: () => _controller.animateToPage(entry.key),
+              child : Container(
                 width : 24,
                 height : 24,
                 margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 4),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color : Colors.white,
                 ),
-                child: IconButton(
-                  onPressed: () => _controller.animateToPage(entry.key),
-                  icon: Image.network(
-                    imageLinks[entry.key],
-                    fit: BoxFit.cover,
-                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                      return Image.asset("assets/images/logo.png",width: MediaQuery.of(context).size.width,);
-                    },
-                  )
-                ),
-              );
+              )
+            );
           }).toList()
         )
       ),
@@ -100,5 +93,13 @@ class _CarouselState extends State<Carousel> {
 }
 
 /*
-      
+                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                      return Image.asset("assets/images/logo.png",width: MediaQuery.of(context).size.width,);
+                    },
+                                      image : DecorationImage(
+                    image : NetworkImage(
+                      imageLinks[entry.key],
+                    ),
+                    fit: BoxFit.cover
+                  ),
 */

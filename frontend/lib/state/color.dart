@@ -55,15 +55,11 @@ class Themes{
       onSecondary: LightStyle.grey,
       error: CommonStyle.red,
       onError:LightStyle.black,
-      background: LightStyle.back,
-      onBackground: LightStyle.backStr,
-      surface: LightStyle.white,
-      onSurface: LightStyle.back,
+      surface: LightStyle.back,
+      onSurface: LightStyle.backStr,
       )
   );
     static final ThemeData dark = ThemeData.light().copyWith(
-    splashColor: Colors.transparent,
-    highlightColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
       backgroundColor: DarkStyle.white
     ),
@@ -71,6 +67,7 @@ class Themes{
       bodyLarge : TextStyle(color : DarkStyle.black , fontSize: 18),
       bodyMedium : TextStyle(color : DarkStyle.black , fontSize: 16),
       bodySmall : TextStyle(color : DarkStyle.black , fontSize: 14),
+      
     ),
     colorScheme: const ColorScheme(
       brightness: Brightness.light,

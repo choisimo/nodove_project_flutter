@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nodove_flutter/UI/Feed/feedlist.dart';
-import 'package:nodove_flutter/UI/Feed/feedrow.dart';
-import 'package:nodove_flutter/UI/navbar.dart';
+import 'package:nodove_flutter/Feed/view/normal/feedlist.dart';
+import 'package:nodove_flutter/navbar.dart';
 
-import 'package:nodove_flutter/model/feed.dart';
+import 'package:nodove_flutter/Feed/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
