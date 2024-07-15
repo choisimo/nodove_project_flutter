@@ -1,11 +1,13 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:nodove_flutter/Slider/zoom.dart';
 
 class Carousel extends StatefulWidget {
   final List<dynamic> imageLinks;
+  final int page;
 
-  const Carousel({super.key,required this.imageLinks});
+  const Carousel({super.key,required this.imageLinks,required this.page});
 
   @override
   State<Carousel> createState() => _CarouselState();
@@ -13,6 +15,7 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   int _current = 0;
+  var error = false;
   final CarouselController _controller = CarouselController();
   
   @override
@@ -27,22 +30,49 @@ class _CarouselState extends State<Carousel> {
       )
     );
   }
+  
+  void _onError () {
+    setState(()=>error = true);
+  }
+
   Widget carouselWidget(){
     List<dynamic> imageLinks = widget.imageLinks;
-
-    return CarouselSlider(
+    int page = widget.page;
+    
+    return 
+    (imageLinks.isNotEmpty)?
+    CarouselSlider(
       carouselController: _controller,
-      items: imageLinks.map((imageLink){
+      items: imageLinks.asMap().entries.map((i){
         return Builder(
           builder: (BuildContext context) {
             return SizedBox(
               width : MediaQuery.of(context).size.width,
-              child : Image.network(
-                imageLink,
-                fit : BoxFit.cover,
-                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                    return Image.asset("assets/images/logo.png",width: MediaQuery.of(context).size.width,);
+              child : GestureDetector(
+                onTap: (){
+                  if (!error){
+                    Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context,
+                      Animation<double> animation1,
+                      Animation<double> animation2){
+                        return ImgZoomView(page : page , imageLinks: imageLinks, index: i.key);
+                      },
+                    ));
+                  }
                 },
+                child : Container(
+                  child: Hero(
+                    tag : "$page-${imageLinks[i.key]}",
+                    child: Image.network(
+                      imageLinks[i.key],
+                      fit : BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        return Image.asset("assets/images/logo.png",width: MediaQuery.of(context).size.width,);
+                      },
+                    ),
+                  ),
+                )
               )
             );
           },
@@ -61,12 +91,14 @@ class _CarouselState extends State<Carousel> {
           });
         }
       )
-    );
+    ):const SizedBox.shrink();
   }
   Widget carouselIndicator(){
     List<dynamic> imageLinks = widget.imageLinks;
 
-    return Container(
+    return
+    (imageLinks.isNotEmpty)?
+    SizedBox(
       height : 420,
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -78,17 +110,26 @@ class _CarouselState extends State<Carousel> {
               child : Container(
                 width : 24,
                 height : 24,
-                margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 4),
+                margin: const EdgeInsets.symmetric(horizontal: 4,vertical: 16),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color : Colors.white,
+                  image : DecorationImage(
+                    image : Image.network(
+                      imageLinks[entry.key],
+                      errorBuilder: (context, error, stackTrace){
+                        return Image.asset("assets/image/logo.png");
+                      },
+                    ).image,
+                    fit: BoxFit.cover
+                  ),
                 ),
               )
             );
           }).toList()
         )
       ),
-    );
+    ):const SizedBox.shrink();
   }
 }
 
@@ -96,10 +137,5 @@ class _CarouselState extends State<Carousel> {
                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                       return Image.asset("assets/images/logo.png",width: MediaQuery.of(context).size.width,);
                     },
-                                      image : DecorationImage(
-                    image : NetworkImage(
-                      imageLinks[entry.key],
-                    ),
-                    fit: BoxFit.cover
-                  ),
+
 */

@@ -42,6 +42,9 @@ dependencies:
   carousel_slider :
   provider :
   infinite_scroll_pagination : 
+  photo_view : 
+  intl : 
+  flutter_html:
 
 dev_dependencies:
   flutter_test:

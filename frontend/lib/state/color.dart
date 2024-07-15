@@ -35,12 +35,27 @@ class CommonStyle{
   static const Color sky = Color.fromRGBO(215 , 242, 255, 1);
 }
 
+class RowContainer{
+  static const BoxShadow shadow = BoxShadow(
+        color : LightStyle.grey,
+        blurRadius: 6,
+        offset : Offset(0,2),
+  );
+  static const BorderRadius radius = BorderRadius.all(Radius.circular(12));
+  static const Color background = LightStyle.white;
+}
+
 class Themes{
   static final ThemeData light = ThemeData.light().copyWith(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
       backgroundColor: LightStyle.white
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style : TextButton.styleFrom(
+        foregroundColor: LightStyle.backStr
+      )
     ),
     textTheme : const TextTheme(
       bodyLarge : TextStyle(color : LightStyle.black , fontSize: 18),
@@ -69,6 +84,11 @@ class Themes{
       bodySmall : TextStyle(color : DarkStyle.black , fontSize: 14),
       
     ),
+    textButtonTheme: TextButtonThemeData(
+      style : TextButton.styleFrom(
+        foregroundColor: DarkStyle.backStr
+      )
+    ),
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
       primary: DarkStyle.black,
@@ -77,10 +97,8 @@ class Themes{
       onSecondary: DarkStyle.grey,
       error: CommonStyle.red,
       onError:DarkStyle.black,
-      background: DarkStyle.back,
-      onBackground: DarkStyle.backStr,
-      surface: DarkStyle.white ,
-      onSurface: DarkStyle.back,
+      surface: DarkStyle.back,
+      onSurface: DarkStyle.backStr,
       )
   );
 }

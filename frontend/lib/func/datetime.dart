@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 DateTime getDateTime(String string){
   try{
     final createdDate = DateTime.parse(string);
@@ -19,4 +21,8 @@ String getDateDiff(String string){
     } else {
       return '${createdAt.year}.${createdAt.month}.${createdAt.day}';
     }
+}
+String getDateFull(String string){
+    DateTime createdAt = getDateTime(string);
+    return DateFormat("yyyy월 MM월 dd일 hh시 mm분").format(createdAt);
 }
