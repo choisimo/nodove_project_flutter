@@ -12,6 +12,8 @@ void main() {
   runApp(const MyApp());
 }
 
+
+
 class MyApp extends StatelessWidget{
   const MyApp({super.key});
 
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget{
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
         GetPage(name : "/view/:page" , page : ()=>FeedPage()),
-        GetPage(name : '/cate/:page' , page : ()=>const CatePage()),
+        GetPage(name : "/cate/:page" , page : ()=>const CatePage()),
       ],
     );
   }
@@ -39,29 +41,23 @@ class MyHome extends StatefulWidget{
   @override
   State<MyHome> createState() => _MyHomeState();
 }
-
+List<Widget> page = [
+  const MainPage(key : Key("fuck")),
+  const SizedBox.shrink(),
+  const CatePage(),
+  const SizedBox.shrink(),
+  const SizedBox.shrink(),
+];
 class _MyHomeState extends State<MyHome>{
-
+  final PageState index = PageState();
 
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    NavbarContent navbarOpt = NavbarContent(
-      leading: navbarTitle(context,"메인",20),
-      actions : [
-        searchBtn(context),
-        alertBtn(context)
-      ]
-    );
-    List<Widget> page = [
-      const MainPage(key : Key("fuck")),
-      const CatePage(),
-    ];
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: navbarTop(context,navbarOpt,false),
       bottomNavigationBar: const BottomNavbar(),
-      body : const MainPage(),
+      body : Obx(()=>page[PageState.page.index.value]),
     );
   }
 }
@@ -75,11 +71,20 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int page = 3;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: ()=>Get.toNamed("/cate/0"),
-      child: Text("이동"),
+    NavbarContent navbarOpt = NavbarContent(
+      title : navbarTitle(context,"메인",20),
+      actions : [
+        searchBtn(context),
+        alertBtn(context)
+      ]
+    );
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: navbarTop(context,navbarOpt,false),
+      body: const SizedBox.shrink(),
     );
   }
 }

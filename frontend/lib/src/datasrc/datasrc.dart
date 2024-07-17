@@ -6,6 +6,7 @@ import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/state/url.dart';
 
 class DataSrc{
   Dio dio = Dio();
@@ -27,6 +28,12 @@ class DataSrc{
       return Feed.defaultState();
     }
   }
+  Future<void> postFeed(FeedWrite formData) async {
+    final res = await dio.post(
+      '/api/restrict/user/write',
+      data : formData
+    );
+  }
   Future<List<Categories>> getCateList(String url,String opt,bool child) async{
     try{
       final res = await dio.get("$url$opt");
@@ -43,6 +50,23 @@ class DataSrc{
       return res.data.map<Comment>((json)=>Comment.fromJson(json)).toList();
     }catch(e){
       return [];
+    }
+  }
+
+  Future<bool> postComment(CommentWrite formData) async {
+    final res = await dio.post(
+      '${Url.apiUrl}/restrict/user/commentWrite',
+      data : formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) { return status! < 500; }
+      ),
+    );
+
+    if (res.statusCode == 200){
+      return true;
+    } else {
+      return false;
     }
   }
 }

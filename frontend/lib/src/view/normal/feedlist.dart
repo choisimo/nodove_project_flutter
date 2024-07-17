@@ -21,7 +21,7 @@ class FeedListPage extends StatefulWidget{
 }
 
 class _FeedListPageState extends State<FeedListPage>{
-  final int cateid = int.parse(Get.parameters['page']??'3');
+  final int cateid = int.parse(Get.parameters['page']??'0');
   final bool collected = false;
   final int size = 15;
   final String url = "${Url.apiUrl}${Url.feedList}";
@@ -33,10 +33,11 @@ class _FeedListPageState extends State<FeedListPage>{
       leading: backBtn(context),
       actions : [
         searchBtn(context),
+        
         etcBtn(
           context,
           (id){
-
+            
           },
           cateid
         )
@@ -45,7 +46,6 @@ class _FeedListPageState extends State<FeedListPage>{
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,true),
-      bottomNavigationBar: const BottomNavbar(),
       floatingActionButton: plusButton(),
       body : FeedList(
         cateId: cateid,
@@ -87,12 +87,14 @@ class _FeedListState extends State<FeedList> {
   Dio dio = Dio();
   final size = 10;
   late List<Feed> feedList;
+
   final PagingController<int, Feed> _pagingController = PagingController(firstPageKey: 0);
 
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newData = await FeedRepo().getFeedList(pageKey,widget.url,"pageSize=$size&categoryId=${widget.cateId}");
       final isLastPage = newData.isEmpty;
+      if (!mounted) return;
       if (isLastPage) {
         _pagingController.appendLastPage(newData);
       } else {
@@ -103,6 +105,7 @@ class _FeedListState extends State<FeedList> {
       _pagingController.error = error;
     }
   }
+  
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
@@ -110,6 +113,7 @@ class _FeedListState extends State<FeedList> {
     });
     super.initState();
   }
+
   @override
   void dispose() {
     _pagingController.dispose();
@@ -137,14 +141,18 @@ class _FeedListState extends State<FeedList> {
   Widget collectedRow(){
     return RefreshIndicator(
       onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-      child : PagedGridView<int,Feed>(
-        pagingController: _pagingController,
-        gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2
-        ),
-        builderDelegate: PagedChildBuilderDelegate<Feed>(
-          itemBuilder : (con,item,index) => CollectedRow(props : item)
-        ),
+      child : Builder(
+        builder: (context) {
+          return PagedGridView<int,Feed>(
+            pagingController: _pagingController,
+            gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2
+            ),
+            builderDelegate: PagedChildBuilderDelegate<Feed>(
+              itemBuilder : (con,item,index) => CollectedRow(props : item)
+            ),
+          );
+        }
       )
     );
   }

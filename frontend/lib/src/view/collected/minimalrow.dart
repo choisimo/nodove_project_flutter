@@ -17,9 +17,8 @@ class MinimalRow extends StatelessWidget {
         alignment: Alignment.center,
         padding : EdgeInsets.all(4),
         constraints: BoxConstraints(
-          minWidth : constraints.minWidth * 0.6,
           maxWidth : constraints.maxWidth * 0.9,
-          maxHeight: constraints.maxHeight * 0.75,
+          maxHeight: constraints.maxHeight * 0.4,
         ),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
@@ -34,68 +33,76 @@ class MinimalRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  props.writer,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize : 14,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    props.writer,
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize : 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Text(
-                  props.title,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize : 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    props.title,
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize : 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Container(
-                  width : cons.maxWidth,
-                  padding : EdgeInsets.all(4),
-                  height : 28,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width : cons.maxWidth * 0.45,
-                        child : Row(
-                          children: [
-                            SvgPicture.asset("assets/icons/post/star.svg",
-                            width : 20, height : 20,
-                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                            ),
-                            const SizedBox(width : 4),
-                            Text(
-                              "${props.likeCount}",
-                              style : const TextStyle(
-                                fontSize : 16,
-                                fontWeight: FontWeight.bold,
-                              )
-                            ),
-                          ],
+                Expanded(
+                  child: Container(
+                    width : cons.maxWidth,
+                    padding : EdgeInsets.all(4),
+                    height : 28,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width : cons.maxWidth * 0.45,
+                          child : Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/post/star.svg",
+                              width : 20, height : 20,
+                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                              ),
+                              const SizedBox(width : 4),
+                              Text(
+                                "${props.likeCount}",
+                                style : const TextStyle(
+                                  fontSize : 16,
+                                  fontWeight: FontWeight.bold,
+                                )
+                              ),
+                            ],
+                          )
+                        ),
+                        SizedBox(
+                          width : cons.maxWidth * 0.5,
+                          child : Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/navbar/msg.svg",
+                              width : 20, height : 20,
+                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                              ),
+                              SizedBox(width : 4),
+                              Text(
+                                "${props.commentCount}",
+                                style : const TextStyle(
+                                  fontSize : 16,
+                                  fontWeight: FontWeight.bold,
+                                )
+                              ),
+                            ],
+                          )
                         )
-                      ),
-                      SizedBox(
-                        width : cons.maxWidth * 0.5,
-                        child : Row(
-                          children: [
-                            SvgPicture.asset("assets/icons/navbar/msg.svg",
-                            width : 20, height : 20,
-                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                            ),
-                            SizedBox(width : 4),
-                            Text(
-                              "${props.commentCount}",
-                              style : const TextStyle(
-                                fontSize : 16,
-                                fontWeight: FontWeight.bold,
-                              )
-                            ),
-                          ],
-                        )
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

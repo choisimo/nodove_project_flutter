@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/view/normal/feedlist.dart';
+import 'package:nodove_flutter/src/view/page/comment.dart';
 import 'package:nodove_flutter/src/view/page/page.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/Slider/carousel.dart';
@@ -107,7 +108,22 @@ class FeedRow extends StatelessWidget {
                         fixedSize: const Size(320, 32),
                         side: BorderSide(width: 1.0, color: CommonStyle.first),
                       ),
-                      onPressed: (){},
+                      onPressed: (){
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          showDragHandle: true,
+                          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                          builder :(BuildContext context) {
+                            return Padding(
+                              padding : EdgeInsets.only(
+                                bottom: MediaQuery.of(context).viewInsets.bottom
+                              ),
+                              child: commentList(context , props.id)
+                            );
+                          },
+                        );
+                      },
                       icon : SvgPicture.asset(
                         'assets/icons/navbar/noBorderAdd.svg',
                         width : 12,
@@ -233,7 +249,7 @@ class Profile extends StatelessWidget {
     return Container(
       width :  width,
       height : height,
-      margin : const EdgeInsets.all(8),
+      margin : const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         image : DecorationImage(
           image : Image.network(

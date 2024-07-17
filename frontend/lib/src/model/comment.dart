@@ -26,3 +26,13 @@ class Comment{
     );
   }
 }
+
+class CommentWrite{
+  final int post_id;
+  final String comment;
+
+  CommentWrite({
+    required this.post_id,
+    required this.comment,
+  });
+}

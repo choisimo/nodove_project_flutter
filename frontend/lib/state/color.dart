@@ -20,6 +20,7 @@ class DarkStyle{
   static const Color grey = Color.fromRGBO(155 , 155, 155, 1);
   static const Color black = Color.fromRGBO(255, 255, 255 , 1);
   static const Color blackAlpha = Color.fromRGBO(255, 255, 255 , 0.75);
+  static const Color shadow = Color.fromRGBO(0, 0, 0, 0.5);
   static const Color back = Color.fromRGBO(35 , 35, 35, 1);
   static const Color backStr = Color.fromRGBO(255 , 255, 255, 1);
   static const Color backAlpha = Color.fromRGBO(248 , 248, 248, 0.5);
@@ -41,6 +42,8 @@ class RowContainer{
         blurRadius: 6,
         offset : Offset(0,2),
   );
+  static const Offset offset = Offset(0,2);
+  static const double blurRadius = 6.0;
   static const BorderRadius radius = BorderRadius.all(Radius.circular(12));
   static const Color background = LightStyle.white;
 }
@@ -57,6 +60,7 @@ class Themes{
         foregroundColor: LightStyle.backStr
       )
     ),
+    cardColor: LightStyle.white,
     textTheme : const TextTheme(
       bodyLarge : TextStyle(color : LightStyle.black , fontSize: 18),
       bodyMedium : TextStyle(color : LightStyle.black , fontSize: 16),
@@ -68,13 +72,16 @@ class Themes{
       onPrimary: LightStyle.white,
       secondary: LightStyle.darkGrey,
       onSecondary: LightStyle.grey,
+      shadow : LightStyle.grey,
       error: CommonStyle.red,
       onError:LightStyle.black,
       surface: LightStyle.back,
       onSurface: LightStyle.backStr,
-      )
+    )
   );
     static final ThemeData dark = ThemeData.light().copyWith(
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
       backgroundColor: DarkStyle.white
     ),
@@ -84,6 +91,7 @@ class Themes{
       bodySmall : TextStyle(color : DarkStyle.black , fontSize: 14),
       
     ),
+    cardColor: DarkStyle.white,
     textButtonTheme: TextButtonThemeData(
       style : TextButton.styleFrom(
         foregroundColor: DarkStyle.backStr
@@ -94,6 +102,7 @@ class Themes{
       primary: DarkStyle.black,
       onPrimary: DarkStyle.white,
       secondary: DarkStyle.darkGrey,
+      shadow : DarkStyle.shadow,
       onSecondary: DarkStyle.grey,
       error: CommonStyle.red,
       onError:DarkStyle.black,

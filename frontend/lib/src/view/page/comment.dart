@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
+import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
@@ -11,7 +12,9 @@ import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class CommentList extends StatefulWidget {
-  const CommentList({super.key});
+  final int? page;
+  final bool? enableScroll;
+  const CommentList({super.key , this.page , this.enableScroll});
   
   @override
   State<CommentList> createState() => _CommentListState();
@@ -20,17 +23,32 @@ class CommentList extends StatefulWidget {
 class _CommentListState extends State<CommentList> {
   Dio dio = Dio();
   final size = 10;
-  final int page = int.parse(Get.parameters['page']??'3');
-  
   late List<Comment> commentList;
   
   final PagingController<int, Comment> _pagingController = PagingController(firstPageKey: 0);
+  
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
 
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+  
   Future<void> _fetchPage(int pageKey) async {
+    final int page = widget.page??int.parse(Get.parameters['page']??'3');
+  
     try {
       final String url = "https://gcp.nodove.com/api/commentListByPostId/$page";
       final newData = await FeedRepo().getCommentPage(pageKey,url,"pageSize=$size");
       final isLastPage = newData.isEmpty;
+      if(!mounted) return;
       if (isLastPage) {
         _pagingController.appendLastPage(newData);
       } else {
@@ -41,32 +59,23 @@ class _CommentListState extends State<CommentList> {
       _pagingController.error = error;
     }
   }
-  @override
-  void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
-    super.initState();
-  }
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return normalRow();
-  }
-
-  Widget normalRow (){
-    return PagedListView<int,Comment>(
-        pagingController: _pagingController,
-        physics : const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        builderDelegate: PagedChildBuilderDelegate<Comment>(
-          itemBuilder : (con,item,index) => CommentRow(props : item)
+    bool enableScroll = widget.enableScroll??false;
+    return SizedBox(
+      width : MediaQuery.of(context).size.width,
+      child: RefreshIndicator(
+        onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
+        child: PagedListView<int,Comment>(
+          pagingController: _pagingController,
+          physics : (enableScroll)?const AlwaysScrollableScrollPhysics():const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          builderDelegate: PagedChildBuilderDelegate<Comment>(
+            itemBuilder : (con,item,index) => CommentRow(props : item)
+          ),
         ),
+      ),
     );
   }
 }
@@ -84,11 +93,12 @@ class _CommentRowState extends State<CommentRow> {
   @override
   Widget build(BuildContext context) {
     Comment props = widget.props;
+    final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
 
     return Container(
-      margin: const EdgeInsets.only(left : 8 , right : 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       child : Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -99,26 +109,31 @@ class _CommentRowState extends State<CommentRow> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Profile(profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg", width: 18, height: 18),
-                    const SizedBox(width: 2),
-                    Text(
-                      props.writer,
-                      style : const TextStyle(
-                        height : 1,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                Container(
+                  margin : EdgeInsets.only(bottom: 4),
+                  height : 21,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Profile(profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg", width: 18, height: 18),
+                      const SizedBox(width: 2),
+                      Text(
+                        props.writer,
+                        style : const TextStyle(
+                          height : 1,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold
+                        )
                       )
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-                SizedBox(
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     props.comment,
                     softWrap: true,
-                    style : TextStyle(
+                    style : const TextStyle(
                       height : 1,
                       
                     )
@@ -126,8 +141,16 @@ class _CommentRowState extends State<CommentRow> {
                 ),
                 Container(
                   child: TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      if (commentTopKey.currentContext != null){
+                        Scrollable.ensureVisible(
+                          commentTopKey.currentContext!,
+                          duration : const Duration(seconds : 1),
+                        );
+                      }
+                    },
                     child : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("답글 ${props.replies!.length}개 보기"),
                         SizedBox(width : 6),
@@ -182,4 +205,124 @@ class _CommentRowState extends State<CommentRow> {
       )
     );
   }
+}
+Widget commentList(BuildContext context,int page){
+  final height = MediaQuery.of(context).size.height;
+  FocusNode nfocus = FocusNode();
+  return SafeArea(
+    child: SizedBox(
+      height : height * 0.6,
+      child: LayoutBuilder(
+        builder:(context,constraint){
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                height : 32,
+                child : Center(
+                  child: Text(
+                    "댓글",
+                    style : TextStyle(
+                      color : Theme.of(context).colorScheme.onSurface,
+                      fontSize : 20,
+                    
+                    )
+                  ),
+                )
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap : ()=>nfocus.unfocus(),
+                  child: SizedBox(
+                    child: CommentList(page : page,enableScroll: true),
+                  ),
+                ),
+              ),
+              commentWrite(context,page,false,nfocus)
+            ],
+          );
+        }
+      ),
+    ),
+  );
+}
+Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
+  late String comment;
+  return LayoutBuilder(
+    builder : (context,constraint){
+      return SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.symmetric(
+              horizontal: BorderSide(
+                width: 1,
+                color : Theme.of(context).colorScheme.onSecondary
+              )
+            )
+          ),
+          constraints : const BoxConstraints(
+            minHeight: 50
+          ),
+          child : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(
+                width : 42,
+                child: IconButton(
+                  icon : SvgPicture.asset(
+                    "assets/icons/navbar/noBorderAdd.svg",
+                    width : 24, height : 24,
+                    colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                  ),
+                  onPressed: (){},
+                ),
+              ),
+              Container(
+                width : constraint.maxWidth - 92,
+                padding : const EdgeInsets.symmetric(
+                  vertical: 2,
+                  horizontal: 8,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.symmetric(
+                    vertical: BorderSide(
+                      width: 1,
+                      color : Theme.of(context).colorScheme.onSecondary
+                    ),
+                  ),
+                ),
+                child: TextField(
+                  maxLines: 10,
+                  minLines: 1,
+                  autofocus: focus,
+                  onChanged : (text){
+                    comment = text;
+                  },
+                  focusNode: nfocus,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none
+                  ),
+                ),
+              ),
+              SizedBox(
+                width : 42,
+                child: IconButton(
+                  icon : SvgPicture.asset(
+                    "assets/icons/navbar/msg.svg",
+                    width : 24, height : 24,
+                    colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                  ),
+                  onPressed: () async{
+                    bool post = await DataSrc().postComment(CommentWrite(post_id: page, comment: comment));
+                  },
+                ),
+              ),
+            ],
+          )
+        ),
+      );
+    }
+  );
 }

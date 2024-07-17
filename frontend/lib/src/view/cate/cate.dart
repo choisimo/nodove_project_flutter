@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/view/normal/feedlist.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
 
 class CatePage extends StatelessWidget {
   const CatePage({super.key});
@@ -18,16 +19,78 @@ class CatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(PageState());
     NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(context),
+      title : PopupMenuButton(
+        shape : const TooltipShape(125),
+        offset : const Offset(0,36),
+        
+        itemBuilder: (BuildContext context) { 
+          return [
+          PopupMenuItem(
+            child: Row(
+              children :[
+                SizedBox(
+                  width : 24,
+                  child: SvgPicture.asset(
+                    "assets/icons/navbar/menu.svg",
+                    width : 10 , height : 10,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                  ),
+                ),
+                navbarTitle(context,"카테고리",20)
+              ]
+            ),
+            onTap: () {
+              print('카테고리 선택');
+            },
+          ),
+          PopupMenuItem(
+            child: Row(
+              children :[
+                SizedBox(
+                  width : 24,
+                  child: SvgPicture.asset(
+                    "assets/icons/navbar/hashtag.svg",
+                    width : 12 , height : 12,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                  ),
+                ),
+                navbarTitle(context,"태그",20)
+              ]
+            ),
+            onTap: () {
+              print('태그 선택');
+            }
+          ),
+          PopupMenuItem(
+            child: Row(
+              children :[
+                SizedBox(
+                  width : 24,
+                  child: SvgPicture.asset(
+                    "assets/icons/navbar/navi.svg",
+                    width : 12 , height : 12,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                  ),
+                ),
+                navbarTitle(context,"내 위치",20)
+              ]
+            ),
+            onTap: () {
+              print('위치 선택');
+            }
+          ),
+          ];
+          },
+        child: navbarTitle(context,"카테고리",20)
+      ),
       actions : [
         searchBtn(context),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,true),
-      bottomNavigationBar: const BottomNavbar(),
       floatingActionButton: plusButton(),
+      appBar: navbarTop(context,navbarOpt,false),
       body : ChangeNotifierProvider<CateListModel>(
         create : (context) => CateListModel(),
         child : const CateList()
@@ -104,9 +167,15 @@ class CateRow extends StatelessWidget {
       child : Container(
       height : 96,
       margin : const EdgeInsets.symmetric(vertical: 8),
-      decoration: const BoxDecoration(
-        boxShadow: [RowContainer.shadow],
-        color : RowContainer.background,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color : Theme.of(context).colorScheme.shadow,
+            offset: RowContainer.offset,
+            blurRadius: RowContainer.blurRadius
+          )
+        ],
+        color : Theme.of(context).colorScheme.onPrimary,
       ),
       child : LayoutBuilder(
         builder : (context,constraint){
@@ -114,13 +183,65 @@ class CateRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              etcBtn(
-                context,
-                (int id){},
-                props.categoryId
+              PopupMenuButton(
+                constraints: const BoxConstraints(
+                  minWidth : 120
+                ),
+                shape : const TooltipShape(92),
+                offset : const Offset(0,40),
+                icon : Text(
+                  '•••',
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style : TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface
+                  )
+                ),
+                itemBuilder: (BuildContext context) { 
+                  return [
+                  PopupMenuItem(
+                    child: Row(
+                      children :[
+                        SizedBox(
+                          width : 24,
+                          child: SvgPicture.asset(
+                            "assets/icons/navbar/noBorderAdd.svg",
+                            width : 12 , height : 12,
+                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                          ),
+                        ),
+                        navbarTitle(context,"구독",20)
+                      ]
+                    ),
+                    onTap: () {
+                      print('구독 선택');
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: Row(
+                      children :[
+                        SizedBox(
+                          width : 24,
+                          child: SvgPicture.asset(
+                            "assets/icons/navbar/certification.svg",
+                            width : 12 , height : 12,
+                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.error, BlendMode.srcIn),
+                          ),
+                        ),
+                        navbarTitle(context,"신고",20)
+                      ]
+                    ),
+                    onTap: () {
+                      print('카테고리 신고 선택');
+                    }
+                  ),
+                  ];
+                },
               ),
               const Profile(
-                profile: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRNAWPmYQgACzkRRUDTwBDzONjC3rlmMCfxw&s",
+                profile: "https://www.jbnu.ac.kr/amass/kor_143/20200427125931_17009.jpg",
                 width: 56,
                 height: 56
               ),

@@ -12,7 +12,7 @@ class FeedViewModel with ChangeNotifier{
   List<Feed> get feedList => _feedList;
   int page = 0;
   int pagesize = 5;
-  int cateid = 15;
+  int cateid = Get.arguments;
   String url = "${Url.apiUrl}/getPostByList/";
 
   FeedViewModel(page,url,opt){
@@ -32,20 +32,34 @@ class PageViewModel with ChangeNotifier{
   late final FeedRepo _feedrepo;
   Feed _feed = Feed.defaultState();
   Feed get feed => _feed;
+  bool isdisposed  = false;
 
   PageViewModel(){
     _feedrepo = FeedRepo();
     _getFeedList(page,url);
   }
 
+  @override
+  void dispose(){
+    isdisposed = true;
+    super.dispose();
+  }
+
   Future<void> _getFeedList(int page,String url) async{
     _feed = await _feedrepo.getFeedPage(page,url);
     notifyListeners();
   }
+  
+  @override
+  void notifyListeners() {
+    if (!isdisposed){
+      super.notifyListeners();
+    }
+  }
 }
 
 class CateListModel with ChangeNotifier{
-  final int page = int.parse(Get.parameters['page']??'3');
+  final int page = int.parse(Get.parameters['page']??'0');
   late final FeedRepo _feedrepo;
   List<Categories> _cate = List.empty();
   List<Categories> get cate => _cate;

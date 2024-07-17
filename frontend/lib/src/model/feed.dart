@@ -72,3 +72,29 @@ class Feed{
     );
   }
 }
+
+class FeedWrite{
+  final int page;
+  final String title;
+  final DateTime created_at;
+  final String content;
+  final Pos position;
+  FeedWrite({
+    required this.title,
+    required this.page,
+    required this.created_at,
+    required this.content,
+    required this.position
+  });
+}
+
+class Pos{
+  final String name;
+  final int lat;
+  final int lng;
+  Pos({
+    required this.name,
+    required this.lat,
+    required this.lng
+  });
+}

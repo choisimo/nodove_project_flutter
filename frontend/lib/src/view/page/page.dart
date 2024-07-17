@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -46,9 +47,8 @@ class _FeedPageState extends State<FeedPage>{
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,true),
-      bottomNavigationBar: const BottomNavbar(),
       floatingActionButton: commentButton(),
       body : ChangeNotifierProvider<PageViewModel>(
         create : (context) => PageViewModel(),
@@ -60,8 +60,26 @@ class _FeedPageState extends State<FeedPage>{
     );
   }
   Widget commentButton(){
+    FocusNode nfocus = FocusNode();
     return FloatingActionButton(
-      onPressed: (){},
+      onPressed: (){
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.zero),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          builder :(BuildContext context) {
+            return Padding(
+              padding : EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom
+              ),
+              child: commentWrite(context , widget.page , true , nfocus),
+            );
+          },
+        );
+      },
       backgroundColor: CommonStyle.first,
       child : SvgPicture.asset(
         'assets/icons/navbar/msg.svg',
@@ -76,6 +94,7 @@ class _FeedPageState extends State<FeedPage>{
 class FeedView extends StatefulWidget {
   final int page;
   final String url;
+
   const FeedView({super.key ,
   required this.page,
   required this.url
@@ -87,6 +106,7 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   late Feed feed;
+  final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
 
   Future<void> refresh() async{
     setState(() {});
@@ -94,6 +114,7 @@ class _FeedViewState extends State<FeedView> {
 
   @override
   Widget build(BuildContext context) {
+    
     BoxDecoration commonDecor = BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
       border : Border.symmetric(
@@ -103,6 +124,7 @@ class _FeedViewState extends State<FeedView> {
         )
       ),
     );
+
     return Consumer<PageViewModel>(
       builder : (con,prov,child){
         feed = prov.feed;
@@ -122,6 +144,9 @@ class _FeedViewState extends State<FeedView> {
                 SizedBox(height : 8),
                 Container(
                   decoration: commonDecor,
+                  constraints:BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height * 0.75
+                  ),
                   child: Column(
                     children: [
                       pageUserInfo(feed.writer, feed.createdAt, feed.updatedAt, []),
@@ -132,8 +157,10 @@ class _FeedViewState extends State<FeedView> {
                         etcOpt: false
                       ),
                       Container(
+                        key : commentTopKey,
                         width : double.infinity,
                         height : 1 ,
+                        margin : EdgeInsets.only(bottom:8),
                         decoration: BoxDecoration(
                           color : Theme.of(context).colorScheme.onSecondary),
                       ),

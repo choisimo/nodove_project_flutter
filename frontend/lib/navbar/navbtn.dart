@@ -5,12 +5,14 @@ import 'package:nodove_flutter/navbar/navbar.dart';
 import 'dart:math' as math;
 
 Widget navbarTitle(BuildContext context,String title,double? fontSize){
-  return Text(
-    title,
-    style : TextStyle(
-      color : Theme.of(context).colorScheme.onSurface ,
-      fontSize : fontSize??18
-    )
+  return SizedBox(
+    child: Text(
+      title,
+      style : TextStyle(
+        color : Theme.of(context).colorScheme.onSurface ,
+        fontSize : fontSize??18
+      )
+    ),
   );
 }
 
@@ -56,12 +58,12 @@ Widget alertBtn(BuildContext context){
   );
 }
 
-Widget etcBtn(BuildContext context,Function cb,int id){
+Widget etcBtn(BuildContext context,Function? cb,int id){
   return SizedBox(
     width : 42,
     height : 42,
     child: TextButton(
-      onPressed: ()=>cb(id),
+      onPressed: ()=>cb?.call(id),
       style : TextButton.styleFrom(
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),

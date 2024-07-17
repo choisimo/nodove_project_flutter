@@ -17,13 +17,26 @@ class NavbarContent{
 }
 
 PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
-  return AppBar(
+  return 
+  (centerTitle)?
+  AppBar(
+      centerTitle: centerTitle,
+      shape: Border(
+        bottom: BorderSide(color: Theme.of(context).colorScheme.onSecondary,width: 1)
+      ),
+      automaticallyImplyLeading: true,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      leading: content.leading??const SizedBox.shrink(),
+      title : content.title??const SizedBox.shrink(),
+      actions : content.actions??[const SizedBox.shrink()]
+  )
+  :
+  AppBar(
       centerTitle: centerTitle,
       shape: Border(
         bottom: BorderSide(color: Theme.of(context).colorScheme.onSecondary,width: 1)
       ),
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      leading: content.leading??const SizedBox.shrink(),
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()]
   );
@@ -46,8 +59,8 @@ class BottomNavbar extends GetView<PageState>{
           unselectedItemColor:Theme.of(context).colorScheme.onSurface,
           currentIndex: controller.index.value,
           onTap : controller.setIndex,
-          unselectedLabelStyle: const TextStyle(fontSize: 12),
-          selectedLabelStyle: const TextStyle(fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 14),
+          selectedLabelStyle: const TextStyle(fontSize: 14),
           items: [
             BottomNavigationBarItem(
               label: "홈",
