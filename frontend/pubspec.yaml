@@ -45,6 +45,7 @@ dependencies:
   photo_view : 
   intl : 
   flutter_html:
+  flutter_secure_storage : 
 
 dev_dependencies:
   flutter_test:

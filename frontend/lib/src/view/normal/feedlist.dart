@@ -129,6 +129,8 @@ class _FeedListState extends State<FeedList> {
 
   Widget normalRow (){
     return RefreshIndicator(
+      color : Theme.of(context).colorScheme.onSurface,
+      backgroundColor : Theme.of(context).colorScheme.onPrimary,
       onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
       child : PagedListView<int,Feed>(
         pagingController: _pagingController,

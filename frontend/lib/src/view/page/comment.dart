@@ -247,7 +247,7 @@ Widget commentList(BuildContext context,int page){
   );
 }
 Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
-  late String comment;
+  late String comment = "";
   return LayoutBuilder(
     builder : (context,constraint){
       return SafeArea(
@@ -315,7 +315,9 @@ Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
                     colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
                   ),
                   onPressed: () async{
-                    bool post = await DataSrc().postComment(CommentWrite(post_id: page, comment: comment));
+                    if (comment.isNotEmpty){
+                      await DataSrc().postComment({'post_id': page, 'comment': comment});
+                    }
                   },
                 ),
               ),

@@ -63,6 +63,12 @@ class CateListModel with ChangeNotifier{
   late final FeedRepo _feedrepo;
   List<Categories> _cate = List.empty();
   List<Categories> get cate => _cate;
+  bool isdisposed  = false;
+  @override
+  void dispose(){
+    isdisposed = true;
+    super.dispose();
+  }
 
   CateListModel(){
     _feedrepo = FeedRepo();
@@ -80,5 +86,12 @@ class CateListModel with ChangeNotifier{
       _cate = await _feedrepo.getCateList(url,opt,false);
     }
     notifyListeners();
+  }
+  
+  @override
+  void notifyListeners() {
+    if (!isdisposed){
+      super.notifyListeners();
+    }
   }
 }
