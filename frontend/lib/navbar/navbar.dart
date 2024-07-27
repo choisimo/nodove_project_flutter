@@ -21,24 +21,24 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
   (centerTitle)?
   AppBar(
       centerTitle: centerTitle,
-      shape: Border(
-        bottom: BorderSide(color: Theme.of(context).colorScheme.onSecondary,width: 1)
-      ),
       automaticallyImplyLeading: true,
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       leading: content.leading??const SizedBox.shrink(),
       title : content.title??const SizedBox.shrink(),
-      actions : content.actions??[const SizedBox.shrink()]
+      actions : content.actions??[const SizedBox.shrink()],
+      shape : Border(
+        bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
+      ),
   )
   :
   AppBar(
       centerTitle: centerTitle,
-      shape: Border(
-        bottom: BorderSide(color: Theme.of(context).colorScheme.onSecondary,width: 1)
-      ),
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       title : content.title??const SizedBox.shrink(),
-      actions : content.actions??[const SizedBox.shrink()]
+      actions : content.actions??[const SizedBox.shrink()],
+      shape : Border(
+        bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
+      ),
   );
 }
 
@@ -48,10 +48,10 @@ class BottomNavbar extends GetView<PageState>{
   @override
   Widget build(context){
     return Container(
-      width : double.infinity,
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.onSecondary,width: 1))
+        border: Border(top: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary))
       ),
+      width : double.infinity,
       child: Obx(()=>
         BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,

@@ -4,7 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
 import 'package:nodove_flutter/func/token.dart';
-import 'package:nodove_flutter/src/user/login.dart';
+import 'package:nodove_flutter/src/view/etc/etc.dart';
+import 'package:nodove_flutter/src/view/messenger/messenger.dart';
+import 'package:nodove_flutter/src/view/user/login.dart';
+import 'package:nodove_flutter/src/view/user/userpage.dart';
 import 'package:nodove_flutter/src/view/cate/cate.dart';
 import 'package:nodove_flutter/src/view/normal/feedlist.dart';
 import 'package:nodove_flutter/src/view/page/page.dart';
@@ -36,7 +39,6 @@ class MyApp extends StatelessWidget{
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
         GetPage(name : "/view/:page" , page : ()=>FeedPage()),
-        GetPage(name : "/cate/:page" , page : ()=>const CatePage()),
       ],
     );
   }
@@ -48,20 +50,12 @@ class MyHome extends StatefulWidget{
   @override
   State<MyHome> createState() => _MyHomeState();
 }
-List<Widget> page = [
-  const MainPage(key : Key("fuck")),
-  const SizedBox.shrink(),
-  const CatePage(),
-  const SizedBox.shrink(),
-  SafeArea(
-    child: TextButton(onPressed: (){
-      const storage = FlutterSecureStorage();
-      storage.delete(key: 'userToken');
-      storage.delete(key: 'cookie');
-    },
-    child : Text("캐시 삭제")
-    ),
-  ),
+List<Widget> pages = [
+  const MainPage(key : Key("mainPage")),
+  const MsgPage(key : Key('messengerPage')),
+  const CatePage(page: 0,key : Key('listPage')),
+  const UserPage(id: 'bocchi',key : Key('userPage')),
+  const EtcPage(key : Key("etcPage")),
 ];
 
 class _MyHomeState extends State<MyHome>{
@@ -73,7 +67,22 @@ class _MyHomeState extends State<MyHome>{
     
     return Scaffold(
       bottomNavigationBar: const BottomNavbar(),
-      body : Obx(()=>page[PageState.page.index.value]),
+      body : Obx((){
+        return IndexedStack(
+          index: PageState.page.index.value,
+          children: pages.map((page){
+            return Navigator(
+              onGenerateRoute: (_){
+                return MaterialPageRoute(
+                  builder: (builder){
+                    return page;
+                  },
+                );
+              },
+            );
+          }).toList(),
+        );
+      }),
     );
   }
 }

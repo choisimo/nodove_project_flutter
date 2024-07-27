@@ -3,26 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/state/url.dart';
 
-class FeedViewModel with ChangeNotifier{
-  late final FeedRepo _feedrepo;
-  List<Feed> _feedList = List.empty(growable: true);
-  List<Feed> get feedList => _feedList;
-  int page = 0;
-  int pagesize = 5;
-  int cateid = Get.arguments;
-  String url = "${Url.apiUrl}/getPostByList/";
+class FeedListModel extends GetxController {
+  final FeedRepo _feedrepo = FeedRepo();
+  RxList<Feed> feedList = <Feed>[].obs;
 
-  FeedViewModel(page,url,opt){
-    _feedrepo = FeedRepo();
-    _getFeedList(page,url,opt);
+  Future<List<Feed>> getFeedList(int page,String url,String opt) async{
+    final feedList = await _feedrepo.getFeedList(page,url,opt);
+    return feedList;
   }
+}
 
-  Future<void> _getFeedList(int page,String url,String opt) async{
-    _feedList = await _feedrepo.getFeedList(page,url,opt);
-    notifyListeners();
+class UserInfoModel extends GetxController{
+  final FeedRepo _feedRepo = FeedRepo();
+  RxMap<String,dynamic> userInfo = <String,dynamic>{}.obs;
+
+  Future<User> getUserInfo(id) async{
+    final userInfo = await _feedRepo.getUserInfo(id);
+    return userInfo;
   }
 }
 
@@ -59,23 +60,23 @@ class PageViewModel with ChangeNotifier{
 }
 
 class CateListModel with ChangeNotifier{
-  final int page = int.parse(Get.parameters['page']??'0');
   late final FeedRepo _feedrepo;
   List<Categories> _cate = List.empty();
   List<Categories> get cate => _cate;
   bool isdisposed  = false;
+
   @override
   void dispose(){
     isdisposed = true;
     super.dispose();
   }
 
-  CateListModel(){
+  CateListModel(page){
     _feedrepo = FeedRepo();
-    _getCateList();
+    _getCateList(page);
   }
 
-  Future<void> _getCateList() async{
+  Future<void> _getCateList(page) async{
     if (page > 0){
       String opt = "";
       String url = "${Url.apiUrl}/categories/getAllCategoriesByParentId/$page";
@@ -87,7 +88,7 @@ class CateListModel with ChangeNotifier{
     }
     notifyListeners();
   }
-  
+
   @override
   void notifyListeners() {
     if (!isdisposed){

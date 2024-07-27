@@ -35,7 +35,7 @@ class MinimalRow extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    props.writer,
+                    props.writerNick,
                     textAlign: TextAlign.start,
                     style: const TextStyle(
                       fontSize : 14,

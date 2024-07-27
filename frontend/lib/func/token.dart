@@ -1,10 +1,6 @@
 import "dart:convert";
+import "dart:developer";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
-
-Codec<String, String> b64 = utf8.fuse(base64);
-
-String base64Decode(String string) => b64.decode(string);
-String base64Encode(dynamic object) => b64.encode(object);
 
 Future<Map<String,dynamic>> decoding(String? jwt,String? cookie) async{
   if (jwt!.isEmpty||cookie!.isEmpty) return {};
@@ -31,8 +27,8 @@ Future<dynamic> cacheRefresh(String jwt,String cookie) async{
   try{
     await storage.delete(key : 'userToken');
     await storage.write(key : "userToken", value : jwt);
-    await storage.delete(key : 'cookie');
-    await storage.write(key : "cookie", value : cookie);
+    await storage.delete(key : 'refreshToken');
+    await storage.write(key : "refreshToken", value : cookie);
     return jwt;
   }catch(e){
     print("캐시 삭제 오류 : $e");
@@ -41,7 +37,10 @@ Future<dynamic> cacheRefresh(String jwt,String cookie) async{
 }
 
 Map<String, dynamic> jwtParsing (String jwt) {
-  final payload = jwt.substring(jwt.indexOf('.') + 1, jwt.lastIndexOf('.'));
-  final decodedToken = base64Decode(payload);
+  if (jwt.isEmpty) return {};
+  Base64Codec base64 = const Base64Codec();
+  final payload = jwt.substring(jwt.indexOf('.') + 1, jwt.lastIndexOf('.')); 
+  final normalize = base64.normalize(payload);
+  final decodedToken = utf8.decode(base64.decode(normalize));
   return jsonDecode(decodedToken);
 }

@@ -1,17 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:nodove_flutter/src/repo/repo.dart';
+import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/src/view/collected/colrow.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FeedListPage extends StatefulWidget{
   const FeedListPage({super.key});
@@ -22,35 +25,77 @@ class FeedListPage extends StatefulWidget{
 
 class _FeedListPageState extends State<FeedListPage>{
   final int cateid = int.parse(Get.parameters['page']??'0');
-  final bool collected = false;
+  final storage = const FlutterSecureStorage();
+  late bool collected = false;
   final int size = 15;
-  final String url = "${Url.apiUrl}${Url.feedList}";
+
+  @override
+  void initState() {
+    _checkcollected();
+    super.initState();
+  }
+
+  void _checkcollected() async{
+    String? c = await storage.read(key: 'collectedView');
+    setState((){
+      collected = ((c == null)||(c == 'false'))?false:true;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(context),
-      actions : [
-        searchBtn(context),
-        
-        etcBtn(
-          context,
-          (id){
-            
-          },
-          cateid
-        )
-      ]
-    );
+    GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
     return Scaffold(
+      key: _key,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,true),
+      appBar: AppBar(
+        centerTitle: false,
+        automaticallyImplyLeading: true,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        leading: backBtn(context),
+        actions : [
+          searchBtn(context),
+          IconButton(
+            onPressed: (){
+              _key.currentState!.openEndDrawer();
+            },
+            icon: SvgPicture.asset(
+              "assets/icons/navbar/menu.svg",
+              width : 16 , height : 16,
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            )
+          )
+        ],
+        shape : Border(
+          bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
+        ),
+      ),
       floatingActionButton: plusButton(),
       body : FeedList(
-        cateId: cateid,
-        collected : collected,
-        url : url,
+        collected: collected,
+        url : "${Url.apiUrl}${Url.feedList}",
+        opt : "pageSize=$size&categoryId=$cateid"
+      ),
+      endDrawer: drawer(cateid),
+    );
+  }
+  Widget drawer(id){
+    return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+
+      child : ListView(
+        children: [
+          const MenuTitle(title: "이미지로 보기"),
+          Switch(
+            value: collected,
+            onChanged: (b)=>
+            setState((){
+              collected = !collected;
+              storage.write(key : 'collectedView',value : collected.toString());
+            })
+          )
+        ],
       )
     );
   }
@@ -69,14 +114,14 @@ class _FeedListPageState extends State<FeedListPage>{
 }
 
 class FeedList extends StatefulWidget {
-  final int? cateId;
   final bool collected;
   final String url;
-
-  const FeedList({super.key ,
-  required this.cateId,
-  required this.collected,
-  required this.url
+  final String opt;
+  const FeedList({
+    super.key ,
+    required this.collected,
+    required this.url,
+    required this.opt,
   });
   
   @override
@@ -85,14 +130,16 @@ class FeedList extends StatefulWidget {
 
 class _FeedListState extends State<FeedList> {
   Dio dio = Dio();
-  final size = 10;
-  late List<Feed> feedList;
 
+  bool firstPageFetched = true;
+  final FeedListModel _con = Get.put(FeedListModel());
   final PagingController<int, Feed> _pagingController = PagingController(firstPageKey: 0);
 
   Future<void> _fetchPage(int pageKey) async {
+    String url = widget.url;
+    String opt = widget.opt;
     try {
-      final newData = await FeedRepo().getFeedList(pageKey,widget.url,"pageSize=$size&categoryId=${widget.cateId}");
+      final newData = await _con.getFeedList(pageKey,url,opt);
       final isLastPage = newData.isEmpty;
       if (!mounted) return;
       if (isLastPage) {
@@ -111,6 +158,21 @@ class _FeedListState extends State<FeedList> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _pagingController.addStatusListener((status) {
+      if (status == PagingStatus.subsequentPageError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Something went wrong while fetching a new page.',
+            ),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () => _pagingController.retryLastFailedRequest(),
+            ),
+          ),
+        );
+      }
+    });
     super.initState();
   }
 
@@ -122,7 +184,8 @@ class _FeedListState extends State<FeedList> {
 
   @override
   Widget build(BuildContext context) {
-    return (widget.collected)?
+    bool collected = widget.collected;
+    return (collected)?
     collectedRow()
     :normalRow();
   }
@@ -132,23 +195,26 @@ class _FeedListState extends State<FeedList> {
       color : Theme.of(context).colorScheme.onSurface,
       backgroundColor : Theme.of(context).colorScheme.onPrimary,
       onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-      child : PagedListView<int,Feed>(
+      child : 
+      PagedListView<int,Feed>(
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<Feed>(
-          itemBuilder : (con,item,index) => FeedRow(props : item)
-        ),
+          itemBuilder : (con,item,index) => FeedRow(props : item),
+      )
       )
     );
   }
   Widget collectedRow(){
     return RefreshIndicator(
+      color : Theme.of(context).colorScheme.onSurface,
+      backgroundColor : Theme.of(context).colorScheme.onPrimary,
       onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
       child : Builder(
         builder: (context) {
           return PagedGridView<int,Feed>(
             pagingController: _pagingController,
             gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2
+              crossAxisCount: 2,
             ),
             builderDelegate: PagedChildBuilderDelegate<Feed>(
               itemBuilder : (con,item,index) => CollectedRow(props : item)
@@ -159,14 +225,16 @@ class _FeedListState extends State<FeedList> {
     );
   }
 }
-//CollectedRow
+
 /*
-ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: feedList.length,
-              itemBuilder: (BuildContext cont,int index){
-                return FeedRow(props : feedList[index]);
-              }
-            );
+:ListView.builder(
+        itemCount: 5,
+        itemBuilder: (context, index){
+          return Shimmer.fromColors(
+            child: FeedRow(props: Feed.defaultState(),),
+            baseColor: Theme.of(context).colorScheme.onSecondary,
+            highlightColor: Theme.of(context).colorScheme.onPrimary
+          );
+        },
+      )
 */

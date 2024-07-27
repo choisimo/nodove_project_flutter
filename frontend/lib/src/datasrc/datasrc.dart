@@ -1,15 +1,19 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
+import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/url.dart';
+import 'package:nodove_flutter/state/user.dart';
 
 class DataSrc{
   Dio dio = Dio(BaseOptions(
@@ -25,10 +29,11 @@ class DataSrc{
   Future<List<Feed>> getFeedList(int page,String url,String opt) async{
 
     try{
+      log("$url/$page?$opt");
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
-      print(e);
+      log(e.toString());
       return [Feed.defaultState()];
     }
   }
@@ -37,7 +42,7 @@ class DataSrc{
       final res = await dio.get("$url/$page");
       return Feed.fromJson(res.data);
     }catch(e){
-      print(e);
+      log(e.toString());
       return Feed.defaultState();
     }
   }
@@ -56,13 +61,14 @@ class DataSrc{
       return [];
     }
   }
-  Future<List<Comment>> getCommentList(int page,String url,String opt) async{
+  Future<CommentAll> getCommentList(int page,String url,String opt) async{
     try{
       final res = await dio.get("$url/$page?$opt");
-      print("$url/$page?$opt");
-      return res.data.map<Comment>((json)=>Comment.fromJson(json)).toList();
+      log("$url/$page?$opt");
+      return CommentAll.fromJson(res.data);
     }catch(e){
-      return [];
+      log(e.toString());
+      return CommentAll.defaultState();
     }
   }
 
@@ -74,7 +80,7 @@ class DataSrc{
         data : formData,
       );
     }catch(e){
-      print("댓글 작성 에러 : $e");
+      log("댓글 작성 에러 : $e");
     }
   }
 
@@ -88,10 +94,22 @@ class DataSrc{
       if (res.statusCode == 200){
         Get.off(()=>const MyHome());
       } else {
-        print("로그인 실패");
+        log("로그인 실패");
       }
     } catch(e){
-      print("로그인 에러 : $e");
+      log("로그인 에러 : $e");
+    }
+  }
+
+  Future<User> getUserInfo(String id) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.get("${Url.apiUrl}/restrict/user/userInfo?userId=$id");
+      log(res.toString());
+      return User.fromJson(res.data);
+    }catch(e){
+      log("불러오기 에러 : $e");
+      return User.defaultState();
     }
   }
 }

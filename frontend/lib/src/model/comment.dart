@@ -1,6 +1,43 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+class CommentAll{
+  final int totalItems;
+  final int totalReplies;
+  final int totalPages;
+  final int currentPage;
+  final List<Comment> comments;
+
+  CommentAll({
+    required this.totalItems,
+    required this.totalPages,
+    required this.currentPage,
+    required this.totalReplies,
+    required this.comments,
+  });
+
+  factory CommentAll.fromJson(Map<String,dynamic> json){
+    return CommentAll(
+      totalItems : json['totalItems'],
+      totalReplies : json['totalReplies'],
+      totalPages : json['totalPages'],
+      currentPage : json['currentPage'],
+      comments : json['comments'].map<Comment>((json)=>
+        Comment.fromJson(json)
+      ).toList(),
+    );
+  }
+  factory CommentAll.defaultState(){
+    return CommentAll(
+      totalItems : 0,
+      totalReplies : 0,
+      totalPages : 0,
+      currentPage : 0,
+      comments:[],
+    );
+  }
+}
+
 class Comment{
   final int commentId;
   final String comment;

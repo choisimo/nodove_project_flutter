@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 class Feed{
   final int id;
   final String title;
-  final String writer;
+  final String writerNick;
+  final String writerUserId;
+  final String writerProfile;
   final int writerId;
   final String? caption;
   final String? content;
@@ -20,7 +22,9 @@ class Feed{
   Feed({
     required this.id,
     required this.title,
-    required this.writer,
+    required this.writerNick,
+    required this.writerUserId,
+    required this.writerProfile,
     required this.writerId,
     this.caption,
     this.content,
@@ -38,7 +42,9 @@ class Feed{
     return Feed(
       id : json['id'],
       title : json['title'],
-      writer : json['writer'],
+      writerNick : json['writerNick'],
+      writerUserId : json['writerUserId'],
+      writerProfile : json['writerProfile'],
       writerId : json['writerId'],
       caption : json['caption'],
       content : json['content'],
@@ -57,7 +63,9 @@ class Feed{
     return Feed(
       id : 0,
       title : "",
-      writer : "",
+      writerNick : "",
+      writerUserId : "",
+      writerProfile : "",
       writerId : 0,
       caption : "",
       content : "",

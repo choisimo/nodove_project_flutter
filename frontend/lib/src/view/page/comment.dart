@@ -32,6 +32,21 @@ class _CommentListState extends State<CommentList> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _pagingController.addStatusListener((status) {
+      if (status == PagingStatus.subsequentPageError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Something went wrong while fetching a new page.',
+            ),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () => _pagingController.retryLastFailedRequest(),
+            ),
+          ),
+        );
+      }
+    });
     super.initState();
   }
 
@@ -47,13 +62,13 @@ class _CommentListState extends State<CommentList> {
     try {
       final String url = "https://gcp.nodove.com/api/commentListByPostId/$page";
       final newData = await FeedRepo().getCommentPage(pageKey,url,"pageSize=$size");
-      final isLastPage = newData.isEmpty;
+      final isLastPage = newData.comments.isEmpty;
       if(!mounted) return;
       if (isLastPage) {
-        _pagingController.appendLastPage(newData);
+        _pagingController.appendLastPage(newData.comments);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newData, nextPageKey);
+        _pagingController.appendPage(newData.comments, nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;
@@ -63,36 +78,43 @@ class _CommentListState extends State<CommentList> {
   @override
   Widget build(BuildContext context) {
     bool enableScroll = widget.enableScroll??false;
-    return SizedBox(
-      width : MediaQuery.of(context).size.width,
-      child: RefreshIndicator(
-        onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-        child: PagedListView<int,Comment>(
-          pagingController: _pagingController,
-          physics : (enableScroll)?const AlwaysScrollableScrollPhysics():const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          builderDelegate: PagedChildBuilderDelegate<Comment>(
-            itemBuilder : (con,item,index) => CommentRow(props : item)
+    return LayoutBuilder(
+
+      builder: (context,constraint) {
+        return RefreshIndicator(
+          onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
+          child: PagedListView<int,Comment>(
+            pagingController: _pagingController,
+            physics : (enableScroll)?const AlwaysScrollableScrollPhysics():const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            builderDelegate: PagedChildBuilderDelegate<Comment>(
+              itemBuilder : (con,item,index) =>
+              CommentRow(
+                props : item,
+                constraint : constraint
+              )
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }
 
 class CommentRow extends StatefulWidget {
   final Comment props;
-  const CommentRow({super.key ,required this.props});
+  final BoxConstraints constraint;
+  const CommentRow({super.key ,required this.props , required this.constraint});
 
   @override
   State<CommentRow> createState() => _CommentRowState();
 }
 
 class _CommentRowState extends State<CommentRow> {
-  
   @override
   Widget build(BuildContext context) {
     Comment props = widget.props;
+    BoxConstraints constraints = widget.constraint;
     final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
 
     return Container(
@@ -101,69 +123,68 @@ class _CommentRowState extends State<CommentRow> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth:  MediaQuery.of(context).size.width * 0.8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin : EdgeInsets.only(bottom: 4),
-                  height : 21,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Profile(profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg", width: 18, height: 18),
-                      const SizedBox(width: 2),
-                      Text(
-                        props.writer,
-                        style : const TextStyle(
-                          height : 1,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        )
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    props.comment,
-                    softWrap: true,
-                    style : const TextStyle(
-                      height : 1,
-                      
-                    )
-                  ),
-                ),
-                Container(
-                  child: TextButton(
-                    onPressed: (){
-                      if (commentTopKey.currentContext != null){
-                        Scrollable.ensureVisible(
-                          commentTopKey.currentContext!,
-                          duration : const Duration(seconds : 1),
-                        );
-                      }
-                    },
-                    child : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+          Expanded(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin : EdgeInsets.only(bottom: 4),
+                    height : 21,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("답글 ${props.replies!.length}개 보기"),
-                        SizedBox(width : 6),
-                        SvgPicture.asset(
-                          "assets/icons/common/right.svg",
-                          width : 16 , height : 10,
-                          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                        const Profile(profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg", width: 18, height: 18),
+                        const SizedBox(width: 2),
+                        Text(
+                          props.writer,
+                          style : const TextStyle(
+                            height : 1,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold
+                          )
                         )
                       ],
-                    )
+                    ),
                   ),
-                )
-              ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      props.comment,
+                      softWrap: true,
+                      style : const TextStyle(
+                        height : 1,
+                        
+                      )
+                    ),
+                  ),
+                  Container(
+                    child: TextButton(
+                      onPressed: (){
+                        if (commentTopKey.currentContext != null){
+                          Scrollable.ensureVisible(
+                            commentTopKey.currentContext!,
+                            duration : const Duration(seconds : 1),
+                          );
+                        }
+                      },
+                      child : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("답글 ${props.replies!.length}개 보기"),
+                          SizedBox(width : 6),
+                          SvgPicture.asset(
+                            "assets/icons/common/right.svg",
+                            width : 16 , height : 10,
+                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                          )
+                        ],
+                      )
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
           Column(
@@ -216,6 +237,7 @@ Widget commentList(BuildContext context,int page){
         builder:(context,constraint){
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(
                 height : 32,
@@ -233,9 +255,7 @@ Widget commentList(BuildContext context,int page){
               Expanded(
                 child: GestureDetector(
                   onTap : ()=>nfocus.unfocus(),
-                  child: SizedBox(
-                    child: CommentList(page : page,enableScroll: true),
-                  ),
+                  child: CommentList(page : page,enableScroll: true)
                 ),
               ),
               commentWrite(context,page,false,nfocus)
@@ -255,7 +275,7 @@ Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
           decoration: BoxDecoration(
             border: Border.symmetric(
               horizontal: BorderSide(
-                width: 1,
+                width: 0.5,
                 color : Theme.of(context).colorScheme.onSecondary
               )
             )
@@ -268,7 +288,8 @@ Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               SizedBox(
-                width : 42,
+                width : 56,
+                height : 56,
                 child: IconButton(
                   icon : SvgPicture.asset(
                     "assets/icons/navbar/noBorderAdd.svg",
@@ -278,36 +299,38 @@ Widget commentWrite(BuildContext context,int page,bool focus,FocusNode nfocus){
                   onPressed: (){},
                 ),
               ),
-              Container(
-                width : constraint.maxWidth - 92,
-                padding : const EdgeInsets.symmetric(
-                  vertical: 2,
-                  horizontal: 8,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.symmetric(
-                    vertical: BorderSide(
-                      width: 1,
-                      color : Theme.of(context).colorScheme.onSecondary
+              Expanded(
+                child: Container(
+                  padding : const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.symmetric(
+                      vertical: BorderSide(
+                        width: 0.5,
+                        color : Theme.of(context).colorScheme.onSecondary
+                      ),
                     ),
                   ),
-                ),
-                child: TextField(
-                  maxLines: 10,
-                  minLines: 1,
-                  autofocus: focus,
-                  onChanged : (text){
-                    comment = text;
-                  },
-                  focusNode: nfocus,
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none
+                  child: TextField(
+                    maxLines: 10,
+                    minLines: 1,
+                    autofocus: focus,
+                    onChanged : (text){
+                      comment = text;
+                    },
+                    focusNode: nfocus,
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none
+                    ),
                   ),
                 ),
               ),
               SizedBox(
-                width : 42,
+                width : 56,
+                height : 56,
                 child: IconButton(
                   icon : SvgPicture.asset(
                     "assets/icons/navbar/msg.svg",

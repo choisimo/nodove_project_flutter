@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:nodove_flutter/state/color.dart';
+
 class TooltipShape extends ShapeBorder {
   final double? verticalOffset;
   final double radius = 16;
   final double triSize = 10;
+  final double kborder = 1;
+  final Color? borderColor;
 
-  const TooltipShape(this.verticalOffset);
+  const TooltipShape(this.verticalOffset , this.borderColor);
 
   final BorderSide _side = BorderSide.none;
   final BorderRadiusGeometry _borderRadius = BorderRadius.zero;
@@ -32,26 +36,53 @@ class TooltipShape extends ShapeBorder {
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     final Path path = Path();
     final double offset = verticalOffset??125;
+    
     final RRect rrect = _borderRadius.resolve(textDirection).toRRect(rect);
+    final Map<String,double> radiusAuto = {
+      "left" : 
+      (rrect.width - (offset + triSize * 2) < radius && rrect.width > offset)?
+      rrect.width - (offset + triSize * 2)
+      :radius,
+      "right" : 
+      ((offset) < radius && rrect.width > offset)?
+      offset
+      :radius
+    };
 
-    path.moveTo(0, radius);
-    path.quadraticBezierTo(0, 0, radius, 0);
+    path.moveTo(0, radiusAuto['left']!);
+    path.quadraticBezierTo(0, 0, radiusAuto['left']!, 0);
     path.lineTo(rrect.width - (offset + triSize * 2), 0);
     path.lineTo(rrect.width - (offset + triSize), -1 * triSize);
     path.lineTo(rrect.width - offset, 0);
-    path.lineTo(rrect.width - radius, 0);
-    path.quadraticBezierTo(rrect.width, 0, rrect.width, radius);
+    path.lineTo(rrect.width - radiusAuto['right']!, 0);
+    path.quadraticBezierTo(rrect.width, 0, rrect.width, radiusAuto['right']!);
     path.lineTo(rrect.width, rrect.height - radius);
     path.quadraticBezierTo(
         rrect.width, rrect.height, rrect.width - radius, rrect.height);
     path.lineTo(radius, rrect.height);
     path.quadraticBezierTo(0, rrect.height, 0, rrect.height - radius);
+    path.lineTo(0, radiusAuto['left']!);
 
     return path;
   }
 
   @override
-  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
+  void paint(
+    Canvas canvas,
+    Rect rect,
+    {TextDirection? textDirection}) {
+      final rrectShadow = RRect.fromRectAndRadius(rect, Radius.circular(radius));
+      final shadowPaint = Paint()
+        ..strokeWidth = 0.5
+        ..color = borderColor??CommonStyle.firstAlpha
+        ..style = PaintingStyle.stroke
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+
+    canvas.drawPath(
+      getOuterPath(rect),
+      shadowPaint
+    );
+  }
 
   @override
   ShapeBorder scale(double t) => RoundedRectangleBorder(

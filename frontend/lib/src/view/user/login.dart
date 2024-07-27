@@ -15,11 +15,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   static const storage = FlutterSecureStorage();
-  late String? token = "";
+  Future<String?> token = storage.read(key: "userToken");
+  Future<String?> cookie = storage.read(key : 'refreshToken');
 
   void _checkToken() async{
-    token = await storage.read(key: "userToken");
-    if(token != null){
+    if(await token != null&&await cookie != null){
         Get.off(()=>const MyHome());
     }
   }
@@ -34,10 +34,16 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body : 
-      (token != "")?
-        const SafeArea(child: LoginForm())
-        :SizedBox.shrink(),
+      body : FutureBuilder(
+        future : token,
+        builder: (BuildContext context,AsyncSnapshot snapshot) {
+          return SafeArea(child: 
+          (snapshot.hasData)?
+          const SizedBox.shrink()
+          :const LoginForm()
+          );
+        }
+      )
     );
   }
 }

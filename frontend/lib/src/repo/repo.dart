@@ -3,6 +3,7 @@ import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/user.dart';
 
 class FeedRepo{
   final DataSrc _source = DataSrc();
@@ -16,7 +17,10 @@ class FeedRepo{
   Future<List<Categories>> getCateList(url,opt , child){
     return _source.getCateList(url, opt , child);
   }
-  Future<List<Comment>> getCommentPage(pageKey,url,opt){
+  Future<CommentAll> getCommentPage(pageKey,url,opt){
     return _source.getCommentList(pageKey,url,opt);
+  }
+  Future<User> getUserInfo(id){
+    return _source.getUserInfo(id);
   }
 }

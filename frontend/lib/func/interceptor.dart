@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
+import 'package:nodove_flutter/src/view/user/login.dart';
+import 'package:nodove_flutter/state/user.dart';
 
 class ApiInterceptors extends Interceptor {
   @override
@@ -8,25 +13,57 @@ class ApiInterceptors extends Interceptor {
     const storage = FlutterSecureStorage();
 
     final String? token = await storage.read(key: "userToken");
-    final String? cookie = await storage.read(key: "cookie");
+    final String? refresh = await storage.read(key: "refreshToken");
     if (token != null){options.headers['Authorization'] = token;}
-    if (cookie != null){options.headers['cookie'] = cookie;}
+    if (refresh != null){options.headers['cookie'] = refresh;}
 
     super.onRequest(options, handler);
   }
 
   @override
-  void onError(DioException dioError, ErrorInterceptorHandler handler) {
-    print(dioError);
-    super.onError(dioError, handler);
+  void onError(DioException err, ErrorInterceptorHandler handler) async{
+    log(err.toString());
+    log(err.response!.statusCode.toString());
+    final dio = Dio();
+    const storage = FlutterSecureStorage();
+    final tokenError = (err.response!.statusCode == 401); 
+    final fetchOpt = err.requestOptions;
+    final String? refresh = await storage.read(key: "refreshToken");
+    
+    if(refresh == null){
+      return handler.reject(err);
+    }
+    
+    if (tokenError){
+      log("토큰에러! 재시도중...");
+      Future.delayed(const Duration(milliseconds: 1000));
+      try{
+        final response = await dio.fetch(fetchOpt);
+        return handler.resolve(response);
+      }catch(e){
+        await storage.delete(key: 'userToken');
+        await storage.delete(key: 'refreshToken');
+        Get.off(()=>LoginPage());
+
+      }
+      
+    }
+    super.onError(err, handler);
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) async{
+  void onResponse(response, ResponseInterceptorHandler handler) async{
     final String? cookie = response.headers['set-cookie']?[0];
     final String? jwt = response.headers['Authorization']?[0];
+    final user = Get.put(UserState());
 
-    if (jwt!.isNotEmpty&&cookie!.isNotEmpty){await decoding(jwt,cookie);}
+    if (jwt != null && cookie != null){
+      final res = await decoding(jwt,cookie);
+      if (res['parsed'] != null){
+        user.setIndex(res['parsed']['userId']);
+        print(user.id);
+      }
+    }
     
     super.onResponse(response, handler);
   }

@@ -46,6 +46,8 @@ dependencies:
   intl : 
   flutter_html:
   flutter_secure_storage : 
+  shimmer : 
+  lottie : 
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/func/transform.dart';
 import 'package:nodove_flutter/graphic/border.dart';
+import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
@@ -11,77 +13,94 @@ import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
 class CatePage extends StatelessWidget {
-  const CatePage({super.key});
+  final int page;
+  const CatePage({super.key,required this.page});
 
   @override
   Widget build(BuildContext context) {
     Get.put(PageState());
+
     NavbarContent navbarOpt = NavbarContent(
       title : PopupMenuButton(
-        shape : const TooltipShape(125),
+        shape : TooltipShape(125,Theme.of(context).colorScheme.onSurface),
         offset : const Offset(0,36),
-        
-        itemBuilder: (BuildContext context) { 
+        itemBuilder: (BuildContext context) {
           return [
-          PopupMenuItem(
-            child: Row(
-              children :[
-                SizedBox(
-                  width : 24,
-                  child: SvgPicture.asset(
-                    "assets/icons/navbar/menu.svg",
-                    width : 10 , height : 10,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            PopupMenuItem(
+              child: Row(
+                children : [
+                  SizedBox(
+                    width : 24,
+                    child: SvgPicture.asset(
+                      "assets/icons/navbar/menu.svg",
+                      width : 10 , height : 10,
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    ),
                   ),
-                ),
-                navbarTitle(context,"카테고리",20)
-              ]
+                  navbarTitle(context,"카테고리",20)
+                ]
+              ),
+              onTap: () {
+                print('카테고리 선택');
+              },
             ),
-            onTap: () {
-              print('카테고리 선택');
-            },
-          ),
-          PopupMenuItem(
-            child: Row(
-              children :[
-                SizedBox(
-                  width : 24,
-                  child: SvgPicture.asset(
-                    "assets/icons/navbar/hashtag.svg",
-                    width : 12 , height : 12,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            PopupMenuItem(
+              child: Row(
+                children :[
+                  SizedBox(
+                    width : 24,
+                    child: SvgPicture.asset(
+                      "assets/icons/navbar/hashtag.svg",
+                      width : 12 , height : 12,
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    ),
                   ),
-                ),
-                navbarTitle(context,"태그",20)
-              ]
+                  navbarTitle(context,"태그",20)
+                ]
+              ),
+              onTap: () {
+                print('태그 선택');
+              }
             ),
-            onTap: () {
-              print('태그 선택');
-            }
-          ),
-          PopupMenuItem(
-            child: Row(
-              children :[
-                SizedBox(
-                  width : 24,
-                  child: SvgPicture.asset(
-                    "assets/icons/navbar/navi.svg",
-                    width : 12 , height : 12,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            PopupMenuItem(
+              child: Row(
+                children :[
+                  SizedBox(
+                    width : 24,
+                    child: SvgPicture.asset(
+                      "assets/icons/navbar/navi.svg",
+                      width : 12 , height : 12,
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    ),
                   ),
-                ),
-                navbarTitle(context,"내 위치",20)
-              ]
+                  navbarTitle(context,"내 위치",20)
+                ]
+              ),
+              onTap: () {
+                print('위치 선택');
+              }
             ),
-            onTap: () {
-              print('위치 선택');
-            }
-          ),
           ];
-          },
-        child: navbarTitle(context,"카테고리",20)
+        },
+        child: Row(
+          children : [
+            navbarTitle(context,"카테고리",20),
+            Rotate(
+              angle : 90,
+              child: SizedBox(
+                width : 20,
+                child: SvgPicture.asset(
+                  "assets/icons/common/right.svg",
+                  width : 12 , height : 12,
+                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+                ),
+              ),
+            ),
+          ]
+        )
       ),
       actions : [
         searchBtn(context),
@@ -92,7 +111,7 @@ class CatePage extends StatelessWidget {
       floatingActionButton: plusButton(),
       appBar: navbarTop(context,navbarOpt,false),
       body : ChangeNotifierProvider<CateListModel>(
-        create : (context) => CateListModel(),
+        create : (context) => CateListModel(page),
         child : const CateList()
       ),
     );
@@ -120,7 +139,6 @@ class CateList extends StatefulWidget {
 
 class _CateListState extends State<CateList> {
   late List<Categories> list;
-  final CateListModel cate = CateListModel();
 
   Future<void> refresh() async{
     setState((){});
@@ -155,13 +173,19 @@ class _CateListState extends State<CateList> {
     );
   }
 }
-
-class CateRow extends StatelessWidget {
+class CateRow extends StatefulWidget {
   final Categories props;
   const CateRow({super.key,required this.props});
 
   @override
+  State<CateRow> createState() => _CateRowState();
+}
+
+class _CateRowState extends State<CateRow> {
+  @override
   Widget build(BuildContext context) {
+    Categories props = widget.props;
+
     return GestureDetector(
       onTap : ()=>Get.toNamed("/list/${props.categoryId}"),
       child : Container(
@@ -187,7 +211,7 @@ class CateRow extends StatelessWidget {
                 constraints: const BoxConstraints(
                   minWidth : 120
                 ),
-                shape : const TooltipShape(92),
+                shape : TooltipShape(92,Theme.of(context).colorScheme.onSurface),
                 offset : const Offset(0,40),
                 icon : Text(
                   '•••',
@@ -287,7 +311,7 @@ class CateRow extends StatelessWidget {
                     width : 16 , height : 16,
                     colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
                   ),
-                  onPressed: ()=>Get.toNamed("/cate/${props.categoryId}"),
+                  onPressed: ()=>Navigator.push(context,MaterialPageRoute(builder : (context)=>CatePage(page : props.categoryId))),
                 ):SizedBox.shrink(),
               ),
             ],

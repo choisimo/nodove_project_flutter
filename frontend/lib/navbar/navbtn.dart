@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/func/transform.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'dart:math' as math;
@@ -58,28 +59,42 @@ Widget alertBtn(BuildContext context){
   );
 }
 
-Widget etcBtn(BuildContext context,Function? cb,int id){
-  return SizedBox(
-    width : 42,
-    height : 42,
-    child: TextButton(
-      onPressed: ()=>cb?.call(id),
-      style : TextButton.styleFrom(
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-      ),
-      child: Transform.rotate(
-        angle : 90 * math.pi / 180,
-        child: Text(
-          '•••',
-          overflow: TextOverflow.visible,
-          softWrap: false,
-          style : TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface
-          )
+class etcBtn extends StatefulWidget {
+  final Function? cb;
+  final int id;
+  const etcBtn({super.key , this.cb , required this.id});
+
+  @override
+  State<etcBtn> createState() => _etcBtnState();
+}
+
+class _etcBtnState extends State<etcBtn> {
+  @override
+  Widget build(BuildContext context) {
+    final Function? cb = widget.cb;
+    final int id = widget.id;
+    return SizedBox(
+      width : 42,
+      height : 42,
+      child: TextButton(
+        onPressed: ()=>cb?.call(id),
+        style : TextButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
         ),
-      )
-    ),
-  );
+        child: Rotate(
+          angle : 90,
+          child: Text(
+            '•••',
+            overflow: TextOverflow.visible,
+            softWrap: false,
+            style : TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface
+            )
+          ),
+        )
+      ),
+    );
+    }
 }

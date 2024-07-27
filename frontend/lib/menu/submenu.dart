@@ -2,13 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class MenuBtn extends StatelessWidget {
+class MenuBtn extends StatefulWidget {
   final BuildContext context;
   final Function cb;
   final String? iconSrc;
   final String title;
   final Color? tcolor;
-
   const MenuBtn({
     super.key,
     required this.context,
@@ -19,7 +18,18 @@ class MenuBtn extends StatelessWidget {
   });
 
   @override
+  State<MenuBtn> createState() => _MenuBtnState();
+}
+
+class _MenuBtnState extends State<MenuBtn> {
+  @override
   Widget build(BuildContext context) {
+
+    final BuildContext context = widget.context;
+    final Function cb = widget.cb;
+    final String? iconSrc = widget.iconSrc;
+    final String title = widget.title;
+    final Color? tcolor = widget.tcolor;
     return Container(
       width : MediaQuery.of(context).size.width * 0.95,
       height : 42,
@@ -33,23 +43,26 @@ class MenuBtn extends StatelessWidget {
             )
           )
         ),
-        onPressed: ()=>cb,
+        onPressed: ()=>cb.call(),
         child: LayoutBuilder(
           builder: (BuildContext context,BoxConstraints constraints) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                (iconSrc!= null)?
                 SvgPicture.asset(
-                  iconSrc!,
+                  iconSrc,
                   width : 24,
                   height : 24,
                   colorFilter: ColorFilter.mode(
                     tcolor??Theme.of(context).colorScheme.onSurface ,
                     BlendMode.srcIn
                   ),
-                ),
-                SizedBox(
-                  width: constraints.maxWidth * 0.25,
+                ): const SizedBox.shrink(),
+                Container(
+                  constraints: BoxConstraints(
+                    minWidth: constraints.maxWidth * 0.25,
+                  ),
                   child : Text(
                     title,
                     textAlign: TextAlign.center,

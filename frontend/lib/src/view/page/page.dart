@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/src/view/page/comment.dart';
@@ -34,16 +35,41 @@ class _FeedPageState extends State<FeedPage>{
     NavbarContent navbarOpt = NavbarContent(
       leading: backBtn(context),
       actions : <Widget>[
-        etcBtn(context, (id){
+        etcBtn(
+          cb : (id){
           showModalBottomSheet(
             context: context,
             backgroundColor: Theme.of(context).colorScheme.onPrimary,
             builder: (BuildContext context){
-              return EtcModal(
-                id : id
+              return Modal(
+                id : id,
+                widget : [
+                  const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
+                  ModalMenu(
+                    cb : (){},
+                    iconSrc : "assets/icons/navbar/certification.svg",
+                    title : "신고",
+                  ),
+                  ModalMenu(
+                    cb : (){},
+                    iconSrc : "assets/icons/navbar/user.svg",
+                    title : "정보",
+                  ),
+                  const MenuTitle(title : '내가 쓴 글' , key : Key("내가 쓴 글 제목")),
+                  ModalMenu(
+                    cb : (){},
+                    iconSrc : "assets/icons/post/edit.svg",
+                    title : "수정",
+                  ),
+                  ModalMenu(
+                    cb : (){},
+                    iconSrc : "assets/icons/post/delete.svg",
+                    title : "삭제",
+                  ),
+                ]
               );
           });
-        }, widget.page),
+        }, id : widget.page),
       ]
     );
     return Scaffold(
@@ -119,7 +145,7 @@ class _FeedViewState extends State<FeedView> {
       color : Theme.of(context).colorScheme.onPrimary,
       border : Border.symmetric(
         horizontal: BorderSide(
-          width :1,
+          width :0.5,
           color : Theme.of(context).colorScheme.onSecondary,
         )
       ),
@@ -130,6 +156,8 @@ class _FeedViewState extends State<FeedView> {
         feed = prov.feed;
         return RefreshIndicator(
           onRefresh: ()=>refresh(),
+          color : Theme.of(context).colorScheme.onSurface,
+          backgroundColor : Theme.of(context).colorScheme.onPrimary,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -149,7 +177,8 @@ class _FeedViewState extends State<FeedView> {
                   ),
                   child: Column(
                     children: [
-                      pageUserInfo(feed.writer, feed.createdAt, feed.updatedAt, []),
+                      pageUserInfo(feed.writerProfile,feed.writerNick,
+                      feed.createdAt, feed.updatedAt, []),
                       Html(data: feed.content),
                       FeedRowBottom(
                         id: feed.id,
@@ -159,7 +188,7 @@ class _FeedViewState extends State<FeedView> {
                       Container(
                         key : commentTopKey,
                         width : double.infinity,
-                        height : 1 ,
+                        height : 0.5 ,
                         margin : EdgeInsets.only(bottom:8),
                         decoration: BoxDecoration(
                           color : Theme.of(context).colorScheme.onSecondary),
@@ -176,13 +205,15 @@ class _FeedViewState extends State<FeedView> {
     );
   }
   Widget pageUserInfo(
-    String userName , String createdAt , String updatedAt , List<String> group
+    String userProfile ,
+    String userName , String createdAt ,
+    String updatedAt , List<String> group
   ){
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        const Profile(
-          profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg",
+        Profile(
+          profile: userProfile,
           width: 56,
           height: 56
         ),
@@ -214,6 +245,7 @@ class _FeedViewState extends State<FeedView> {
                 color : Theme.of(context).colorScheme.secondary,
               ),
             ),
+            (createdAt != updatedAt)?
             Text(
               "${getDateFull(updatedAt)} 수정됨",
               style: TextStyle(
@@ -221,7 +253,7 @@ class _FeedViewState extends State<FeedView> {
                 fontSize : 12,
                 color : Theme.of(context).colorScheme.secondary,
               ),
-            ),
+            ):SizedBox.shrink(),
           ]
         )
       ],
