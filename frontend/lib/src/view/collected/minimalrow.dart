@@ -15,7 +15,7 @@ class MinimalRow extends StatelessWidget {
     return LayoutBuilder(builder: (context,constraints){
       return Container(
         alignment: Alignment.center,
-        padding : EdgeInsets.all(4),
+        padding : const EdgeInsets.all(4),
         constraints: BoxConstraints(
           maxWidth : constraints.maxWidth * 0.9,
           maxHeight: constraints.maxHeight * 0.4,
@@ -49,16 +49,17 @@ class MinimalRow extends StatelessWidget {
                     textAlign: TextAlign.start,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize : 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Expanded(
+                  flex : 0,
                   child: Container(
                     width : cons.maxWidth,
-                    padding : EdgeInsets.all(4),
+                    padding : const EdgeInsets.all(4),
                     height : 28,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -68,14 +69,13 @@ class MinimalRow extends StatelessWidget {
                           child : Row(
                             children: [
                               SvgPicture.asset("assets/icons/post/star.svg",
-                              width : 20, height : 20,
+                              width : 16, height : 16,
                               colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                               ),
                               const SizedBox(width : 4),
                               Text(
-                                "${props.likeCount}",
+                                "${props.likeCount??0}",
                                 style : const TextStyle(
-                                  fontSize : 16,
                                   fontWeight: FontWeight.bold,
                                 )
                               ),
@@ -87,12 +87,12 @@ class MinimalRow extends StatelessWidget {
                           child : Row(
                             children: [
                               SvgPicture.asset("assets/icons/navbar/msg.svg",
-                              width : 20, height : 20,
+                              width : 16, height : 16,
                               colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                               ),
-                              SizedBox(width : 4),
+                              const SizedBox(width : 4),
                               Text(
-                                "${props.commentCount}",
+                                "${props.commentCount??0}",
                                 style : const TextStyle(
                                   fontSize : 16,
                                   fontWeight: FontWeight.bold,

@@ -13,8 +13,8 @@ class Feed{
   final String? status;
   final String createdAt;
   final String updatedAt;
-  final int likeCount;
-  final int commentCount;
+  final dynamic likeCount;
+  final dynamic commentCount;
   final List<dynamic> hashtags;
   final List<dynamic> imageLinks;
   final bool private;

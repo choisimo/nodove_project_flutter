@@ -48,6 +48,8 @@ dependencies:
   flutter_secure_storage : 
   shimmer : 
   lottie : 
+  custom_refresh_indicator : 
+  image_picker : 
 
 dev_dependencies:
   flutter_test:

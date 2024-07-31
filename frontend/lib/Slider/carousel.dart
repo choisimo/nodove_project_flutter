@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/Slider/zoom.dart';
+import 'package:nodove_flutter/src/view/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:lottie/lottie.dart';
 
@@ -75,24 +76,9 @@ class _CarouselState extends State<Carousel> {
                 child : Container(
                   child: Hero(
                     tag : "$page-${imageLinks[i.key]}",
-                    child: Image.network(
+                    child: customImage(
                       imageLinks[i.key],
                       fit : BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null){
-                          return child;
-                        }
-                        return LottieBuilder.asset(
-                          "assets/icons/common/loading.json",
-                          width : 64 , height : 64,
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace){
-                        return LottieBuilder.asset(
-                          "assets/icons/common/loading.json",
-                          width : 64 , height : 64
-                        );
-                      },
                     ),
                   ),
                 )

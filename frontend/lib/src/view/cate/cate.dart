@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/transform.dart';
+import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
-import 'package:nodove_flutter/src/view/normal/feedlist.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
 
-class CatePage extends StatelessWidget {
+class CatePage extends StatefulWidget {
   final int page;
   const CatePage({super.key,required this.page});
 
   @override
+  State<CatePage> createState() => _CatePageState();
+}
+
+class _CatePageState extends State<CatePage> {
+
+  @override
   Widget build(BuildContext context) {
     Get.put(PageState());
+    bool PopupOpen = false;
+    int page = widget.page;
+    final String arg = Get.arguments?["backName"]??'';
+
+    void setPopup (bool bool) => setState(()=>PopupOpen=bool);
 
     NavbarContent navbarOpt = NavbarContent(
-      title : PopupMenuButton(
+      title : (arg.isNotEmpty)?
+      navbarTitle(context, arg, 20)
+      :PopupMenuButton(
+        onOpened: () => setState((){PopupOpen=true;}),
+        onCanceled: () => setState((){PopupOpen=false;}),
         shape : TooltipShape(125,Theme.of(context).colorScheme.onSurface),
         offset : const Offset(0,36),
         itemBuilder: (BuildContext context) {
@@ -89,13 +101,13 @@ class CatePage extends StatelessWidget {
           children : [
             navbarTitle(context,"카테고리",20),
             Rotate(
-              angle : 90,
+              angle : (PopupOpen)?270:90,
               child: SizedBox(
                 width : 20,
                 child: SvgPicture.asset(
                   "assets/icons/common/right.svg",
                   width : 12 , height : 12,
-                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+                   colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -187,7 +199,10 @@ class _CateRowState extends State<CateRow> {
     Categories props = widget.props;
 
     return GestureDetector(
-      onTap : ()=>Get.toNamed("/list/${props.categoryId}"),
+      onTap : ()=>Get.toNamed(
+        "/list/${props.categoryId}",
+
+      ),
       child : Container(
       height : 96,
       margin : const EdgeInsets.symmetric(vertical: 8),
@@ -265,7 +280,7 @@ class _CateRowState extends State<CateRow> {
                 },
               ),
               const Profile(
-                profile: "https://www.jbnu.ac.kr/amass/kor_143/20200427125931_17009.jpg",
+                profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",
                 width: 56,
                 height: 56
               ),
@@ -311,7 +326,13 @@ class _CateRowState extends State<CateRow> {
                     width : 16 , height : 16,
                     colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
                   ),
-                  onPressed: ()=>Navigator.push(context,MaterialPageRoute(builder : (context)=>CatePage(page : props.categoryId))),
+                  onPressed: ()=>Get.to(
+                    ()=>CatePage(page : props.categoryId),
+                    arguments: {
+                      "backName" : props.categoryName
+                    },
+                    preventDuplicates: false,
+                  ),
                 ):SizedBox.shrink(),
               ),
             ],

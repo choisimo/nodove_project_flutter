@@ -158,21 +158,6 @@ class _FeedListState extends State<FeedList> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    _pagingController.addStatusListener((status) {
-      if (status == PagingStatus.subsequentPageError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'Something went wrong while fetching a new page.',
-            ),
-            action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () => _pagingController.retryLastFailedRequest(),
-            ),
-          ),
-        );
-      }
-    });
     super.initState();
   }
 
@@ -209,19 +194,64 @@ class _FeedListState extends State<FeedList> {
       color : Theme.of(context).colorScheme.onSurface,
       backgroundColor : Theme.of(context).colorScheme.onPrimary,
       onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-      child : Builder(
-        builder: (context) {
-          return PagedGridView<int,Feed>(
-            pagingController: _pagingController,
-            gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-            ),
-            builderDelegate: PagedChildBuilderDelegate<Feed>(
-              itemBuilder : (con,item,index) => CollectedRow(props : item)
-            ),
-          );
-        }
-      )
+      child : PagedGridView<int,Feed>(
+        pagingController: _pagingController,
+        gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        builderDelegate: PagedChildBuilderDelegate<Feed>(
+          itemBuilder : (con,item,index) => CollectedRow(props : item)
+        ),
+      ),
+    );
+  }
+}
+
+class CollectedVList extends StatefulWidget {
+  final String url;
+  final String opt;
+  const CollectedVList({
+    super.key,
+    required this.url,
+    required this.opt
+  });
+
+  @override
+  State<CollectedVList> createState() => _CollectedVListState();
+}
+
+class _CollectedVListState extends State<CollectedVList> {
+  final FeedListModel _con = Get.put(FeedListModel());
+  late dynamic  list = [];
+  
+  @override
+  void initState(){
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future : _con.getFeedList(0,widget.url,widget.opt),
+      builder: (BuildContext context,AsyncSnapshot snapshot) {
+        print(snapshot.data.toString());
+        return
+        (snapshot.data != null)? 
+        SizedBox(
+          height : 298,
+          child: ListView.builder(
+            shrinkWrap : true,
+            itemCount: snapshot.data.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder:(context,index){
+              return CollectedVRow(props: snapshot.data[index]);
+            }
+          ),
+        ):const Center(
+          child : CircularProgressIndicator(
+            strokeWidth: 2,
+          )
+        );
+      }
     );
   }
 }

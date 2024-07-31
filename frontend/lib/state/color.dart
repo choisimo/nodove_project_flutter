@@ -49,7 +49,9 @@ class RowContainer{
 }
 
 class Themes{
-  static final ThemeData light = ThemeData.light().copyWith(
+  static final ThemeData light = ThemeData.light(
+    useMaterial3: true,
+  ).copyWith(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
@@ -79,7 +81,9 @@ class Themes{
       onSurface: LightStyle.backStr,
     )
   );
-    static final ThemeData dark = ThemeData.light().copyWith(
+    static final ThemeData dark = ThemeData.dark(
+      useMaterial3: true,
+    ).copyWith(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     appBarTheme : const AppBarTheme(

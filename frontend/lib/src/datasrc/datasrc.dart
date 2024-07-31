@@ -20,16 +20,10 @@ class DataSrc{
     baseUrl: Url.serverUrl, // 요청의 기본 URL
     connectTimeout: const Duration(milliseconds: 5000), // 연결 시간 초과 (밀리초)
     receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    },
   ));
   
   Future<List<Feed>> getFeedList(int page,String url,String opt) async{
-
     try{
-      log("$url/$page?$opt");
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
@@ -61,14 +55,15 @@ class DataSrc{
       return [];
     }
   }
-  Future<CommentAll> getCommentList(int page,String url,String opt) async{
+  Future<List<Comment>> getCommentList(int page,String url,String opt) async{
     try{
       final res = await dio.get("$url/$page?$opt");
-      log("$url/$page?$opt");
-      return CommentAll.fromJson(res.data);
+      final data = res.data['comments'];
+      print(data);
+      return data.map<Comment>((json)=>Comment.fromJson(json)).toList();
     }catch(e){
       log(e.toString());
-      return CommentAll.defaultState();
+      return [];
     }
   }
 

@@ -17,10 +17,13 @@ class FeedRepo{
   Future<List<Categories>> getCateList(url,opt , child){
     return _source.getCateList(url, opt , child);
   }
-  Future<CommentAll> getCommentPage(pageKey,url,opt){
+  Future<List<Comment>> getCommentPage(pageKey,url,opt){
     return _source.getCommentList(pageKey,url,opt);
   }
   Future<User> getUserInfo(id){
     return _source.getUserInfo(id);
+  }
+  Future<void> postComment(Map<String,dynamic> formData) async{
+    _source.postComment(formData);
   }
 }

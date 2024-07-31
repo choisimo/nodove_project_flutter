@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 class CommentAll{
   final int totalItems;
   final int totalReplies;
@@ -62,6 +59,8 @@ class Comment{
       replies : json['replies'],
     );
   }
+
+  static defaultState() {}
 }
 
 class CommentWrite{

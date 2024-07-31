@@ -43,7 +43,7 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
 }
 
 class BottomNavbar extends GetView<PageState>{
-  const BottomNavbar({Key? key}) : super(key: key);
+  const BottomNavbar({super.key});
 
   @override
   Widget build(context){
@@ -74,7 +74,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/home.svg',
                 width : 21,
                 height : 21,
-                colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -89,7 +89,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/msg.svg',
                 width : 21,
                 height : 21,
-                colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -104,7 +104,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/menu.svg',
                 width : 18,
                 height : 18,
-                colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -119,7 +119,7 @@ class BottomNavbar extends GetView<PageState>{
                   'assets/icons/navbar/user.svg',
                   width : 24,
                   height : 21,
-                  colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(

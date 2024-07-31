@@ -1,19 +1,71 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/state/url.dart';
 
+class InitViewModel implements Bindings{
+  @override
+  void dependencies(){
+    Get.lazyPut<FeedListModel>(()=> FeedListModel());
+    Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
+    Get.lazyPut<UserInfoModel>(()=> UserInfoModel());
+  }
+}
+
 class FeedListModel extends GetxController {
   final FeedRepo _feedrepo = FeedRepo();
   RxList<Feed> feedList = <Feed>[].obs;
+  RxBool isFetching = false.obs;
+  RxBool isFragFetching = false.obs;
+
+  Future<void> getFeedFirst(String url,String opt) async{
+    isFetching(true);
+    final list = await _feedrepo.getFeedList(0,url,opt);
+    isFetching(false);
+
+    if (list.isNotEmpty) feedList(list);
+  }
 
   Future<List<Feed>> getFeedList(int page,String url,String opt) async{
-    final feedList = await _feedrepo.getFeedList(page,url,opt);
-    return feedList;
+    final list = await _feedrepo.getFeedList(page,url,opt);
+    return feedList(list);
+  }
+}
+
+class CommentPageModel extends GetxController {
+  final FeedRepo _feedrepo = FeedRepo();
+  RxList<Comment> commentList = <Comment>[].obs;
+  RxBool isFetching = false.obs;
+  RxBool isFragFetching = false.obs;
+
+  Future<void> getCommentFirst(String url,String opt) async{
+    isFetching(true);
+    final list = await _feedrepo.getCommentPage(0,url,opt);
+    isFetching(false);
+
+    if (list.isNotEmpty) commentList(list);
+  }
+  Future<List<Comment>> fetchCommentFrag(int page,String url,String opt) async{
+    isFragFetching(true);
+    final list = await _feedrepo.getCommentPage(page,url,opt);
+    isFragFetching(false);
+    return list;
+  }
+  Future<void> appendLastPage(List<Comment> newData) async{
+    commentList.addAll(newData);
+  }
+  Future<void> appendPage(List<Comment> newData) async{
+    commentList.addAll(newData);
+  }
+  Future<void> postComment(Map<String,dynamic> formData) async{
+    await _feedrepo.postComment(formData);
+    commentList.refresh();
   }
 }
 

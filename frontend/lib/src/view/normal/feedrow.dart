@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/share/share.dart';
-import 'package:nodove_flutter/src/view/normal/feedlist.dart';
+import 'package:nodove_flutter/src/view/custom/custom.dart';
 import 'package:nodove_flutter/src/view/page/comment.dart';
-import 'package:nodove_flutter/src/view/page/page.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/Slider/carousel.dart';
 import 'package:nodove_flutter/tag/tagrow.dart';
@@ -121,7 +119,7 @@ class FeedRow extends StatelessWidget {
                               padding : EdgeInsets.only(
                                 bottom: MediaQuery.of(context).viewInsets.bottom
                               ),
-                              child: commentList(context , props.id)
+                              child: commentList(page : props.id)
                             );
                           },
                         );
@@ -295,22 +293,10 @@ class Profile extends StatelessWidget {
       margin : const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         image : DecorationImage(
-          image : Image.network(
+          image : customImgProvider(
             profile,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null){
-                return child;
-              }
-              return LottieBuilder.asset(
-                "assets/icons/common/loading.json",
-              );
-            },
-            errorBuilder: (context, error, stackTrace){
-              return LottieBuilder.asset(
-                "assets/icons/common/loading.json",
-              );
-            },
-          ).image,
+            fit : BoxFit.cover
+          ),
           fit: BoxFit.cover
         ),
         shape: BoxShape.circle,

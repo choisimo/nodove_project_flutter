@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
 import 'package:nodove_flutter/func/token.dart';
+import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/view/etc/etc.dart';
 import 'package:nodove_flutter/src/view/messenger/messenger.dart';
 import 'package:nodove_flutter/src/view/user/login.dart';
@@ -13,6 +14,7 @@ import 'package:nodove_flutter/src/view/normal/feedlist.dart';
 import 'package:nodove_flutter/src/view/page/page.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -40,6 +42,7 @@ class MyApp extends StatelessWidget{
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
         GetPage(name : "/view/:page" , page : ()=>FeedPage()),
       ],
+      initialBinding: InitViewModel(),
     );
   }
 }
@@ -95,7 +98,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int page = 3;
+  int univPage = 15;
+  int companyPage = 16;
+  int maxSize = 7;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +114,24 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,false),
-      body: const SizedBox.shrink(),
+      body: RefreshIndicator(
+        onRefresh: ()=>Future.delayed(Duration(milliseconds: 1000),()=>setState((){})),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              CollectedVList(
+                url : "${Url.apiUrl}${Url.feedList}",
+                opt : "pageSize=$maxSize&categoryId=$companyPage"
+              ),
+              CollectedVList(
+                url : "${Url.apiUrl}${Url.feedList}",
+                opt : "pageSize=$maxSize&categoryId=$univPage"
+              ),
+            ]
+          ),
+        ),
+      ),
     );
   }
 }

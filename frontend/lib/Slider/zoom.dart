@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
+import 'package:lottie/lottie.dart';
 
 class ImgZoomView extends StatefulWidget {
   final List<dynamic> imageLinks;
@@ -29,25 +29,32 @@ class _ImgZoomViewState extends State<ImgZoomView> {
         itemBuilder: (context,index){
           return Stack(
             children: [
-              PhotoView(
-                minScale: PhotoViewComputedScale.contained,
-                imageProvider: Image.network(
-                  widget.imageLinks[index],
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace){
-                    return Image.asset("assets/image/logo.png");
-                  },
-                ).image,
-                heroAttributes: PhotoViewHeroAttributes(tag: "${widget.page}-${widget.imageLinks[widget.index]}"),
-                loadingBuilder:(context, event) => Center(
-                  child : Container(
-                    width : 32,
-                    height : 32,
-                    child : const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: CommonStyle.first,
+              PhotoViewGestureDetectorScope(
+                axis : Axis.vertical,
+                child: PhotoView(
+                  minScale: PhotoViewComputedScale.contained,
+                  imageProvider: Image.network(
+                    widget.imageLinks[index],
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace){
+                      return LottieBuilder.asset(
+                        "assets/icons/common/loading.json",
+                        width : 64 , height : 64
+                      );
+                    },
+                  ).image,
+                  onScaleEnd: (context,details,value)=> Get.back(),
+                  heroAttributes: PhotoViewHeroAttributes(tag: "${widget.page}-${widget.imageLinks[widget.index]}"),
+                  loadingBuilder:(context, event) => const Center(
+                    child : SizedBox(
+                      width : 32,
+                      height : 32,
+                      child : CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: CommonStyle.first,
+                      )
                     )
-                  )
+                  ),
                 ),
               ),
               Align(

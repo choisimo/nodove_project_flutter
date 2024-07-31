@@ -1,11 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/src/view/normal/feedrow.dart';
 import 'package:nodove_flutter/src/view/page/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -92,7 +89,7 @@ class _FeedPageState extends State<FeedPage>{
         showModalBottomSheet(
           isScrollControlled: true,
           context: context,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.zero),
           ),
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -101,7 +98,7 @@ class _FeedPageState extends State<FeedPage>{
               padding : EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom
               ),
-              child: commentWrite(context , widget.page , true , nfocus),
+              child: commentWrite(page : widget.page,focus : true,nfocus : nfocus)
             );
           },
         );
@@ -133,14 +130,52 @@ class FeedView extends StatefulWidget {
 class _FeedViewState extends State<FeedView> {
   late Feed feed;
   final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
+  late ScrollController scrollController;
+  final CommentPageModel con = Get.put(CommentPageModel());
+  int pageKey = 0;
 
   Future<void> refresh() async{
-    setState(() {});
+    setState((){
+      con.update();
+    });
+    
+  }
+    @override
+  void initState() {
+    scrollController = ScrollController()..addListener(fetchPage);
+    super.initState();
+  }
+  @override
+  void dispose() {
+    scrollController.removeListener(fetchPage);
+    super.dispose();
+  }
+  
+  void fetchPage() async {
+    if (!con.isFetching.value && 
+    !con.isFragFetching.value &&
+    scrollController.position.extentAfter < 100){
+      try {
+        pageKey += 1;
+        final int page = widget.page;
+        final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
+        final newData = await con.fetchCommentFrag(pageKey, url, "pageSize=5");
+        final isLastPage = newData.isEmpty;
+
+        if(!mounted) return;
+        if (isLastPage) {
+          con.appendLastPage(newData);
+        } else {
+          con.appendPage(newData);
+        }
+      } catch (error) {
+        print(error);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    
     BoxDecoration commonDecor = BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
       border : Border.symmetric(
@@ -159,6 +194,7 @@ class _FeedViewState extends State<FeedView> {
           color : Theme.of(context).colorScheme.onSurface,
           backgroundColor : Theme.of(context).colorScheme.onPrimary,
           child: SingleChildScrollView(
+            controller: scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
@@ -167,9 +203,9 @@ class _FeedViewState extends State<FeedView> {
                   decoration: commonDecor,
                   child:FeedTop(title: feed.title,hashtags: feed.hashtags)
                 ),
-                SizedBox(height : 8),
+                const SizedBox(height : 8),
                 Carousel(imageLinks: feed.imageLinks, page: feed.id),
-                SizedBox(height : 8),
+                const SizedBox(height : 8),
                 Container(
                   decoration: commonDecor,
                   constraints:BoxConstraints(
@@ -189,7 +225,7 @@ class _FeedViewState extends State<FeedView> {
                         key : commentTopKey,
                         width : double.infinity,
                         height : 0.5 ,
-                        margin : EdgeInsets.only(bottom:8),
+                        margin : const EdgeInsets.only(bottom:8),
                         decoration: BoxDecoration(
                           color : Theme.of(context).colorScheme.onSecondary),
                       ),
