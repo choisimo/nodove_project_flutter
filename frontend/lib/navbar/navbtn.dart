@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
-import 'package:nodove_flutter/src/view/normal/feedrow.dart';
+import 'package:nodove_flutter/src/view/list/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'dart:math' as math;
 
@@ -43,6 +43,18 @@ Widget searchBtn(BuildContext context){
       width : 20,
       height : 20,
       colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+    )
+  );
+}
+
+Widget nextBtn(BuildContext context,Function? callback){
+  return TextButton(
+    onPressed: ()=>callback?.call(),
+    child : const Text(
+      "다음",
+      style: TextStyle(
+        fontSize: 18
+      ),
     )
   );
 }

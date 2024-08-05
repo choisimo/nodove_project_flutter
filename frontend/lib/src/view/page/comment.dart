@@ -7,7 +7,7 @@ import 'package:nodove_flutter/func/dateTime.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
-import 'package:nodove_flutter/src/view/normal/feedrow.dart';
+import 'package:nodove_flutter/src/view/list/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';

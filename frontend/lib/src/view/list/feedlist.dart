@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,10 +7,11 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/src/view/collected/colrow.dart';
-import 'package:nodove_flutter/src/view/normal/feedrow.dart';
+import 'package:nodove_flutter/src/view/list/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/view/post/write.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -101,7 +103,14 @@ class _FeedListPageState extends State<FeedListPage>{
   }
   Widget plusButton(){
     return FloatingActionButton(
-      onPressed: (){},
+      onPressed: (){
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (_)=>const WritePage()
+            )
+        );
+      },
       backgroundColor: CommonStyle.first,
       child : SvgPicture.asset(
         'assets/icons/navbar/noBorderAdd.svg',

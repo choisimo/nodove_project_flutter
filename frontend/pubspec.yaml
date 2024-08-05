@@ -50,6 +50,7 @@ dependencies:
   lottie : 
   custom_refresh_indicator : 
   image_picker : 
+  flutter_quill : 
 
 dev_dependencies:
   flutter_test:

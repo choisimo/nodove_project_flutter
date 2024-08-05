@@ -6,7 +6,7 @@ import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
-import 'package:nodove_flutter/src/view/normal/feedrow.dart';
+import 'package:nodove_flutter/src/view/list/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';

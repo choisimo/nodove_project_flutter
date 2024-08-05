@@ -3,7 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/src/view/normal/feedrow.dart';
+import 'package:nodove_flutter/src/view/list/feedrow.dart';
 import 'package:nodove_flutter/src/view/page/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/Slider/carousel.dart';

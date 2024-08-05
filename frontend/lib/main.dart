@@ -10,7 +10,7 @@ import 'package:nodove_flutter/src/view/messenger/messenger.dart';
 import 'package:nodove_flutter/src/view/user/login.dart';
 import 'package:nodove_flutter/src/view/user/userpage.dart';
 import 'package:nodove_flutter/src/view/cate/cate.dart';
-import 'package:nodove_flutter/src/view/normal/feedlist.dart';
+import 'package:nodove_flutter/src/view/list/feedlist.dart';
 import 'package:nodove_flutter/src/view/page/page.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
