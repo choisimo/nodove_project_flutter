@@ -2,8 +2,8 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nodove_flutter/Slider/zoom.dart';
-import 'package:nodove_flutter/src/view/custom/custom.dart';
+import 'package:nodove_flutter/media/zoom.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:lottie/lottie.dart';
 
@@ -50,6 +50,7 @@ class _CarouselState extends State<Carousel> {
               width : MediaQuery.of(context).size.width,
               child : GestureDetector(
                 onScaleStart: (detail){
+                  print(detail);
                   if (!error){
                     Navigator.of(context).push(
                     PageRouteBuilder(

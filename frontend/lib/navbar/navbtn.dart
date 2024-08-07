@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
-import 'package:nodove_flutter/src/view/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'dart:math' as math;
 
@@ -17,24 +17,6 @@ Widget navbarTitle(BuildContext context,String title,double? fontSize){
   );
 }
 
-Widget backBtn(BuildContext context){
-  return Row(
-    children: [
-      IconButton(
-        onPressed: (){
-          Navigator.of(context).pop();
-        },
-        icon : SvgPicture.asset(
-          'assets/icons/common/left.svg',
-          width : 20,
-          height : 20,
-          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-        )
-      ),
-    ],
-  );
-}
-
 Widget searchBtn(BuildContext context){
   return IconButton(
     onPressed: (){},
@@ -47,27 +29,40 @@ Widget searchBtn(BuildContext context){
   );
 }
 
-Widget nextBtn(BuildContext context,Function? callback){
+Widget backBtn(BuildContext context,{String? displayText,Function? callback}){
   return TextButton(
     onPressed: ()=>callback?.call(),
-    child : const Text(
-      "다음",
-      style: TextStyle(
+    child : (displayText != null)?
+    Text(
+      displayText,
+      style: const TextStyle(
         fontSize: 18
       ),
     )
-  );
-}
-
-Widget alertBtn(BuildContext context){
-  return IconButton(
-    onPressed: (){},
-    icon : SvgPicture.asset(
-      'assets/icons/navbar/alert.svg',
+    :SvgPicture.asset(
+      'assets/icons/common/left.svg',
       width : 20,
       height : 20,
       colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
     )
+  );
+}
+
+Widget nextBtn(BuildContext context,{String? displayText,Function? callback}){
+  return TextButton(
+    onPressed: ()=>callback?.call(),
+    child : (displayText != null)?
+    Text(
+      displayText,
+      style: const TextStyle(
+        fontSize: 18
+      ),
+    ):SvgPicture.asset(
+        'assets/icons/common/right.svg',
+        width : 20,
+        height : 20,
+        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+      )
   );
 }
 

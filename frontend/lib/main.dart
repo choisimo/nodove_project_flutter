@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/view/etc/etc.dart';
-import 'package:nodove_flutter/src/view/messenger/messenger.dart';
-import 'package:nodove_flutter/src/view/user/login.dart';
-import 'package:nodove_flutter/src/view/user/userpage.dart';
-import 'package:nodove_flutter/src/view/cate/cate.dart';
-import 'package:nodove_flutter/src/view/list/feedlist.dart';
-import 'package:nodove_flutter/src/view/page/page.dart';
+import 'package:nodove_flutter/src/page/etc/etc.dart';
+import 'package:nodove_flutter/src/page/messenger/messenger.dart';
+import 'package:nodove_flutter/src/page/user/login.dart';
+import 'package:nodove_flutter/src/page/user/userpage.dart';
+import 'package:nodove_flutter/src/page/cate/cate.dart';
+import 'package:nodove_flutter/src/page/list/feedlist.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -57,8 +57,8 @@ List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
   const MsgPage(key : Key('messengerPage')),
   const CatePage(page: 0,key : Key('listPage')),
+  const SizedBox.shrink(),
   const UserPage(id: 'bocchi',key : Key('userPage')),
-  const EtcPage(key : Key("etcPage")),
 ];
 
 class _MyHomeState extends State<MyHome>{
@@ -108,7 +108,6 @@ class _MainPageState extends State<MainPage> {
       title : navbarTitle(context,"메인",20),
       actions : [
         searchBtn(context),
-        alertBtn(context)
       ]
     );
     return Scaffold(

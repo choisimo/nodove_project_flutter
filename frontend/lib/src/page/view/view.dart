@@ -3,10 +3,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/src/view/list/feedrow.dart';
-import 'package:nodove_flutter/src/view/page/comment.dart';
+import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
-import 'package:nodove_flutter/Slider/carousel.dart';
+import 'package:nodove_flutter/media/carousel.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
@@ -30,7 +30,7 @@ class _FeedPageState extends State<FeedPage>{
   Widget build(BuildContext context){
     Get.put(PageState());
     NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(context),
+      leading: backBtn(context,callback: ()=>Navigator.of(context).pop()),
       actions : <Widget>[
         etcBtn(
           cb : (id){
@@ -118,9 +118,10 @@ class FeedView extends StatefulWidget {
   final int page;
   final String url;
 
-  const FeedView({super.key ,
-  required this.page,
-  required this.url
+  const FeedView({
+    super.key ,
+    required this.page,
+    required this.url
   });
   
   @override
@@ -136,11 +137,11 @@ class _FeedViewState extends State<FeedView> {
 
   Future<void> refresh() async{
     setState((){
-      con.update();
+      con.getCommentFirst();
     });
-    
   }
-    @override
+
+  @override
   void initState() {
     scrollController = ScrollController()..addListener(fetchPage);
     super.initState();
@@ -157,9 +158,7 @@ class _FeedViewState extends State<FeedView> {
     scrollController.position.extentAfter < 100){
       try {
         pageKey += 1;
-        final int page = widget.page;
-        final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
-        final newData = await con.fetchCommentFrag(pageKey, url, "pageSize=5");
+        final newData = await con.fetchCommentFrag(pageKey);
         final isLastPage = newData.isEmpty;
 
         if(!mounted) return;
@@ -180,7 +179,7 @@ class _FeedViewState extends State<FeedView> {
       color : Theme.of(context).colorScheme.onPrimary,
       border : Border.symmetric(
         horizontal: BorderSide(
-          width :0.5,
+          width : 0.5,
           color : Theme.of(context).colorScheme.onSecondary,
         )
       ),
@@ -198,7 +197,7 @@ class _FeedViewState extends State<FeedView> {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                SizedBox(height : 8),
+                const SizedBox(height : 8),
                 Container(
                   decoration: commonDecor,
                   child:FeedTop(title: feed.title,hashtags: feed.hashtags)

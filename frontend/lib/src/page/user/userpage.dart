@@ -8,8 +8,8 @@ import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
-import 'package:nodove_flutter/src/view/list/feedlist.dart';
-import 'package:nodove_flutter/src/view/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -171,7 +171,6 @@ Widget customSliverAppbar(BuildContext context ,snapshot){
     ]
   );
   return SliverAppBar(
-    expandedHeight: 64,
     floating: true,
     pinned: true,
     snap: true,

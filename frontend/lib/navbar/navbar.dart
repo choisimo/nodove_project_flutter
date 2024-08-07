@@ -108,6 +108,21 @@ class BottomNavbar extends GetView<PageState>{
               ),
             ),
             BottomNavigationBarItem(
+              label: '알림',
+              icon: SvgPicture.asset(
+                'assets/icons/navbar/alert.svg',
+                width : 24,
+                height :21,
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/navbar/alert.svg',
+                width : 24,
+                height : 21,
+                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+              ),
+            ),
+            BottomNavigationBarItem(
               label: '유저',
               icon: SvgPicture.asset(
                 'assets/icons/navbar/user.svg',
@@ -120,17 +135,6 @@ class BottomNavbar extends GetView<PageState>{
                   width : 24,
                   height : 21,
                   colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: Text(
-                '•••',
-                style : TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onSurface)
-              ),
-              label: '더보기',
-              activeIcon: const Text(
-                '•••',
-                style : TextStyle(fontWeight: FontWeight.bold,color: CommonStyle.first)
               ),
             ),
           ],

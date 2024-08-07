@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
@@ -38,22 +39,40 @@ class FeedListModel extends GetxController {
   }
 }
 
+class FeedImageModel extends GetxController{
+  final FeedRepo _feedrepo = FeedRepo();
+  RxList<String> imageList = <String>[].obs;
+  void postImages(List<XFile> images) async{
+    final list = await _feedrepo.postImagesRepo(images);
+    imageList.addAll(list);
+  }
+  void postVideo(XFile video) async{
+    final list = await _feedrepo.postImagesRepo([video]);
+    imageList.addAll(list);
+  }
+}
+
 class CommentPageModel extends GetxController {
   final FeedRepo _feedrepo = FeedRepo();
   RxList<Comment> commentList = <Comment>[].obs;
   RxBool isFetching = false.obs;
   RxBool isFragFetching = false.obs;
+  int maxPage = 5;
+  int page = int.parse(Get.parameters['page']??'3');
+  
 
-  Future<void> getCommentFirst(String url,String opt) async{
+  Future<void> getCommentFirst() async{
+    String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
     isFetching(true);
-    final list = await _feedrepo.getCommentPage(0,url,opt);
+    final list = await _feedrepo.getCommentPage(0,url,"maxSize=$maxPage");
     isFetching(false);
 
     if (list.isNotEmpty) commentList(list);
   }
-  Future<List<Comment>> fetchCommentFrag(int page,String url,String opt) async{
+  Future<List<Comment>> fetchCommentFrag(int page) async{
+    String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
     isFragFetching(true);
-    final list = await _feedrepo.getCommentPage(page,url,opt);
+    final list = await _feedrepo.getCommentPage(page,url,"maxSize=$maxPage");
     isFragFetching(false);
     return list;
   }

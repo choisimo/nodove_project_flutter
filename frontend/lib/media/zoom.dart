@@ -43,7 +43,11 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                       );
                     },
                   ).image,
-                  onScaleEnd: (context,details,value)=> Get.back(),
+                  onScaleEnd: (BuildContext context,ScaleEndDetails details,PhotoViewControllerValue value){
+                    if (value.scale! < 0.05){
+                      Get.back();
+                    }
+                  },
                   heroAttributes: PhotoViewHeroAttributes(tag: "${widget.page}-${widget.imageLinks[widget.index]}"),
                   loadingBuilder:(context, event) => const Center(
                     child : SizedBox(

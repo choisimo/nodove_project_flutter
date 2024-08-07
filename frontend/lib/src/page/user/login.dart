@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/state/color.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -60,7 +61,7 @@ class LoginForm extends StatelessWidget {
         width : MediaQuery.of(context).size.width * 0.9,
         height : MediaQuery.of(context).size.height * 0.7,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             SizedBox(
               width : MediaQuery.of(context).size.width * 0.25,
@@ -68,6 +69,47 @@ class LoginForm extends StatelessWidget {
               child : Image.asset(
                 "assets/images/logo.png"
               )
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+               IconButton(
+                  onPressed: (){},
+                  icon : Image.asset(
+                    "assets/icons/user/Oauth.png",
+                    width : 42 , height : 42
+                  )
+                ),
+                IconButton(
+                  onPressed: (){},
+                  icon : Image.asset(
+                    "assets/icons/user/Kakao.png",
+                    width : 42 , height : 42
+                  )
+                ),
+                IconButton(
+                  onPressed: (){},
+                  icon : Image.asset(
+                    "assets/icons/user/Naver.png",
+                    width : 42 , height : 42
+                  )
+                ),
+                IconButton(
+                  icon : Image.asset(
+                    "assets/icons/user/Apple.png",
+                    width : 42 , height : 42,
+                  ),
+                  onPressed: () async {
+                    await SignInWithApple.getAppleIDCredential(
+                      scopes: [
+                        AppleIDAuthorizationScopes.email,
+                        AppleIDAuthorizationScopes.fullName,
+                      ],
+                    );
+                  },
+                ),
+                const Text("로 로그인")
+              ],
             ),
             TextFormField(
               onChanged: (str){

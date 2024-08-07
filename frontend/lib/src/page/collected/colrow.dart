@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/view/collected/minimalrow.dart';
-import 'package:nodove_flutter/src/view/custom/custom.dart';
+import 'package:nodove_flutter/src/page/collected/minimalrow.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class CollectedRow extends StatelessWidget {

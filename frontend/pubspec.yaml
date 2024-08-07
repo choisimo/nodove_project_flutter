@@ -51,6 +51,7 @@ dependencies:
   custom_refresh_indicator : 
   image_picker : 
   flutter_quill : 
+  sign_in_with_apple : 
 
 dev_dependencies:
   flutter_test:

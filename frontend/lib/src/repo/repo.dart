@@ -1,4 +1,5 @@
 
+import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
@@ -24,6 +25,9 @@ class FeedRepo{
     return _source.getUserInfo(id);
   }
   Future<void> postComment(Map<String,dynamic> formData) async{
-    _source.postComment(formData);
+    return _source.postComment(formData);
+  }
+  Future<List<String>> postImagesRepo(List<XFile> images) async{
+    return _source.postImagesData(images);
   }
 }

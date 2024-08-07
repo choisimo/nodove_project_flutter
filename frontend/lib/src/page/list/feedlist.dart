@@ -6,12 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/src/view/collected/colrow.dart';
-import 'package:nodove_flutter/src/view/list/feedrow.dart';
+import 'package:nodove_flutter/src/datasrc/datasrc.dart';
+import 'package:nodove_flutter/src/page/collected/colrow.dart';
+import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
-import 'package:nodove_flutter/src/view/post/write.dart';
+import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -55,7 +56,7 @@ class _FeedListPageState extends State<FeedListPage>{
         centerTitle: false,
         automaticallyImplyLeading: true,
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        leading: backBtn(context),
+        leading: backBtn(context,callback: (){Navigator.of(context).pop();}),
         actions : [
           searchBtn(context),
           IconButton(
@@ -83,19 +84,48 @@ class _FeedListPageState extends State<FeedListPage>{
     );
   }
   Widget drawer(id){
+    final int cateid = int.parse(Get.parameters['page']??'0');
+    final DataSrc src = DataSrc();
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
 
       child : ListView(
         children: [
-          const MenuTitle(title: "이미지로 보기"),
-          Switch(
-            value: collected,
-            onChanged: (b)=>
-            setState((){
-              collected = !collected;
-              storage.write(key : 'collectedView',value : collected.toString());
-            })
+          FutureBuilder(
+            future: src.getCateList(
+              "/api/categories/getAllCategoriesByParentId/", 
+              cateid.toString(),
+              false
+            ),
+            builder:(context, snapshot) {
+              if (snapshot.data !=null){
+                return Column(
+                  children: [
+                    const Profile(profile: "",
+                      width: 96,
+                      height: 96
+                    ),
+                    Text(snapshot.data![0].categoryName),
+                    Text('"${snapshot.data![0].categoryDescription}"')
+                  ],
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
+              }
+            },
+          ),
+          Row(
+            children: [
+              const Text("이미지로 보기"),
+              Switch(
+                value: collected,
+                onChanged: (b)=>
+                setState((){
+                  collected = !collected;
+                  storage.write(key : 'collectedView',value : collected.toString());
+                })
+              )
+            ],
           )
         ],
       )
@@ -106,9 +136,10 @@ class _FeedListPageState extends State<FeedListPage>{
       onPressed: (){
         Navigator.push(
           context,
-          CupertinoPageRoute(
-            builder: (_)=>const WritePage()
-            )
+          MaterialPageRoute(
+            builder: (_)=>const WritePage(),
+            fullscreenDialog: true
+          )
         );
       },
       backgroundColor: CommonStyle.first,
@@ -242,7 +273,6 @@ class _CollectedVListState extends State<CollectedVList> {
     return FutureBuilder(
       future : _con.getFeedList(0,widget.url,widget.opt),
       builder: (BuildContext context,AsyncSnapshot snapshot) {
-        print(snapshot.data.toString());
         return
         (snapshot.data != null)? 
         SizedBox(

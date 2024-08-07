@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
+import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
-import 'package:nodove_flutter/src/view/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -31,10 +33,7 @@ class _CommentListState extends State<CommentList> {
   int pageKey = 0;
 
   void _initLoad() async{
-    final int page = widget.page??int.parse(Get.parameters['page']??'3');
-    final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
-
-    con.getCommentFirst(url, "pageSize=$size");
+    con.getCommentFirst();
   }
 
   @override
@@ -55,9 +54,7 @@ class _CommentListState extends State<CommentList> {
     _scrollController.position.extentAfter < 100){
       try {
         pageKey += 1;
-        final int page = widget.page??int.parse(Get.parameters['page']??'3');
-        final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
-        final newData = await con.fetchCommentFrag(pageKey, url, "pageSize=5");
+        final newData = await con.fetchCommentFrag(pageKey);
         final isLastPage = newData.isEmpty;
 
         if(!mounted) return;
@@ -74,14 +71,11 @@ class _CommentListState extends State<CommentList> {
 
   @override
   Widget build(BuildContext context) {
-    final int page = widget.page??int.parse(Get.parameters['page']??'3');
-    final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
     bool enableScroll = widget.enableScroll??false;
     return LayoutBuilder(
-
       builder: (context,constraint) {
         return RefreshIndicator(
-          onRefresh: ()=>Future.sync(()=>con.update()),
+          onRefresh: ()=>Future.sync(()=>con.getCommentFirst()),
           child: GetX<CommentPageModel>(
             builder:(context){
               if (con.isFetching.value){
@@ -124,7 +118,6 @@ class _CommentRowState extends State<CommentRow> {
   @override
   Widget build(BuildContext context) {
     Comment props = widget.props;
-    BoxConstraints constraints = widget.constraint;
     final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
 
     return Container(
@@ -183,7 +176,7 @@ class _CommentRowState extends State<CommentRow> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("답글 ${props.replies!.length}개 보기"),
-                        SizedBox(width : 6),
+                        const SizedBox(width : 6),
                         SvgPicture.asset(
                           "assets/icons/common/right.svg",
                           width : 16 , height : 10,
@@ -304,13 +297,27 @@ class commentWrite extends StatefulWidget {
 }
 
 class _commentWriteState extends State<commentWrite> {
+  final ImagePicker _picker = ImagePicker();
+  
+  final FeedImageModel _imageModel = Get.put(FeedImageModel());
+  void imageUpload() async{
+    XFile? selectImage = await _picker.pickImage(
+      source : ImageSource.gallery,
+      maxWidth: 1920,
+      maxHeight: 1080,
+      imageQuality: 30,
+    );
+    
+    if(selectImage != null){
+      _imageModel.postImages([selectImage]);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final int page = widget.page;
     final bool focus = widget.focus;
     final FocusNode nfocus = widget.nfocus;
     late String comment = "";
-    final String url = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/$page";
     final CommentPageModel con = Get.put(CommentPageModel());
     return LayoutBuilder(
       builder : (context,constraint){
@@ -331,16 +338,51 @@ class _commentWriteState extends State<commentWrite> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                SizedBox(
-                  width : 56,
-                  height : 56,
-                  child: IconButton(
-                    icon : SvgPicture.asset(
-                      "assets/icons/navbar/noBorderAdd.svg",
-                      width : 24, height : 24,
-                      colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        onTap: imageUpload,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/post/picture.svg',
+                              width : 24,
+                              height : 24,
+                              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                            ),
+                            const SizedBox(width : 8),
+                            const Text("사진"),
+                          ],
+                        )
+                      ),
+                      PopupMenuItem(
+                        onTap: (){},
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/post/video.svg',
+                              width : 24,
+                              height : 24,
+                              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                            ),
+                            const SizedBox(width : 8),
+                            const Text("이모티콘"),
+                          ],
+                        )
+                      )
+                    ];
+                  },
+                  child : SizedBox(
+                    width : 56,
+                    height : 56,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/icons/navbar/noBorderAdd.svg',
+                        width : 24, height : 24,
+                        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                      ),
                     ),
-                    onPressed: (){},
                   ),
                 ),
                 Expanded(
@@ -383,9 +425,12 @@ class _commentWriteState extends State<commentWrite> {
                     ),
                     onPressed: () async{
                       if (comment.isNotEmpty){
-                        con.postComment({
+                        await con.postComment({
                           'post_id': page,
                           'comment': comment
+                        }).then((res){
+                          Get.find<CommentPageModel>().commentList.refresh();
+                          Get.back();
                         });
                       }
                     },

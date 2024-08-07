@@ -1,19 +1,15 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
+import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:get/get.dart' hide FormData hide MultipartFile;
+import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
-import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/user.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/url.dart';
-import 'package:nodove_flutter/state/user.dart';
 
 class DataSrc{
   Dio dio = Dio(BaseOptions(
@@ -55,11 +51,18 @@ class DataSrc{
       return [];
     }
   }
+  Future<Categories> getCateOne(String url,String opt) async{
+    try{
+      final res = await dio.get("$url$opt");
+      return res.data;
+    }catch(e){
+      return Categories.initialState();
+    }
+  }
   Future<List<Comment>> getCommentList(int page,String url,String opt) async{
     try{
       final res = await dio.get("$url/$page?$opt");
       final data = res.data['comments'];
-      print(data);
       return data.map<Comment>((json)=>Comment.fromJson(json)).toList();
     }catch(e){
       log(e.toString());
@@ -100,11 +103,38 @@ class DataSrc{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("${Url.apiUrl}/restrict/user/userInfo?userId=$id");
-      log(res.toString());
       return User.fromJson(res.data);
     }catch(e){
       log("불러오기 에러 : $e");
       return User.defaultState();
+    }
+  }
+
+  Future<List<String>> postImagesData(List<XFile> images) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      dio.options.contentType = "multipart/form-data";
+      dio.options.maxRedirects.isFinite;
+      final uploadList = <MultipartFile>[];
+      for (final imageFiles in images) {
+          uploadList.add(
+              await MultipartFile.fromFile(
+                  imageFiles.path,
+                  filename: imageFiles.path.split('/').last,
+                  contentType: DioMediaType('image', 'jpg'),
+              ),
+          );
+      }
+      FormData formdata = FormData.fromMap({"file" : uploadList});
+      
+      final res = await dio.post(
+        "${Url.apiUrl}/restrict/user/postFileUpload",
+        data : formdata
+      );
+
+      return res.data;
+    } catch(e){
+      return [];
     }
   }
 }
