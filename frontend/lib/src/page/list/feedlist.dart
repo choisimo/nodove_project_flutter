@@ -1,16 +1,12 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
+import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -20,17 +16,20 @@ import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FeedListPage extends StatefulWidget{
-  const FeedListPage({super.key});
+  final int? page;
+  const FeedListPage({
+    super.key,
+    this.page
+  });
 
   @override
   State<FeedListPage> createState() => _FeedListPageState();
 }
 
 class _FeedListPageState extends State<FeedListPage>{
-  final int cateid = int.parse(Get.parameters['page']??'0');
   final storage = const FlutterSecureStorage();
   late bool collected = false;
-  final int size = 15;
+  final int size = 10;
 
   @override
   void initState() {
@@ -48,106 +47,173 @@ class _FeedListPageState extends State<FeedListPage>{
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
-    return Scaffold(
-      key: _key,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        centerTitle: false,
-        automaticallyImplyLeading: true,
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        leading: backBtn(context,callback: (){Navigator.of(context).pop();}),
-        actions : [
-          searchBtn(context),
-          IconButton(
-            onPressed: (){
-              _key.currentState!.openEndDrawer();
-            },
-            icon: SvgPicture.asset(
-              "assets/icons/navbar/menu.svg",
-              width : 16 , height : 16,
-              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-            )
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+    NavbarContent navbarOpt = NavbarContent(
+      leading : backBtn(context,callback: (){Navigator.of(context).pop();}),
+      actions: [
+        navbarCommonBtn(
+          context,
+          "assets/icons/navbar/search.svg",
+          cb : (){},
+          ),
+        IconButton(
+          onPressed: (){
+            key.currentState!.openEndDrawer();
+          },
+          icon: SvgPicture.asset(
+            "assets/icons/navbar/menu.svg",
+            width : 16 , height : 16,
+            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
           )
-        ],
-        shape : Border(
-          bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
-        ),
+        )
+      ]
+    );
+    
+    return Scaffold(
+      key: key,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: navbarTop(
+        context,
+        navbarOpt,
+        false
       ),
       floatingActionButton: plusButton(),
       body : FeedList(
         collected: collected,
         url : "${Url.apiUrl}${Url.feedList}",
-        opt : "pageSize=$size&categoryId=$cateid"
+        opt : "pageSize=$size&categoryId=$cateid",
+        scrollEnabled: true,
       ),
-      endDrawer: drawer(cateid),
+      endDrawer: drawer(),
     );
   }
-  Widget drawer(id){
-    final int cateid = int.parse(Get.parameters['page']??'0');
+  Widget drawer(){
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     final DataSrc src = DataSrc();
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
-
-      child : ListView(
-        children: [
-          FutureBuilder(
-            future: src.getCateList(
-              "/api/categories/getAllCategoriesByParentId/", 
-              cateid.toString(),
-              false
+      child : SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FutureBuilder(
+              future: src.getCateList(
+                "/api/categories/getAllCategoriesByParentId/", 
+                cateid.toString(),
+                false
+              ),
+              builder:(BuildContext context,AsyncSnapshot snapshot) {
+                if (snapshot.data !=null && snapshot.data.length > 0){
+                  List<dynamic> child = snapshot.data![0].children;
+                  return Column(
+                    children: [
+                      const Profile(profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",
+                        width: 96,
+                        height: 96
+                      ),
+                      Text(
+                        snapshot.data![0].categoryName,
+                        style : const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
+                      Text(
+                        '"${snapshot.data![0].categoryDescription}"',
+                      ),
+                      SizedBox(
+                        height : 64,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("이미지로 보기"),
+                            Switch(
+                              value: collected,
+                              onChanged: (b)=>
+                              setState((){
+                                collected = !collected;
+                                storage.write(key : 'collectedView',value : collected.toString());
+                              })
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width : double.infinity,
+                        height : MediaQuery.of(context).size.height * 0.45,
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: child.length,
+                          itemBuilder:(context, index) {
+                            return TextButton(
+                              onPressed: ()=> Get.toNamed("/list/${child[index]['categoryId']}",),
+                              child : Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Profile(profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",width : 42,height:42),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(child[index]['categoryName'],
+                                          style : const TextStyle(
+                                            fontSize: 20
+                                          )
+                                        ),
+                                        Text('"${child[index]['categoryDescription']}"',
+                                          style : const TextStyle(
+                                            fontSize: 16
+                                          )
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            );
+                          },
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: (){},
+                            icon: SvgPicture.asset("assets/icons/common/setting.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
+                          )
+                        ],
+                      )
+                    ],
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
+                }
+              },
             ),
-            builder:(context, snapshot) {
-              if (snapshot.data !=null){
-                return Column(
-                  children: [
-                    const Profile(profile: "",
-                      width: 96,
-                      height: 96
-                    ),
-                    Text(snapshot.data![0].categoryName),
-                    Text('"${snapshot.data![0].categoryDescription}"')
-                  ],
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
-              }
-            },
-          ),
-          Row(
-            children: [
-              const Text("이미지로 보기"),
-              Switch(
-                value: collected,
-                onChanged: (b)=>
-                setState((){
-                  collected = !collected;
-                  storage.write(key : 'collectedView',value : collected.toString());
-                })
-              )
-            ],
-          )
-        ],
+          ],
+        ),
       )
     );
   }
   Widget plusButton(){
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     return FloatingActionButton(
-      onPressed: (){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_)=>const WritePage(),
-            fullscreenDialog: true
-          )
-        );
-      },
-      backgroundColor: CommonStyle.first,
+      onPressed: () => Get.to(
+        ()=>const WritePage(),
+        fullscreenDialog: true,
+        arguments: {
+          'postCategory' : cateid
+        }
+      ),
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
       child : SvgPicture.asset(
         'assets/icons/navbar/noBorderAdd.svg',
         width : 24,
         height : 24,
-        colorFilter: ColorFilter.mode(Colors.white,BlendMode.srcIn),
+        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
       )
     );
   }
@@ -157,11 +223,15 @@ class FeedList extends StatefulWidget {
   final bool collected;
   final String url;
   final String opt;
+  final bool scrollEnabled;
+  final ScrollController? scrollController;
   const FeedList({
     super.key ,
     required this.collected,
     required this.url,
     required this.opt,
+    this.scrollEnabled = false,
+    this.scrollController,
   });
   
   @override
@@ -169,80 +239,139 @@ class FeedList extends StatefulWidget {
 }
 
 class _FeedListState extends State<FeedList> {
-  Dio dio = Dio();
+  final FeedListModel con = Get.put(FeedListModel());
+  ScrollController _scrollController = ScrollController();
+  int pageKey = 0;
 
-  bool firstPageFetched = true;
-  final FeedListModel _con = Get.put(FeedListModel());
-  final PagingController<int, Feed> _pagingController = PagingController(firstPageKey: 0);
-
-  Future<void> _fetchPage(int pageKey) async {
+  void fetchPage() async {
     String url = widget.url;
     String opt = widget.opt;
-    try {
-      final newData = await _con.getFeedList(pageKey,url,opt);
-      final isLastPage = newData.isEmpty;
-      if (!mounted) return;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newData);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newData, nextPageKey);
+    if (!con.isFetching.value && 
+    !con.isFragFetching.value &&
+    con.isLastAppend.isFalse&&
+    _scrollController.position.extentAfter < 100){
+      try {
+        pageKey += 1;
+        final newData = await con.getFeedList(pageKey,url,opt);
+        final isLastPage = newData.isEmpty;
+        if (!mounted) return;
+        if (isLastPage) {
+          con.appendLastPage(newData);
+        } else {
+          con.appendPage(newData);
+        }
+      } catch (error) {
+        print(error);
       }
-    } catch (error) {
-      _pagingController.error = error;
     }
+  }
+
+
+  void _initLoad() async{
+    String url = widget.url;
+    String opt = widget.opt;
+    pageKey = 0;
+    ViewPageState.page.setView(url, opt);
+    con.getFeedFirst(url,opt);
   }
   
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    _initLoad();
+    _scrollController = ScrollController()..addListener(fetchPage);
     super.initState();
   }
-
   @override
   void dispose() {
-    _pagingController.dispose();
+    ScrollController().removeListener(fetchPage);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     bool collected = widget.collected;
-    return (collected)?
-    collectedRow()
-    :normalRow();
+    return customRefreshIndicator(
+      context,
+      enabled : widget.scrollEnabled,
+      onRefresh: ()=>Future.sync(()=>_initLoad()),
+      child : (collected)?
+      collectedRow()
+      :normalRow()
+    );
   }
 
   Widget normalRow (){
-    return RefreshIndicator(
-      color : Theme.of(context).colorScheme.onSurface,
-      backgroundColor : Theme.of(context).colorScheme.onPrimary,
-      onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-      child : 
-      PagedListView<int,Feed>(
-        pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Feed>(
-          itemBuilder : (con,item,index) => FeedRow(props : item),
-      )
-      )
-    );
+    return Obx((){
+        if(con.isFetching.isTrue){
+          return  ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 3,
+            itemBuilder:(context, index){
+              return const SkelFeedRow();
+            },
+          );
+        } else if (con.feedList.isEmpty){
+          return ListView.builder(
+            itemCount: 1,
+            physics: (widget.scrollEnabled)?
+            const AlwaysScrollableScrollPhysics():
+            const NeverScrollableScrollPhysics(),
+            itemBuilder: (context,index) {
+              return const Text("피드가 없어요");
+            }
+          );
+        } else{
+          return CustomScrollView(
+            primary: false,
+            physics: (widget.scrollEnabled)?
+            const AlwaysScrollableScrollPhysics():
+            const NeverScrollableScrollPhysics(),
+            controller: _scrollController,
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => FeedRow(props : con.feedList[index]),
+                  childCount: con.feedList.length,
+                ),
+              )
+            ],
+          );
+        }
+    });
   }
   Widget collectedRow(){
-    return RefreshIndicator(
-      color : Theme.of(context).colorScheme.onSurface,
-      backgroundColor : Theme.of(context).colorScheme.onPrimary,
-      onRefresh: ()=>Future.sync(()=>_pagingController.refresh()),
-      child : PagedGridView<int,Feed>(
-        pagingController: _pagingController,
-        gridDelegate : const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        builderDelegate: PagedChildBuilderDelegate<Feed>(
-          itemBuilder : (con,item,index) => CollectedRow(props : item)
-        ),
-      ),
+    return Obx((){
+        if(con.isFetching.isTrue){
+          return const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          );
+        } else if (con.feedList.isEmpty){
+          return ListView.builder(
+            itemCount: 1,
+            physics: (widget.scrollEnabled)?const AlwaysScrollableScrollPhysics():
+            const NeverScrollableScrollPhysics(),
+            itemBuilder: (context,index) {
+              return const Text("피드가 없어요");
+            });
+        } else{
+          return CustomScrollView(
+            controller: _scrollController,
+            physics: (widget.scrollEnabled)?const AlwaysScrollableScrollPhysics():
+            const NeverScrollableScrollPhysics(),
+            slivers: [
+              SliverGrid.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2
+                ),
+                itemBuilder:  (context, index)=>CollectedRow(props : con.feedList[index]),
+                itemCount: con.feedList.length,
+              )
+            ],
+          );
+        }
+      }
     );
   }
 }
@@ -261,37 +390,58 @@ class CollectedVList extends StatefulWidget {
 }
 
 class _CollectedVListState extends State<CollectedVList> {
-  final FeedListModel _con = Get.put(FeedListModel());
-  late dynamic  list = [];
+  final FeedListModel con = Get.put(FeedListModel());
+
+  void _initLoad() async{
+    String url = widget.url;
+    String opt = widget.opt;
+    con.getFeedFirst(url,opt);
+  }
   
   @override
   void initState(){
+    _initLoad();
     super.initState();
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future : _con.getFeedList(0,widget.url,widget.opt),
-      builder: (BuildContext context,AsyncSnapshot snapshot) {
-        return
-        (snapshot.data != null)? 
-        SizedBox(
-          height : 298,
-          child: ListView.builder(
-            shrinkWrap : true,
-            itemCount: snapshot.data.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder:(context,index){
-              return CollectedVRow(props: snapshot.data[index]);
-            }
-          ),
-        ):const Center(
-          child : CircularProgressIndicator(
-            strokeWidth: 2,
-          )
-        );
-      }
-    );
+    return 
+    Obx((){
+        if(con.isFetching.isTrue||con.feedList.isEmpty){
+          return SizedBox(
+            height : 298,
+            child: ListView.builder(
+              itemCount: 5,
+              scrollDirection: Axis.horizontal,
+              itemBuilder:(context,index){
+                return Shimmer.fromColors(
+                  baseColor: Theme.of(context).colorScheme.surface,
+                  highlightColor: Theme.of(context).colorScheme.onPrimary,
+                  child: const CollectedVRowSkel()
+                );
+              }
+            ),
+          );
+        } else{
+          return SizedBox(
+            height : 298,
+            child: ListView.builder(
+              shrinkWrap : true,
+              itemCount: con.feedList.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder:(context,index){
+                return CollectedVRow(props: con.feedList[index]);
+              }
+            ),
+          );
+        }
+      });
   }
 }
 

@@ -1,23 +1,27 @@
-import 'dart:developer';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
+import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/user/editpage.dart';
+import 'package:nodove_flutter/src/page/user/login.dart';
+import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
+import 'package:shimmer/shimmer.dart';
 
 class UserPage extends StatelessWidget {
-  final String id;
-  const UserPage({super.key , required this.id});
+  final String? id;
+  const UserPage({super.key , this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +43,7 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin {
   final UserInfoModel _con = Get.put(UserInfoModel());
   late Future<User> userInfo;
+  ScrollController scrollController = ScrollController();
   late TabController tabController = TabController(
     length: 4,
     vsync: this,
@@ -51,31 +56,32 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
     super.initState();
   }
 
-  void refreshState(){
+  Future<void> refreshState() async{
     final userState = Get.put(UserState());
     String? widgetId = widget.id;
     String myid = userState.id.value;
-    userInfo = _con.getUserInfo(widgetId??myid);
+    _con.getUserInfo(widgetId??myid);
   }
 
   @override
   Widget build(BuildContext context) {
     int size = 15;
+    List<String> tabList = ["홈","피드","구독","활동"];
     return Container(
-      margin : const EdgeInsets.symmetric(vertical: 8),
-      padding : const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
       ),
-      child : FutureBuilder(
-        future : userInfo,
-        builder: (context , snapshot) {
+      child : Obx((){
+          final user = _con.userInfo.value;
           List<Widget> sliverList;
-          if (snapshot.hasData){
+          if (_con.isFetching.isFalse&&user.userId.isNotEmpty){
             sliverList = [
-              customSliverAppbar(context,snapshot),
+              customSliverAppbar(context,user,widget.id),
               SliverToBoxAdapter(
-                child : userInfoWithProfile(context,snapshot.data!)
+                child : userInfoWithProfile(context,user)
+              ),
+              SliverToBoxAdapter(
+                child : userButtons(context,user)
               ),
               SliverPersistentHeader(
                   delegate: _SliverAppBarDelegate(
@@ -84,21 +90,21 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
-                      indicatorColor: CommonStyle.first,
+                      indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
                       unselectedLabelStyle: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                       ),
                       indicatorSize: TabBarIndicatorSize.tab,
                       controller: tabController,
-                      labelColor: CommonStyle.first,
-                      
+                      labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                      indicatorWeight: 0.5,
                       unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
                       tabs: const [
                         Tab(text: "홈"),
                         Tab(text: "피드"),
+                        Tab(text: "구독"),
                         Tab(text: "활동"),
-                        Tab(text: "정보"),
                       ],
                     ),
                   ),
@@ -107,25 +113,56 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
             ];
           } else {
             sliverList = [
-              const SliverToBoxAdapter(
-              child : CircularProgressIndicator(strokeWidth: 2,),
-            )];
+              customSliverAppbarSkel(context),
+              SliverToBoxAdapter(
+                child : userInfoWithProfileSkel(context),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    controller: tabController,
+                    labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    indicatorWeight: 0.5,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+                    tabs: const [
+                      Tab(text: "홈"),
+                      Tab(text: "피드"),
+                      Tab(text: "구독"),
+                      Tab(text: "활동"),
+                    ],
+                  ),
+                ),
+                pinned: true,
+              ),
+            ];
           }
           return NestedScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            controller: scrollController,
             headerSliverBuilder : (BuildContext context , bool isScrolled){
               return sliverList;
             },
             body : 
-            (snapshot.hasData)?
+            (user.userId.isNotEmpty)?
             TabBarView(
               controller: tabController,
               children: [
                 const Text("tab1"),
                 FeedList(
                   collected: true,
-                  url : "${Url.apiUrl}${Url.userPage}/${snapshot.data!.userId}",
-                  opt : "pageSize=$size"
+                  url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
+                  opt : "pageSize=$size",
+                  scrollController : scrollController,
+                  scrollEnabled: true,
                 ),
                 const Text("tab3"),
                 const Text("tab4"),
@@ -138,33 +175,35 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
   }
 }
 
-Widget customSliverAppbar(BuildContext context ,snapshot){
+Widget customSliverAppbar(BuildContext context ,User info,String? id){
   NavbarContent navbarOpt = NavbarContent(
-    title : navbarTitle(context,"유저",20),
+    leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
+    title : navbarTitle(context,"@${info.userId}",20),
     actions : [
       PopupMenuButton(
-      shape : TooltipShape(12,Theme.of(context).colorScheme.onSurface),
+      color : Theme.of(context).colorScheme.onPrimary,
+      shadowColor: Colors.transparent,
+      shape : TooltipShape(
+        vertical : 12,
+        borderColor : Theme.of(context).colorScheme.shadow
+      ),
       offset : const Offset(0,46),
       itemBuilder: (BuildContext context) {
         return [
-          PopupMenuItem(
-            child: Row(
-              children : [
-                SizedBox(
-                  width : 24,
-                  child: SvgPicture.asset(
-                    "assets/icons/post/edit.svg",
-                    width : 10 , height : 10,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                  ),
-                ),
-                navbarTitle(context,"수정",20)
-              ]
-            ),
-            onTap: () {
-              print('수정 선택');
-            },
-          ),
+          popupMenu(
+            context,
+            iconSrc: "assets/icons/post/share.svg",
+            title: navbarTitle(context,"복사",20),
+            cb : () => copyLink(
+              "${Url.serverUrl}${Url.clientUser}?user=${info.userId}",
+            )
+          ), 
+          popupMenu(
+            context,
+            iconSrc: "assets/icons/navbar/user.svg",
+            title: navbarTitle(context,"로그아웃",20),
+            cb : ()=> showUserDialog(context)
+          ), 
         ];
       },
     ),
@@ -175,24 +214,19 @@ Widget customSliverAppbar(BuildContext context ,snapshot){
     pinned: true,
     snap: true,
     flexibleSpace: FlexibleSpaceBar(
-      background: Container(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.0)),
-          ),
+      background: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: Container(
+          decoration: BoxDecoration(color: Colors.white.withOpacity(0.0)),
         ),
       ),
     ),
-    centerTitle: false,
-    automaticallyImplyLeading: true,
+    centerTitle: true,
+    automaticallyImplyLeading: false,
     backgroundColor: Theme.of(context).colorScheme.onPrimary,
     leading: navbarOpt.leading??const SizedBox.shrink(),
     title : navbarOpt.title??const SizedBox.shrink(),
     actions : navbarOpt.actions??[const SizedBox.shrink()],
-    shape : Border(
-      bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
-    ),
   );
 }
 
@@ -224,19 +258,28 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 Widget userInfoWithProfile(BuildContext context, User info){
   return Column(
     children: [
-      Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: RowContainer.radius
+      ClipPath(
+        clipper: const CustomClip(
+          vertical: 72
         ),
-        child : Text(
-          "나에 대한 한마디를 추가해보세요",
-          style : TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
-          )
+        child: Container(
+          padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimaryFixed
+          ),
+          child : Text(
+            "나에 대한 한마디를 추가해보세요",
+            style : TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            )
+          ),
         ),
       ),
-      Profile(profile: info.profile, width: 104, height: 104, borderRadius: 4.0,),
+      Profile(
+        profile: info.profile,
+        width: 104, height: 104,
+        borderRadius: 4.0,
+      ),
       Text(
         info.nickname,
         style: const TextStyle(
@@ -264,5 +307,184 @@ Widget userInfoWithProfile(BuildContext context, User info){
         ),
       ),
     ],
+  );
+}
+
+Widget userButtons(BuildContext context,User info){
+  final myid = UserState.page.id;
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Obx((){
+        return (info.userId.obs == myid)?
+        OutlinedButton(
+          onPressed: ()=>Get.to(
+            ()=>const EditUserPage(),
+            fullscreenDialog: true
+          ),
+          child: Text(
+            "정보 수정",
+            style : TextStyle(
+              color : Theme.of(context).colorScheme.onSurface
+            )
+          )
+        ):const SizedBox.shrink();
+      }),
+      const SizedBox(
+        width : 8
+      ),
+      OutlinedButton(
+        onPressed: (){},
+        child: Text(
+          "#해쉬태그",
+          style : TextStyle(
+            color : Theme.of(context).colorScheme.onSurface
+          )
+        )
+      ),
+    ],
+  );
+}
+
+void showUserDialog (BuildContext context){
+  showDialog(
+    context: context, 
+    builder:(context){
+      return customDialog(
+        context,
+        title : Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            dialogCloseBtn(
+              context,
+              onPressed: ()=>Get.back(),
+            ),
+          ],
+        ),
+        content : Column(
+          children: [
+            dialogStrTitle("로그아웃할까요?"),
+            dialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
+          ],
+        ),
+        bottomBtns: [
+          dialogBottomBtn(
+            context,
+            onPressed: () async{
+              const storage = FlutterSecureStorage();
+              await storage.delete(key: 'userToken');
+              await storage.delete(key: 'cookie');
+              showToast("로그아웃 되었어요");
+              await Get.off(()=>const LoginPage());
+            },
+            child : const Text(
+              "로그아웃",
+              style: TextStyle(
+                fontSize : 18,
+              ),
+            )
+          ),
+        ],
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      );
+    }
+  );
+}
+
+Widget customSliverAppbarSkel(BuildContext context){
+  return SliverAppBar(
+    flexibleSpace: FlexibleSpaceBar(
+    background: Shimmer.fromColors(
+        baseColor: Theme.of(context).colorScheme.surface,
+        highlightColor: Theme.of(context).colorScheme.onPrimary,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimaryFixed
+          ),
+        ),
+      ),
+    ),
+    floating: true,
+    pinned: true,
+    snap: true,
+    centerTitle: true,
+    automaticallyImplyLeading: false,
+    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+  );
+}
+
+Widget userInfoWithProfileSkel(BuildContext context){
+  return LayoutBuilder(
+    builder: (context,constraints) {
+      return Column(
+        children: [
+          const SizedBox(height : 4),
+          ClipPath(
+            clipper: const CustomClip(
+              vertical: 72
+            ),
+            child: Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surface,
+              highlightColor: Theme.of(context).colorScheme.onPrimary,
+              child: Container(
+                height : 42,
+                width : constraints.maxWidth * 0.8,
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
+                decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed
+                ),
+              ),
+            ),
+          ),
+          Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surface,
+              highlightColor: Theme.of(context).colorScheme.onPrimary,
+              child: const ProfileSkel(
+                width: 104, height: 104,
+              ),
+          ),
+          const SizedBox(height : 4),
+          Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surface,
+              highlightColor: Theme.of(context).colorScheme.onPrimary,
+              child: Container(
+                height : 16,
+                width : constraints.maxWidth * 0.3,
+                decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed
+                ),
+              )
+          ),
+          const SizedBox(height : 4),
+          Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.onPrimary,
+            child: Container(
+              height : 16,
+              width : constraints.maxWidth * 0.5,
+              decoration: BoxDecoration(
+                borderRadius: RowContainer.radius,
+                color: Theme.of(context).colorScheme.onPrimaryFixed
+              ),
+            )
+          ),
+          const SizedBox(height : 4),
+          Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.onPrimary,
+            child: Container(
+              height : 16,
+              width : constraints.maxWidth * 0.3,
+              decoration: BoxDecoration(
+                borderRadius: RowContainer.radius,
+                color: Theme.of(context).colorScheme.onPrimaryFixed
+              ),
+            )
+          )
+        ],
+      );
+    }
   );
 }

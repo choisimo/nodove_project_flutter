@@ -8,6 +8,9 @@ DateTime getDateTime(String string){
     return DateTime.now();
   }
 }
+DateTime getMilisecondToDateTime(int milliseconds){
+  return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+}
 String getDateDiff(String string){
     DateTime createdAt = getDateTime(string);
     final date = DateTime.now();

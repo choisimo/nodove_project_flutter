@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MinimalRow extends StatelessWidget {
   final Feed props;
 
-  const MinimalRow({Key? key, required this.props}) : super(key : key);
+  const MinimalRow({super.key, required this.props});
 
   @override
   Widget build(BuildContext context) {
-    final maxwidth = MediaQuery.of(context).size.width;
-  
     return LayoutBuilder(builder: (context,constraints){
       return Container(
         alignment: Alignment.center,
@@ -22,8 +21,12 @@ class MinimalRow extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: const [
-            RowContainer.shadow
+          boxShadow: [
+            BoxShadow(
+              color : Theme.of(context).colorScheme.shadow,
+              offset: RowContainer.offset,
+              blurRadius: RowContainer.blurRadius
+            )
           ],
           borderRadius: RowContainer.radius
         ),
@@ -83,7 +86,7 @@ class MinimalRow extends StatelessWidget {
                           )
                         ),
                         SizedBox(
-                          width : cons.maxWidth * 0.5,
+                          width : cons.maxWidth * 0.45,
                           child : Row(
                             children: [
                               SvgPicture.asset("assets/icons/navbar/msg.svg",

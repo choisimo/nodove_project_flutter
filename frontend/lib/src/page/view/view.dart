@@ -3,7 +3,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/list/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/user/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/media/carousel.dart';
@@ -14,21 +17,27 @@ import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
-import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FeedPage extends StatefulWidget{
-  final int page = int.parse(Get.parameters['page']??'3');
+  final int? page;
   final String url = "${Url.apiUrl}${Url.feedPage}";
-  FeedPage({super.key});
+  FeedPage({
+    super.key,
+    this.page,
+  });
 
   @override
   State<FeedPage> createState() => _FeedPageState();
 }
 
 class _FeedPageState extends State<FeedPage>{
+  final FeedListModel vpage = Get.put(FeedListModel());
+  final CommentPageModel con = Get.put(CommentPageModel());
+
   @override
   Widget build(BuildContext context){
-    Get.put(PageState());
+    int page = widget.page??int.parse(Get.parameters['page']??'3');
     NavbarContent navbarOpt = NavbarContent(
       leading: backBtn(context,callback: ()=>Navigator.of(context).pop()),
       actions : <Widget>[
@@ -38,72 +47,44 @@ class _FeedPageState extends State<FeedPage>{
             context: context,
             backgroundColor: Theme.of(context).colorScheme.onPrimary,
             builder: (BuildContext context){
-              return Modal(
-                id : id,
-                widget : [
-                  const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
-                  ModalMenu(
-                    cb : (){},
-                    iconSrc : "assets/icons/navbar/certification.svg",
-                    title : "신고",
-                  ),
-                  ModalMenu(
-                    cb : (){},
-                    iconSrc : "assets/icons/navbar/user.svg",
-                    title : "정보",
-                  ),
-                  const MenuTitle(title : '내가 쓴 글' , key : Key("내가 쓴 글 제목")),
-                  ModalMenu(
-                    cb : (){},
-                    iconSrc : "assets/icons/post/edit.svg",
-                    title : "수정",
-                  ),
-                  ModalMenu(
-                    cb : (){},
-                    iconSrc : "assets/icons/post/delete.svg",
-                    title : "삭제",
-                  ),
-                ]
-              );
+              return Obx(()=>FeedModal(context,vpage.content.value.writerUserId,id));
           });
-        }, id : widget.page),
+        }, id : page),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,true),
       floatingActionButton: commentButton(),
-      body : ChangeNotifierProvider<PageViewModel>(
-        create : (context) => PageViewModel(),
-        child : FeedView(
-          page : widget.page,
-          url : widget.url,
-        )
-      ),
+      body : FeedView(
+        page : page,
+        url : widget.url,
+      )
     );
   }
   Widget commentButton(){
-    FocusNode nfocus = FocusNode();
+    int page = widget.page??int.parse(Get.parameters['page']??'3');
+    PageUrl url = ViewPageState.page.comment.value;
     return FloatingActionButton(
       onPressed: (){
         showModalBottomSheet(
+          enableDrag: true,
+          useRootNavigator: true,
           isScrollControlled: true,
           context: context,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.zero),
-          ),
+          showDragHandle: true,
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
           builder :(BuildContext context) {
             return Padding(
               padding : EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom
               ),
-              child: commentWrite(page : widget.page,focus : true,nfocus : nfocus)
+              child: commentList(page : page)
             );
           },
         );
       },
-      backgroundColor: CommonStyle.first,
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
       child : SvgPicture.asset(
         'assets/icons/navbar/msg.svg',
         width : 24,
@@ -129,48 +110,22 @@ class FeedView extends StatefulWidget {
 }
 
 class _FeedViewState extends State<FeedView> {
-  late Feed feed;
   final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
-  late ScrollController scrollController;
+  final FeedListModel vcon = Get.put(FeedListModel());
   final CommentPageModel con = Get.put(CommentPageModel());
+  int maxPage = 5;
   int pageKey = 0;
 
   Future<void> refresh() async{
-    setState((){
-      con.getCommentFirst();
-    });
+    PageUrl url = ViewPageState.page.comment.value;
+    con.getCommentFirst(url.url,url.opt);
   }
 
   @override
   void initState() {
-    scrollController = ScrollController()..addListener(fetchPage);
+    ViewPageState.page.setView(widget.url,"/${widget.page}");
+    vcon.getFeedPage(widget.page);
     super.initState();
-  }
-  @override
-  void dispose() {
-    scrollController.removeListener(fetchPage);
-    super.dispose();
-  }
-  
-  void fetchPage() async {
-    if (!con.isFetching.value && 
-    !con.isFragFetching.value &&
-    scrollController.position.extentAfter < 100){
-      try {
-        pageKey += 1;
-        final newData = await con.fetchCommentFrag(pageKey);
-        final isLastPage = newData.isEmpty;
-
-        if(!mounted) return;
-        if (isLastPage) {
-          con.appendLastPage(newData);
-        } else {
-          con.appendPage(newData);
-        }
-      } catch (error) {
-        print(error);
-      }
-    }
   }
 
   @override
@@ -185,113 +140,286 @@ class _FeedViewState extends State<FeedView> {
       ),
     );
 
-    return Consumer<PageViewModel>(
-      builder : (con,prov,child){
-        feed = prov.feed;
-        return RefreshIndicator(
-          onRefresh: ()=>refresh(),
-          color : Theme.of(context).colorScheme.onSurface,
-          backgroundColor : Theme.of(context).colorScheme.onPrimary,
-          child: SingleChildScrollView(
-            controller: scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                const SizedBox(height : 8),
-                Container(
-                  decoration: commonDecor,
-                  child:FeedTop(title: feed.title,hashtags: feed.hashtags)
-                ),
-                const SizedBox(height : 8),
-                Carousel(imageLinks: feed.imageLinks, page: feed.id),
-                const SizedBox(height : 8),
-                Container(
-                  decoration: commonDecor,
-                  constraints:BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height * 0.75
+    return Obx((){
+        final feed = vcon.content.value;
+        if (vcon.isFetching.isFalse){
+          return customRefreshIndicator(
+            context,
+            onRefresh: ()=>refresh(),
+            strokeColor : Theme.of(context).colorScheme.onSurface,
+            backgroundColor : Theme.of(context).colorScheme.onPrimary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  const SizedBox(height : 8),
+                  Container(
+                    decoration: commonDecor,
+                    child:FeedTop(title: feed.title,hashtags: feed.hashtags)
                   ),
-                  child: Column(
-                    children: [
-                      pageUserInfo(feed.writerProfile,feed.writerNick,
-                      feed.createdAt, feed.updatedAt, []),
-                      Html(data: feed.content),
-                      FeedRowBottom(
-                        id: feed.id,
-                        likeCount: feed.likeCount,
-                        etcOpt: false
-                      ),
-                      Container(
-                        key : commentTopKey,
-                        width : double.infinity,
-                        height : 0.5 ,
-                        margin : const EdgeInsets.only(bottom:8),
-                        decoration: BoxDecoration(
-                          color : Theme.of(context).colorScheme.onSecondary),
-                      ),
-                      const CommentList(),
-                    ],
+                  const SizedBox(height : 8),
+                  Carousel(imageLinks: feed.imageLinks, page: feed.id),
+                  const SizedBox(height : 8),
+                  Container(
+                    decoration: commonDecor,
+                    constraints:BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height * 0.75
+                    ),
+                    child: Column(
+                      children: [
+                        pageUserInfo(
+                          feed.writerUserId,
+                          userProfile: feed.writerProfile,
+                          userName: feed.writerNick,
+                          createdAt: feed.createdAt,
+                          updatedAt : feed.updatedAt
+                        ),
+                        Html(data: feed.content),
+                        FeedRowBottom(
+                          userId: feed.writerUserId,
+                          likeCount: feed.likeCount,
+                          etcOpt: false,
+                          postId: feed.id,
+                        ),
+                        Container(
+                          height : 64,
+                          decoration: BoxDecoration(
+                            border : Border.symmetric(horizontal: BorderSide(width: 0.5,color : Theme.of(context).colorScheme.onSecondary))
+                          ),
+                          child: commentButton(context,id : feed.id,count : feed.commentCount)
+                        ),
+                      ],
+                    )
                   )
-                )
-              ],
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        } else{
+          return const FeedViewSkel();
+        }
       }
     );
   }
   Widget pageUserInfo(
-    String userProfile ,
-    String userName , String createdAt ,
-    String updatedAt , List<String> group
+    String userId,
+    {
+      String userProfile = "", 
+      String userName = "", String createdAt = "",
+      String updatedAt = "", List<String>? group
+    }
+    
   ){
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Profile(
-          profile: userProfile,
-          width: 56,
-          height: 56
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children : [
-            Text(
-            userName,
-            style: const TextStyle(
-              height : 1.16,
-              fontSize : 18,
-              fontWeight: FontWeight.bold,
-            )
-            ),
-            Text(
-              "소속 없음",
-              style: TextStyle(
-                height : 1.125,
-                fontSize: 16,
-                color : Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            Text(
-              "${getDateFull(createdAt)} 작성됨",
-              style: TextStyle(
-                height : 1.33,
-                fontSize: 12,
-                color : Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            (createdAt != updatedAt)?
-            Text(
-              "${getDateFull(updatedAt)} 수정됨",
-              style: TextStyle(
-                height : 1.33,
-                fontSize : 12,
-                color : Theme.of(context).colorScheme.secondary,
-              ),
-            ):SizedBox.shrink(),
-          ]
+    return GestureDetector(
+      onTap: ()=>Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_)=>UserPage(id : userId)
         )
-      ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Profile(
+            profile: userProfile,
+            width: 56,
+            height: 56
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children : [
+              Text(
+                userName,
+                style: const TextStyle(
+                  height : 1.16,
+                  fontSize : 18,
+                  fontWeight: FontWeight.bold,
+                )
+              ),
+              Text(
+                group?.toString()??"소속 없음",
+                style: TextStyle(
+                  height : 1.125,
+                  fontSize: 16,
+                  color : Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              Text(
+                "${getDateFull(createdAt)} 작성됨",
+                style: TextStyle(
+                  height : 1.33,
+                  fontSize: 12,
+                  color : Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              (createdAt != updatedAt)?
+              Text(
+                "${getDateFull(updatedAt)} 수정됨",
+                style: TextStyle(
+                  height : 1.33,
+                  fontSize : 12,
+                  color : Theme.of(context).colorScheme.secondary,
+                ),
+              ):const SizedBox.shrink(),
+            ]
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FeedViewSkel extends StatelessWidget {
+  const FeedViewSkel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    BoxDecoration commonDecor = BoxDecoration(
+      color : Theme.of(context).colorScheme.onPrimary,
+      border : Border.symmetric(
+        horizontal: BorderSide(
+          width : 0.5,
+          color : Theme.of(context).colorScheme.onSecondary,
+        )
+      ),
+    );
+    final maxwidth = MediaQuery.of(context).size.width;
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: LayoutBuilder(
+        builder: (context,constraints) {
+          return Column(
+            children: [
+              const SizedBox(height : 8),
+              Container(
+                width : maxwidth,
+                padding : const EdgeInsets.all(4),
+                decoration: commonDecor,
+                child: Shimmer.fromColors(
+                  baseColor: Theme.of(context).colorScheme.surface,
+                  highlightColor: Theme.of(context).colorScheme.onPrimary,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width : maxwidth * 0.3,
+                        height : 18,
+                        decoration:BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                          borderRadius: RowContainer.radius
+                        ),
+                      ),
+                      const SizedBox(height : 4.0),
+                      Container(
+                        width : maxwidth * 0.5,
+                        height : 16,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                          borderRadius: RowContainer.radius
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height : 8),
+              Shimmer.fromColors(
+                baseColor: Theme.of(context).colorScheme.surface,
+                highlightColor: Theme.of(context).colorScheme.onPrimary,
+                child: Container(
+                  width : maxwidth,
+                  height : 420,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                  ),
+                ),
+              ),
+              const SizedBox(height : 8),
+              Container(
+                decoration: commonDecor,
+                constraints:BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.75
+                ),
+                child: Shimmer.fromColors(
+                  baseColor: Theme.of(context).colorScheme.surface,
+                  highlightColor: Theme.of(context).colorScheme.onPrimary,  
+                  child: Column(
+                    children: [
+                      const SizedBox(height : 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const ProfileSkel(
+                            width: 56,
+                            height: 56
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children : [
+                              Container(
+                                width : constraints.maxWidth * 0.3,
+                                height : 16,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                  borderRadius: RowContainer.radius
+                                ),
+                              ),
+                              const SizedBox(height : 4),
+                              Container(
+                                width : constraints.maxWidth * 0.5,
+                                height : 14,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                  borderRadius: RowContainer.radius
+                                ),
+                              ),
+                              const SizedBox(height : 4),
+                              Container(
+                                width : constraints.maxWidth * 0.5,
+                                height : 14,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                  borderRadius: RowContainer.radius
+                                ),
+                              ),
+                              const SizedBox(height : 4),
+                            ]
+                          )
+                        ],
+                      ),
+                      const SizedBox(height : 4),
+                      Container(
+                        height : 120,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                        ),
+                      ),
+                      const SizedBox(height : 4),
+                      Container(
+                        height : 20,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                        ),
+                      ),
+                      const SizedBox(height : 4),
+                      Container(
+                        width : constraints.maxWidth * 0.5,
+                        height : 32,
+                        decoration: BoxDecoration(
+                          borderRadius: RowContainer.radius,
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              )
+            ],
+          );
+        }
+      ),
     );
   }
 }

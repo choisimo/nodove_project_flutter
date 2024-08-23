@@ -7,7 +7,7 @@ class User{
   List<dynamic> groups;
   List<dynamic> hashtags;
   dynamic userActivities;
-  dynamic birthDate;
+  int birthDate;
   bool private;
 
   User({

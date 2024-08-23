@@ -28,19 +28,21 @@ class DarkStyle{
 }
 
 class CommonStyle{
-  static const Color first = Color.fromRGBO(57, 105, 239, 1);
+  static const Color first = Color.fromRGBO(21 , 52 , 177 , 1);
   static const Color firstAlpha = Color.fromRGBO(57, 105, 239, 0.5);
-  static const Color second = Color.fromRGBO(109, 144, 241, 1);
-  static const Color secondAlpha = Color.fromRGBO(109, 144, 241, 0.5);
+  static const Color second = Color.fromRGBO(116 , 135, 168, 1);
+  static const Color secondAlpha = Color.fromRGBO(116 , 135, 168, 0.5);
+  static const Color firstdark = Color.fromRGBO(57,105,239, 1);
+  static const Color third = Color.fromRGBO(5,135,255, 1);
   static const Color red = Color.fromRGBO(255, 100, 100 , 1);
   static const Color sky = Color.fromRGBO(215 , 242, 255, 1);
 }
 
 class RowContainer{
   static const BoxShadow shadow = BoxShadow(
-        color : LightStyle.grey,
-        blurRadius: 6,
-        offset : Offset(0,2),
+    color : LightStyle.grey,
+    blurRadius: 6,
+    offset : Offset(0,2),
   );
   static const Offset offset = Offset(0,2);
   static const double blurRadius = 6.0;
@@ -51,9 +53,10 @@ class RowContainer{
 class Themes{
   static final ThemeData light = ThemeData.light(
     useMaterial3: true,
-  ).copyWith(
+    ).copyWith(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
+    dividerColor: LightStyle.backStr,
     appBarTheme : const AppBarTheme(
       backgroundColor: LightStyle.white
     ),
@@ -63,13 +66,8 @@ class Themes{
       )
     ),
     cardColor: LightStyle.white,
-    textTheme : const TextTheme(
-      bodyLarge : TextStyle(color : LightStyle.black , fontSize: 18),
-      bodyMedium : TextStyle(color : LightStyle.black , fontSize: 16),
-      bodySmall : TextStyle(color : LightStyle.black , fontSize: 14),
-    ),
     colorScheme: const ColorScheme(
-      brightness: Brightness.light,
+      brightness: Brightness.dark,
       primary: LightStyle.black,
       onPrimary: LightStyle.white,
       secondary: LightStyle.darkGrey,
@@ -79,21 +77,15 @@ class Themes{
       onError:LightStyle.black,
       surface: LightStyle.back,
       onSurface: LightStyle.backStr,
+      onPrimaryFixed: CommonStyle.first,
     )
   );
-    static final ThemeData dark = ThemeData.dark(
-      useMaterial3: true,
-    ).copyWith(
+    static final ThemeData dark = ThemeData.dark(useMaterial3: true).copyWith(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
+    dividerColor: DarkStyle.backStr,
     appBarTheme : const AppBarTheme(
       backgroundColor: DarkStyle.white
-    ),
-    textTheme : const TextTheme(
-      bodyLarge : TextStyle(color : DarkStyle.black , fontSize: 18),
-      bodyMedium : TextStyle(color : DarkStyle.black , fontSize: 16),
-      bodySmall : TextStyle(color : DarkStyle.black , fontSize: 14),
-      
     ),
     cardColor: DarkStyle.white,
     textButtonTheme: TextButtonThemeData(
@@ -112,6 +104,7 @@ class Themes{
       onError:DarkStyle.black,
       surface: DarkStyle.back,
       onSurface: DarkStyle.backStr,
+      onPrimaryFixed: CommonStyle.firstdark,
       )
   );
 }

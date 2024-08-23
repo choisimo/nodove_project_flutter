@@ -6,11 +6,14 @@ import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/page/cate/writecate.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/list/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
-import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CatePage extends StatefulWidget {
   final int page;
@@ -25,19 +28,22 @@ class _CatePageState extends State<CatePage> {
   @override
   Widget build(BuildContext context) {
     Get.put(PageState());
-    bool PopupOpen = false;
-    int page = widget.page;
-    final String arg = Get.arguments?["backName"]??'';
-
-    void setPopup (bool bool) => setState(()=>PopupOpen=bool);
+    bool popupOpen = false;
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    final arg = arguments['backName'];
 
     NavbarContent navbarOpt = NavbarContent(
-      title : (arg.isNotEmpty)?
+      title : (arg !=null )?
       navbarTitle(context, arg, 20)
       :PopupMenuButton(
-        onOpened: () => setState((){PopupOpen=true;}),
-        onCanceled: () => setState((){PopupOpen=false;}),
-        shape : TooltipShape(125,Theme.of(context).colorScheme.onSurface),
+        color : Theme.of(context).colorScheme.onPrimary,
+        shadowColor: Colors.transparent,
+        onOpened: () => setState((){popupOpen=true;}),
+        onCanceled: () => setState((){popupOpen=false;}),
+        shape : TooltipShape(
+          vertical : 125,
+          borderColor : Theme.of(context).colorScheme.shadow
+        ),
         offset : const Offset(0,36),
         itemBuilder: (BuildContext context) {
           return [
@@ -101,7 +107,7 @@ class _CatePageState extends State<CatePage> {
           children : [
             navbarTitle(context,"카테고리",20),
             Rotate(
-              angle : (PopupOpen)?270:90,
+              angle : (popupOpen)?270:90,
               child: SizedBox(
                 width : 20,
                 child: SvgPicture.asset(
@@ -115,35 +121,42 @@ class _CatePageState extends State<CatePage> {
         )
       ),
       actions : [
-        searchBtn(context),
+        navbarCommonBtn(
+          context,
+          "assets/icons/navbar/search.svg",
+          cb : (){},
+        ),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: plusButton(),
       appBar: navbarTop(context,navbarOpt,false),
-      body : ChangeNotifierProvider<CateListModel>(
-        create : (context) => CateListModel(page),
-        child : const CateList()
+      body : CateList(
+        page : widget.page,
       ),
     );
   }
   Widget plusButton(){
     return FloatingActionButton(
-      onPressed: (){},
-      backgroundColor: CommonStyle.first,
+      onPressed: ()=>Get.to(()=>const WriteCatePage(),fullscreenDialog: true),
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
       child : SvgPicture.asset(
         'assets/icons/navbar/noBorderAdd.svg',
         width : 24,
         height : 24,
-        colorFilter: ColorFilter.mode(Colors.white,BlendMode.srcIn),
+        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
       )
     );
   }
 }
 
 class CateList extends StatefulWidget {
-  const CateList({super.key});
+  final int page;
+  const CateList({
+    super.key,
+    required this.page,
+  });
 
   @override
   State<CateList> createState() => _CateListState();
@@ -151,37 +164,50 @@ class CateList extends StatefulWidget {
 
 class _CateListState extends State<CateList> {
   late List<Categories> list;
+  CateListModel con = Get.put(CateListModel());
 
-  Future<void> refresh() async{
-    setState((){});
+  @override
+  void initState(){
+    refresh();
+    super.initState();
   }
+  Future<void> refresh() async{
+    con.getCate(widget.page);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+    return customRefreshIndicator(
+      context,
       onRefresh: ()=>refresh(),
-      child: Consumer<CateListModel>(
-        builder: (context, value, child){
-          list = value.cate;
-          if (list.isNotEmpty){
+      child: Obx((){
+          list = con.catelist;
+          if (con.isFetching.isTrue){
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 7,
+              itemBuilder: (context,index){
+                return const CateRowSkel();
+              }
+            );
+          } else if (list.isEmpty){
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 1,
+              itemBuilder: (context,index){
+                return const Text("카테고리가 없어요");
+              }
+            );
+          } else{
             return ListView.builder(
               itemCount: list.length,
               itemBuilder :(context, index) {
                 return CateRow(props: list[index],key : Key("${list[index].categoryId}"));
               },
             );
-          }else{
-            return const Center(
-              child: SizedBox(
-                width : 40,
-                height : 40,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-              )
-            );
           }
         }
-      ),
+      )
     );
   }
 }
@@ -194,18 +220,24 @@ class CateRow extends StatefulWidget {
 }
 
 class _CateRowState extends State<CateRow> {
+  CateListModel con = Get.put(CateListModel());
   @override
   Widget build(BuildContext context) {
     Categories props = widget.props;
-
+      /* ()=>Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context)=>FeedListPage(cate : props.categoryId),
+        
+      )
+    ),*/
     return GestureDetector(
-      onTap : ()=>Get.toNamed(
-        "/list/${props.categoryId}",
-
+      onTap : ()=>Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_)=>FeedListPage(page : props.categoryId))
       ),
       child : Container(
       height : 96,
-      margin : const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -222,124 +254,185 @@ class _CateRowState extends State<CateRow> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              PopupMenuButton(
-                constraints: const BoxConstraints(
-                  minWidth : 120
-                ),
-                shape : TooltipShape(92,Theme.of(context).colorScheme.onSurface),
-                offset : const Offset(0,40),
-                icon : Text(
-                  '•••',
-                  overflow: TextOverflow.visible,
-                  softWrap: false,
-                  style : TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface
-                  )
-                ),
-                itemBuilder: (BuildContext context) { 
-                  return [
-                  PopupMenuItem(
-                    child: Row(
-                      children :[
-                        SizedBox(
-                          width : 24,
-                          child: SvgPicture.asset(
-                            "assets/icons/navbar/noBorderAdd.svg",
-                            width : 12 , height : 12,
-                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                          ),
-                        ),
-                        navbarTitle(context,"구독",20)
-                      ]
-                    ),
-                    onTap: () {
-                      print('구독 선택');
-                    },
-                  ),
-                  PopupMenuItem(
-                    child: Row(
-                      children :[
-                        SizedBox(
-                          width : 24,
-                          child: SvgPicture.asset(
-                            "assets/icons/navbar/certification.svg",
-                            width : 12 , height : 12,
-                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.error, BlendMode.srcIn),
-                          ),
-                        ),
-                        navbarTitle(context,"신고",20)
-                      ]
-                    ),
-                    onTap: () {
-                      print('카테고리 신고 선택');
-                    }
-                  ),
-                  ];
-                },
-              ),
               const Profile(
                 profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",
                 width: 56,
                 height: 56
               ),
-              Container(
-                width : constraint.maxWidth * 0.5,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      props.categoryName,
-                      maxLines: 1,
-                      style : const TextStyle(
-                        fontSize : 18,
-                        color : CommonStyle.first,
-                      )
-                    ),
-                    Text(
-                      '"${props.categoryDescription}"',
-                      maxLines: 2,
-                      style : TextStyle(
-                        fontSize : 14,
-                        color : Theme.of(context).colorScheme.primary,
-                      )
-                    ),
-                  ],
+              Expanded(
+                child: SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        props.categoryName,
+                        maxLines: 1,
+                        textAlign: TextAlign.start,
+                        style : TextStyle(
+                          fontSize : 18,
+                          color : Theme.of(context).colorScheme.onPrimaryFixed,
+                        )
+                      ),
+                      Text(
+                        '"${props.categoryDescription}"',
+                        maxLines: 2,
+                        textAlign: TextAlign.start,
+                        style : TextStyle(
+                          fontSize : 14,
+                          color : Theme.of(context).colorScheme.primary,
+                        )
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(
                 width : constraint.minWidth * 0.15,
-                height : constraint.maxHeight, 
-                child: 
-                (props.children.isNotEmpty)?
-                IconButton(
-                  style: ButtonStyle(
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+                height : 42,
+                child : (true)?
+                TextButton(
+                  onPressed: (){
+                    
+                  },
+                  style : TextButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    shape : const RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius,
+                    )
+                  ),
+                  child: const Text(
+                    "구독됨",
+                    style : TextStyle(
+                      color: Colors.white
+                    )
+                  ),
+                )
+                :OutlinedButton(
+                  onPressed: (){},
+                  style : OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    shape : RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius,
+                      side : BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface
                       )
+                    )
+                  ),
+                  child: Text(
+                    "구독",
+                    style : TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface
+                    )
+                  ),
+                ),
+              ),
+              SizedBox(
+                width : constraint.minWidth * 0.1,
+                height : 42,
+                child: 
+                IconButton(
+                  style : IconButton.styleFrom(
+                    shape : const RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius
                     )
                   ),
                   icon: SvgPicture.asset(
                     "assets/icons/common/right.svg",
                     width : 16 , height : 16,
-                    colorFilter: ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
                   ),
-                  onPressed: ()=>Get.to(
-                    ()=>CatePage(page : props.categoryId),
-                    arguments: {
-                      "backName" : props.categoryName
-                    },
-                    preventDuplicates: false,
+                  onPressed: ()=>Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:(context) => CatePage(page : props.categoryId),
+                      settings: RouteSettings(
+                        arguments: {
+                          "backName" : props.categoryName
+                        },
+                      )
+                    )
                   ),
-                ):SizedBox.shrink(),
+                )
               ),
             ],
           );
         }
       )
     ),
+    );
+  }
+}
+
+class CateRowSkel extends StatelessWidget {
+  const CateRowSkel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height : 96,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color : Theme.of(context).colorScheme.shadow,
+            offset: RowContainer.offset,
+            blurRadius: RowContainer.blurRadius
+          )
+        ],
+        color : Theme.of(context).colorScheme.onPrimary,
+      ),
+      child : Shimmer.fromColors(
+        baseColor: Theme.of(context).colorScheme.surface,
+        highlightColor: Theme.of(context).colorScheme.onPrimary,
+        child: LayoutBuilder(
+          builder : (context,constraint){
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const ProfileSkel(
+                  width: 56,
+                  height: 56
+                ),
+                Expanded(
+                  child: SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: RowContainer.radius,
+                            color: Theme.of(context).colorScheme.onPrimaryFixed
+                          ),
+                          height : 18,
+                          width : constraint.maxWidth * 0.3,
+                        ),
+                        const SizedBox(height : 4),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: RowContainer.radius,
+                            color: Theme.of(context).colorScheme.onPrimaryFixed
+                          ),
+                          height : 18,
+                          width : constraint.maxWidth * 0.5,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width : constraint.minWidth * 0.3,
+                  height : constraint.maxHeight, 
+                ),
+              ],
+            );
+          }
+        ),
+      )
     );
   }
 }

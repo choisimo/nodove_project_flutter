@@ -1,6 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
+import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
@@ -8,7 +9,10 @@ import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/notification.dart';
+import 'package:nodove_flutter/src/model/tag.dart';
 import 'package:nodove_flutter/src/model/user.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/url.dart';
 
 class DataSrc{
@@ -18,36 +22,85 @@ class DataSrc{
     receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
   ));
   
-  Future<List<Feed>> getFeedList(int page,String url,String opt) async{
+  Future<List<Feed>?> getFeedList(int page,String url,String opt) async{
     try{
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
       log(e.toString());
-      return [Feed.defaultState()];
+      showToast("오류가 발생했어요😢");
     }
+    return null;
   }
-  Future<Feed> getFeedPage(int page,String url) async{
+  Future<Feed?> getFeedPage(String url,String opt) async{
     try{
-      final res = await dio.get("$url/$page");
+      final res = await dio.get("$url/$opt");
       return Feed.fromJson(res.data);
     }catch(e){
       log(e.toString());
-      return Feed.defaultState();
+      showToast("오류가 발생했어요😢");
+      return null;
     }
   }
-  Future<void> postFeed(FeedWrite formData) async {
-    final res = await dio.post(
-      '${Url.apiUrl}/restrict/user/write',
-      data : formData
-    );
+  Future<bool> postFeed(Map<dynamic,dynamic> formData) async {
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.post(
+        '${Url.apiUrl}/restrict/user/write',
+        data : jsonEncode(formData)
+      );
+      if (res.statusCode == 200){
+        return true;
+      } else{
+        return false;
+      }
+    }catch(e){
+      showToast("피드를 올릴 수 없어요😢");
+      print(e);
+      return false;
+    }
   }
+  Future<void> deleteFeed(int postId) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.delete(
+        '${Url.apiUrl}${Url.deleteFeed}/$postId',
+      );
+      if(res.statusCode == 200){
+        showToast("삭제가 완료되었습니다");
+      } else{
+        showToast("피드를 삭제 할 수 없어요😢");
+      }
+    }catch(e){
+      showToast("피드를 삭제 할 수 없어요😢");
+      print(e);
+    }
+  }
+  Future<void> editFeed(Map<dynamic,dynamic> formData,int postId) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.post(
+        '${Url.apiUrl}${Url.updateFeed}/$postId',
+        data : jsonEncode(formData)
+      );
+      if(res.statusCode == 200){
+        showToast("수정이 완료되었습니다");
+      } else{
+        showToast("피드를 수정 할 수 없어요😢");
+      }
+    }catch(e){
+      showToast("피드를 수정 할 수 없어요😢");
+      print(e);
+    }
+  }
+
   Future<List<Categories>> getCateList(String url,String opt,bool child) async{
     try{
       final res = await dio.get("$url$opt");
       final data = (child)?res.data[0]['children']:res.data;
       return data.map<Categories>((json)=>Categories.fromJson(json)).toList();
     }catch(e){
+      showToast("오류가 발생했어요😢");
       return [];
     }
   }
@@ -56,15 +109,18 @@ class DataSrc{
       final res = await dio.get("$url$opt");
       return res.data;
     }catch(e){
+      showToast("오류가 발생했어요😢");
       return Categories.initialState();
     }
   }
+
   Future<List<Comment>> getCommentList(int page,String url,String opt) async{
     try{
       final res = await dio.get("$url/$page?$opt");
       final data = res.data['comments'];
       return data.map<Comment>((json)=>Comment.fromJson(json)).toList();
     }catch(e){
+      showToast("오류가 발생했어요😢");
       log(e.toString());
       return [];
     }
@@ -78,6 +134,7 @@ class DataSrc{
         data : formData,
       );
     }catch(e){
+      showToast("댓글을 작성 할 수 없어요😢");
       log("댓글 작성 에러 : $e");
     }
   }
@@ -95,6 +152,7 @@ class DataSrc{
         log("로그인 실패");
       }
     } catch(e){
+      showToast("로그인 할 수 없어요😢");
       log("로그인 에러 : $e");
     }
   }
@@ -110,7 +168,7 @@ class DataSrc{
     }
   }
 
-  Future<List<String>> postImagesData(List<XFile> images) async{
+  Future<List<dynamic>> postImagesData(List<XFile> images) async{
     try{
       dio.interceptors.add(ApiInterceptors());
       dio.options.contentType = "multipart/form-data";
@@ -119,9 +177,9 @@ class DataSrc{
       for (final imageFiles in images) {
           uploadList.add(
               await MultipartFile.fromFile(
-                  imageFiles.path,
-                  filename: imageFiles.path.split('/').last,
-                  contentType: DioMediaType('image', 'jpg'),
+                imageFiles.path,
+                filename: imageFiles.path.split('/').last,
+                contentType: DioMediaType('image', 'jpg'),
               ),
           );
       }
@@ -131,9 +189,20 @@ class DataSrc{
         "${Url.apiUrl}/restrict/user/postFileUpload",
         data : formdata
       );
-
       return res.data;
     } catch(e){
+      return [];
+    }
+  }
+
+  Future<List<Noti>> getNotificationList() async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.get(
+        "${Url.apiUrl}/restrict/user/getAllUnReadAlarms"
+      );
+      return res.data.map<Noti>((json)=>Noti.fromJson(json)).toList();
+    }catch(e){
       return [];
     }
   }

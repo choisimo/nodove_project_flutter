@@ -1,16 +1,26 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:nodove_flutter/state/color.dart';
 
 class TooltipShape extends ShapeBorder {
-  final double? verticalOffset;
-  final double radius = 16;
-  final double triSize = 10;
-  final double kborder = 1;
-  final Color? borderColor;
+  final double vertical;
+  final double horizontal;
+  final String direction;
+  final double rRadius;
+  final double triSize;
+  final Color borderColor;
 
-  const TooltipShape(this.verticalOffset , this.borderColor);
+  const TooltipShape({
+    this.vertical = 125,
+    this.horizontal = 125,
+    this.direction = "top",
+    this.borderColor = Colors.black,
+    this.rRadius = 16,
+    this.triSize = 10
+  });
 
   final BorderSide _side = BorderSide.none;
   final BorderRadiusGeometry _borderRadius = BorderRadius.zero;
@@ -34,36 +44,31 @@ class TooltipShape extends ShapeBorder {
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    final Path path = Path();
-    final double offset = verticalOffset??125;
     
     final RRect rrect = _borderRadius.resolve(textDirection).toRRect(rect);
-    final Map<String,double> radiusAuto = {
-      "left" : 
-      (rrect.width - (offset + triSize * 2) < radius && rrect.width > offset)?
-      rrect.width - (offset + triSize * 2)
-      :radius,
-      "right" : 
-      ((offset) < radius && rrect.width > offset)?
-      offset
-      :radius
-    };
-
-    path.moveTo(0, radiusAuto['left']!);
-    path.quadraticBezierTo(0, 0, radiusAuto['left']!, 0);
-    path.lineTo(rrect.width - (offset + triSize * 2), 0);
-    path.lineTo(rrect.width - (offset + triSize), -1 * triSize);
-    path.lineTo(rrect.width - offset, 0);
-    path.lineTo(rrect.width - radiusAuto['right']!, 0);
-    path.quadraticBezierTo(rrect.width, 0, rrect.width, radiusAuto['right']!);
-    path.lineTo(rrect.width, rrect.height - radius);
-    path.quadraticBezierTo(
-        rrect.width, rrect.height, rrect.width - radius, rrect.height);
-    path.lineTo(radius, rrect.height);
-    path.quadraticBezierTo(0, rrect.height, 0, rrect.height - radius);
-    path.lineTo(0, radiusAuto['left']!);
-
-    return path;
+    final double vOffset = math.min(vertical,rrect.width - triSize);
+    final double hOffset = math.min(horizontal,rrect.width - triSize);
+    
+    switch(direction){
+      case 'bottom' : return 
+      tooltipBottomSidePath(
+        rrect,
+        speechBubble(
+          radius: rRadius,
+          offset : vOffset,
+          triSize: triSize,
+        )
+      );
+      default : return 
+      tooltipTopSidePath(
+        rrect,
+        speechBubble(
+          radius: rRadius,
+          offset : vOffset,
+          triSize: triSize,
+        )
+      );
+    }
   }
 
   @override
@@ -71,13 +76,12 @@ class TooltipShape extends ShapeBorder {
     Canvas canvas,
     Rect rect,
     {TextDirection? textDirection}) {
-      final rrectShadow = RRect.fromRectAndRadius(rect, Radius.circular(radius));
-      final shadowPaint = Paint()
-        ..strokeWidth = 0.5
-        ..color = borderColor??CommonStyle.firstAlpha
-        ..style = PaintingStyle.stroke
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
-
+    final shadowPaint = Paint()
+      ..color = borderColor
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..maskFilter = const MaskFilter.blur(BlurStyle.inner, 6);
+    
     canvas.drawPath(
       getOuterPath(rect),
       shadowPaint
@@ -89,4 +93,76 @@ class TooltipShape extends ShapeBorder {
         side: _side.scale(t),
         borderRadius: _borderRadius * t,
   );
+}
+
+class speechBubble {
+  double offset;
+  double triSize;
+  double radius;
+
+  speechBubble({
+    this.offset = 0.0,
+    this.triSize = 0.0,
+    this.radius = 0.0,
+  });
+}
+
+Path tooltipTopSidePath(rrect,speechBubble bubble) {
+  final Map<String,double> radiusAuto = {
+    "left" : 
+    (rrect.width - (bubble.offset + bubble.triSize * 2) < bubble.radius && rrect.width > bubble.offset)?
+    rrect.width - (bubble.offset + bubble.triSize * 2)
+    :bubble.radius,
+    "right" : 
+    ((bubble.offset) < bubble.radius && rrect.width > bubble.offset)?
+    bubble.offset
+    :bubble.radius
+  };
+  return Path()
+    ..moveTo(0, radiusAuto['left']!)
+    ..quadraticBezierTo(0, 0, radiusAuto['left']!, 0)
+    
+    ..lineTo(rrect.width - (bubble.offset + bubble.triSize * 2), 0)
+    ..quadraticBezierTo(rrect.width - bubble.offset - bubble.triSize*2, -0.5 * bubble.triSize,rrect.width - (bubble.offset + bubble.triSize), -1 * bubble.triSize)
+    ..quadraticBezierTo(rrect.width - bubble.offset - bubble.triSize, -0.5 * bubble.triSize,rrect.width - bubble.offset, 0)
+
+    ..lineTo(rrect.width - radiusAuto['right']!, 0)
+    ..quadraticBezierTo(rrect.width, 0, rrect.width,bubble.radius)
+    ..lineTo(rrect.width, rrect.height - bubble.radius)
+    ..quadraticBezierTo(
+        rrect.width, rrect.height, rrect.width - bubble.radius, rrect.height)
+    ..lineTo(bubble.radius, rrect.height)
+    ..quadraticBezierTo(0, rrect.height, 0, rrect.height - bubble.radius)
+    ..lineTo(0, radiusAuto['left']!);
+}
+
+Path tooltipBottomSidePath(rrect,speechBubble bubble) {
+  final Map<String,double> radiusAuto = {
+    "left" : 
+    (rrect.width - (bubble.offset + bubble.triSize * 2) < bubble.radius && rrect.width > bubble.offset)?
+    rrect.width - (bubble.offset + bubble.triSize * 2)
+    :bubble.radius,
+    "right" : 
+    ((bubble.offset) < bubble.radius && rrect.width > bubble.offset)?
+    bubble.offset
+    :bubble.radius
+  };
+  return Path()
+    ..moveTo(0, bubble.radius)
+    ..quadraticBezierTo(0, 0, bubble.radius, 0)
+    ..lineTo(rrect.width - bubble.radius, 0)
+    ..quadraticBezierTo(rrect.width, 0, rrect.width, bubble.radius)
+    ..lineTo(rrect.width, rrect.height - bubble.radius)
+    ..quadraticBezierTo(
+        rrect.width, rrect.height, rrect.width - radiusAuto['left']!, rrect.height)
+    ..lineTo((bubble.offset + bubble.triSize * 2), rrect.height)
+
+    ..quadraticBezierTo(
+        (bubble.offset + bubble.triSize), rrect.height + bubble.triSize * 0.5, (bubble.offset + bubble.triSize), rrect.height + bubble.triSize)
+    ..quadraticBezierTo(
+        (bubble.offset), rrect.height + bubble.triSize * 0.5, bubble.offset, rrect.height)
+    
+    ..lineTo(radiusAuto['right']!, rrect.height)
+    ..quadraticBezierTo(0, rrect.height, 0, rrect.height - bubble.radius)
+    ..lineTo(0, bubble.radius);
 }

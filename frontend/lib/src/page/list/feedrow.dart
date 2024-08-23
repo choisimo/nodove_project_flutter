@@ -1,43 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/src/share/share.dart';
+import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/post/share.dart';
+import 'package:nodove_flutter/src/page/user/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/media/carousel.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/state/url.dart';
+import 'package:nodove_flutter/state/user.dart';
 import 'package:nodove_flutter/tag/tagrow.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FeedRow extends StatelessWidget {
   final Feed props;
 
-  const FeedRow({Key? key, required this.props}) : super(key : key);
+  const FeedRow({super.key, required this.props});
 
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
   
     return GestureDetector(
-      onTap:() => Get.toNamed("/view/${props.id}"),
+      onTap: ()=>Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context)=>FeedPage(page : props.id),
+          
+        )
+      ),
       child: Container(
         width : maxwidth,
         margin : const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          border: Border(
-            bottom : BorderSide(
-              color: Theme.of(context).colorScheme.onSecondary,
-              width : 0.5
-            ),
-            top : BorderSide(
-              color: Theme.of(context).colorScheme.onSecondary,
-              width : 0.5
+          boxShadow: [
+            BoxShadow(
+              color : Theme.of(context).colorScheme.shadow,
+              offset: RowContainer.offset,
+              blurRadius: RowContainer.blurRadius
             )
-          ),
+          ],
         ),
         child: Column(
           children: [
@@ -45,7 +54,8 @@ class FeedRow extends StatelessWidget {
               children:[
                 FeedTop(title : props.title, hashtags : props.hashtags),
                 Carousel(imageLinks : props.imageLinks,page : props.id),
-                SizedBox(
+                Container(
+                  margin : const EdgeInsets.only(top : 8.0),
                   width : maxwidth,
                   child : LayoutBuilder(
                     builder: (ctx,constraints) {
@@ -85,14 +95,14 @@ class FeedRow extends StatelessWidget {
                   )
                 ),
                 FeedRowBottom(
-                  id: props.id,
+                  userId: props.writerUserId,
                   likeCount: props.likeCount,
-                  etcOpt: true
+                  etcOpt: true,
+                  postId : props.id,
                 ),
                 Container(
                   margin:const EdgeInsets.only(
                     top : 8,
-                    bottom : 8,
                   ),
                   width : maxwidth,
                   height : 0.5,
@@ -100,46 +110,7 @@ class FeedRow extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  children : [
-                    OutlinedButton.icon(
-                      style : OutlinedButton.styleFrom(
-                        fixedSize: const Size(320, 32),
-                        side: BorderSide(width: 1.0, color: CommonStyle.first),
-                      ),
-                      onPressed: (){
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          showDragHandle: true,
-                          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                          builder :(BuildContext context) {
-                            return Padding(
-                              padding : EdgeInsets.only(
-                                bottom: MediaQuery.of(context).viewInsets.bottom
-                              ),
-                              child: commentList(page : props.id)
-                            );
-                          },
-                        );
-                      },
-                      icon : SvgPicture.asset(
-                        'assets/icons/navbar/noBorderAdd.svg',
-                        width : 12,
-                        height : 12,
-                        colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
-                      ),
-                      label: Text(
-                        "댓글 ${props.commentCount}개",
-                        style : const TextStyle(
-                          fontSize : 18,
-                          color : CommonStyle.first
-                        )
-                      )
-                    )
-                  ]
-                )
+                commentButton(context,id : props.id,count : props.commentCount)
               ],
             ),
           ],
@@ -148,12 +119,62 @@ class FeedRow extends StatelessWidget {
     );
   }
 }
-
+Widget commentButton (BuildContext context,{int id = 1,int count = 0}){
+  return ButtonBar(
+    alignment: MainAxisAlignment.center,
+    children : [
+      OutlinedButton.icon(
+        style : OutlinedButton.styleFrom(
+          fixedSize: const Size(320, 24),
+          side: BorderSide(width: 1.0, color: Theme.of(context).colorScheme.onPrimaryFixed),
+        ),
+        onPressed: (){
+          showModalBottomSheet(
+            enableDrag: true,
+            useRootNavigator: true,
+            isScrollControlled: true,
+            context: context,
+            showDragHandle: true,
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
+            builder :(BuildContext context) {
+              return Padding(
+                padding : EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom
+                ),
+                child: commentList(page : id)
+              );
+            },
+          );
+        },
+        icon : SvgPicture.asset(
+          'assets/icons/navbar/noBorderAdd.svg',
+          width : 12,
+          height : 12,
+          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+        ),
+        label: Text(
+          "댓글 $count개",
+          style : TextStyle(
+            fontSize : 18,
+            color : Theme.of(context).colorScheme.onPrimaryFixed
+          )
+        )
+      )
+    ]
+  );
+}
 class FeedRowBottom extends StatelessWidget {
-  final int id;
+  final String userId;
   final int likeCount;
   final bool etcOpt;
-  const FeedRowBottom({super.key,required this.id , required this.likeCount , required this.etcOpt});
+  final int postId;
+  const FeedRowBottom({
+    super.key,
+    required this.userId ,
+    this.likeCount = 0 ,
+    this.etcOpt = false,
+    required this.postId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,11 +189,13 @@ class FeedRowBottom extends StatelessWidget {
                 'assets/icons/post/star-empty.svg',
                 width : 20,
                 height : 20,
-                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
+              const SizedBox(width:4),
               Text(
-                "${likeCount}",
+                "$likeCount",
                 style : TextStyle(
+                  fontSize : 18,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface
                 )
@@ -192,18 +215,11 @@ class FeedRowBottom extends StatelessWidget {
         IconButton(
           onPressed: (){
             showModalBottomSheet(
+              useRootNavigator: true,
               context: context,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               builder: (BuildContext context){
-                return Modal(
-                  id : id,
-                  widget : [
-                    ModalMenu(
-                      cb : () => CopyLink(id),
-                      title : "링크 복사하기",
-                    ),
-                  ]
-                );
+                return ShareModal(id : postId);
             });
           },
           icon: SvgPicture.asset(
@@ -224,35 +240,10 @@ class FeedRowBottom extends StatelessWidget {
             onPressed: (){
               showModalBottomSheet(
                 context: context,
+                useRootNavigator: true,
                 backgroundColor: Theme.of(context).colorScheme.onPrimary,
                 builder: (BuildContext context){
-                  return Modal(
-                    id : id,
-                    widget : [
-                      const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
-                      ModalMenu(
-                        cb : (){},
-                        iconSrc : "assets/icons/navbar/certification.svg",
-                        title : "신고",
-                      ),
-                      ModalMenu(
-                        cb : (){},
-                        iconSrc : "assets/icons/navbar/user.svg",
-                        title : "정보",
-                      ),
-                      const MenuTitle(title : '내가 쓴 글' , key : Key("내가 쓴 글 제목")),
-                      ModalMenu(
-                        cb : (){},
-                        iconSrc : "assets/icons/post/edit.svg",
-                        title : "수정",
-                      ),
-                      ModalMenu(
-                        cb : (){},
-                        iconSrc : "assets/icons/post/delete.svg",
-                        title : "삭제",
-                      ),
-                    ]
-                  );
+                  return FeedModal(context,userId,postId);
               });
             },
             child: Text(
@@ -270,6 +261,50 @@ class FeedRowBottom extends StatelessWidget {
       ]
     );
   }
+}
+
+Widget FeedModal (
+  BuildContext context,
+  String userId,
+  int postId
+) {
+  final myid = UserState.page.id;
+  return Modal(
+    widget : [
+      const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
+      ModalMenu(
+        cb : (){},
+        iconSrc : "assets/icons/navbar/certification.svg",
+        title : "신고",
+      ),
+      ModalMenu(
+        cb : (){
+          Get.to(()=>UserPage(id : userId));
+        },
+        iconSrc : "assets/icons/navbar/user.svg",
+        title : "정보",
+      ),
+      (myid == userId.obs)?
+      Column(
+        children: [
+          const MenuTitle(title : '내 피드' , key : Key("내가 쓴 피드 제목")),
+          ModalMenu(
+            cb : (){},
+            iconSrc : "assets/icons/post/edit.svg",
+            title : "수정",
+          ),
+          ModalMenu(
+            cb : (){
+              Get.back();
+              feedDeleteConfirm(context, postId);
+            },
+            iconSrc : "assets/icons/post/delete.svg",
+            title : "삭제",
+          )
+        ],
+      ):const SizedBox.shrink(),
+    ]
+  );
 }
 
 class Profile extends StatelessWidget {
@@ -301,9 +336,31 @@ class Profile extends StatelessWidget {
         ),
         shape: BoxShape.circle,
         border : Border.all(
-          color : CommonStyle.first,
+          color : Theme.of(context).colorScheme.onPrimaryFixed,
           width : borderRadius??1.0
         )
+      ),
+    );
+  }
+}
+class ProfileSkel extends StatelessWidget {
+  final double width;
+  final double height;
+  const ProfileSkel({
+    super.key ,
+    required this.width ,
+    required this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width :  width,
+      height : height,
+      margin : const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color : Theme.of(context).colorScheme.onPrimaryFixed
       ),
     );
   }
@@ -333,7 +390,12 @@ class FeedTop extends StatelessWidget {
               ),
             ),
           ),
-          TagRow(hashtags: hashtags),
+          TagRow(
+            hashtags: hashtags,
+            callback: (tag,index){
+              Get.toNamed("/tag/${Uri.encodeComponent(tag)}");
+            },
+          ),
         ],
       ),
     );
@@ -361,10 +423,9 @@ class ModalMenu extends StatelessWidget {
 }
 
 class Modal extends StatefulWidget {
-  final int id;
   final List<Widget> widget;
   
-  const Modal({super.key,required this.id , required this.widget});
+  const Modal({super.key,required this.widget});
 
   @override
   State<Modal> createState() => _ModalState();
@@ -373,14 +434,196 @@ class Modal extends StatefulWidget {
 class _ModalState extends State<Modal> {
   @override
   Widget build(BuildContext context) {
-    int id = widget.id;
     List<Widget> widgets = widget.widget;
-    return SizedBox(
-      width : MediaQuery.of(context).size.width,
-      height : 320,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children : widgets
+    return Padding(
+      padding : const EdgeInsets.symmetric(vertical: 32),
+      child: SizedBox(
+        width : MediaQuery.of(context).size.width,
+      
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          children : widgets
+        ),
+      ),
+    );
+  }
+}
+
+void feedDeleteConfirm(BuildContext context,int postId){
+  FeedListModel con = Get.put(FeedListModel());
+  showDialog(
+    context : context,
+    builder: (context){
+      return customDialog(
+        context,
+        title : Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            dialogCloseBtn(
+              context,
+              onPressed: ()=>Get.back(),
+            ),
+          ],
+        ),
+        content : Column(
+          children: [
+            dialogStrTitle("삭제할까요?"),
+            dialogStrContent("삭제된 피드는 다시 복구 할 수 없어요"),
+          ],
+        ),
+        bottomBtns: [
+          dialogBottomBtn(
+            context,
+            backgroundColor: Theme.of(context).colorScheme.error,
+            onPressed: (){
+              con.deleteFeed(postId);
+              con.feedList.refresh();
+              Get.back();
+            },
+            child : const Text(
+              "삭제",
+              style: TextStyle(
+                fontSize : 18,
+              ),
+            )
+          ),
+        ],
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      );
+    }
+  );
+}
+
+class SkelFeedRow extends StatelessWidget {
+  const SkelFeedRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final maxwidth = MediaQuery.of(context).size.width;
+  
+    return Container(
+      width : maxwidth,
+      margin : const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color : Theme.of(context).colorScheme.onPrimary,
+        boxShadow: [
+          BoxShadow(
+            color : Theme.of(context).colorScheme.shadow,
+            offset: RowContainer.offset,
+            blurRadius: RowContainer.blurRadius
+          )
+        ],
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Theme.of(context).colorScheme.surface,
+        highlightColor: Theme.of(context).colorScheme.onPrimary,
+        child: Column(
+          children: [
+            Column(
+              children:[
+                Container(
+                  width : maxwidth,
+                  padding : const EdgeInsets.all(4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width : maxwidth * 0.3,
+                        height : 18,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                          borderRadius: RowContainer.radius
+                        ),
+                      ),
+                      const SizedBox(height : 4.0),
+                      Container(
+                        width : maxwidth * 0.5,
+                        height : 16,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                          borderRadius: RowContainer.radius
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  width : maxwidth,
+                  height : 420,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                  ),
+                ),
+                Container(
+                  margin : const EdgeInsets.only(top : 8.0),
+                  width : maxwidth,
+                  child : LayoutBuilder(
+                    builder: (ctx,constraints) {
+                      return Row(
+                        children : <Widget>[
+                          const ProfileSkel(
+                            width: 40,
+                            height: 40
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children : [
+                              Container(
+                                width : constraints.maxWidth * 0.3,
+                                height : 16,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                  borderRadius: RowContainer.radius
+                                ),
+                              ),
+                              const SizedBox(height : 4.0),
+                              Container(
+                                width : constraints.maxWidth * 0.5,
+                                height : 16,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                  borderRadius: RowContainer.radius
+                                ),
+                              ),
+                            ]
+                          )
+                        ]
+                      );
+                    }
+                  )
+                ),
+                const SizedBox(height : 4),
+                Container(
+                  width: maxwidth,
+                  height : 20,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                    borderRadius: RowContainer.radius
+                  ),
+                ),
+                Container(
+                  margin:const EdgeInsets.only(
+                    top : 8,
+                  ),
+                  width : maxwidth,
+                  height : 0.5,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+                Container(
+                  width: maxwidth * 0.5,
+                  height : 32,
+                  margin: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                    borderRadius: RowContainer.radius
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
       ),
     );
   }

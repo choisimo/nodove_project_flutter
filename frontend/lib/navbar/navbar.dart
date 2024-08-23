@@ -26,9 +26,7 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       leading: content.leading??const SizedBox.shrink(),
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
-      shape : Border(
-        bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
-      ),
+      shadowColor : Theme.of(context).colorScheme.shadow,
   )
   :
   AppBar(
@@ -36,9 +34,7 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
-      shape : Border(
-        bottom: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary)
-      ),
+      shadowColor : Theme.of(context).colorScheme.shadow,
   );
 }
 
@@ -49,7 +45,13 @@ class BottomNavbar extends GetView<PageState>{
   Widget build(context){
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary))
+        boxShadow: [
+          BoxShadow(
+            color : Theme.of(context).colorScheme.shadow,
+            offset: RowContainer.offset,
+            blurRadius: RowContainer.blurRadius
+          )
+        ],
       ),
       width : double.infinity,
       child: Obx(()=>
@@ -74,7 +76,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/home.svg',
                 width : 21,
                 height : 21,
-                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -89,7 +91,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/msg.svg',
                 width : 21,
                 height : 21,
-                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -104,7 +106,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/menu.svg',
                 width : 18,
                 height : 18,
-                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -119,7 +121,7 @@ class BottomNavbar extends GetView<PageState>{
                 'assets/icons/navbar/alert.svg',
                 width : 24,
                 height : 21,
-                colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
@@ -134,7 +136,7 @@ class BottomNavbar extends GetView<PageState>{
                   'assets/icons/navbar/user.svg',
                   width : 24,
                   height : 21,
-                  colorFilter: const ColorFilter.mode(CommonStyle.first, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
           ],

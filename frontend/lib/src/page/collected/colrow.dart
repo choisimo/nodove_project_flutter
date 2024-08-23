@@ -52,8 +52,12 @@ class CollectedVRow extends StatelessWidget {
     double size = 280;
   
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap:() => Get.toNamed("/view/${props.id}"),
       child: Container(
+        decoration: const BoxDecoration(
+          color : Colors.transparent
+        ),
         width : size,
         height : size,
         margin: const EdgeInsets.all(4),
@@ -69,7 +73,7 @@ class CollectedVRow extends StatelessWidget {
                   fit : BoxFit.cover,
                   image: 
                   customImgProvider(
-                    props.imageLinks[0]??"",
+                    (props.imageLinks.isNotEmpty)?props.imageLinks[0]:"",
                   )
                 )
               ),
@@ -77,7 +81,26 @@ class CollectedVRow extends StatelessWidget {
             MinimalRow(props : props)
           ],
         ),
+      )
+    );
+  }
+}
+
+class CollectedVRowSkel extends StatelessWidget {
+  const CollectedVRowSkel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    double size = 280;
+    return Container(
+      decoration: BoxDecoration(
+        color : Theme.of(context).colorScheme.onPrimaryFixed,
+        borderRadius: RowContainer.radius
       ),
+      width : size,
+      height : size,
+      margin: const EdgeInsets.all(4),
+      padding : const EdgeInsets.all(8),
     );
   }
 }

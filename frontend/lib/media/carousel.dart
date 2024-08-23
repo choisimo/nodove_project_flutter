@@ -2,16 +2,20 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:nodove_flutter/media/zoom.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:lottie/lottie.dart';
 
 class Carousel extends StatefulWidget {
   final List<dynamic> imageLinks;
   final int page;
 
-  const Carousel({super.key,required this.imageLinks,required this.page});
+  const Carousel({
+    super.key,
+    required this.imageLinks,
+    required this.page,
+  });
 
   @override
   State<Carousel> createState() => _CarouselState();
@@ -50,37 +54,26 @@ class _CarouselState extends State<Carousel> {
               width : MediaQuery.of(context).size.width,
               child : GestureDetector(
                 onScaleStart: (detail){
-                  print(detail);
                   if (!error){
-                    Navigator.of(context).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context,
-                      Animation<double> animation1,
-                      Animation<double> animation2){
-                        return ImgZoomView(page : page , imageLinks: imageLinks, index: i.key);
-                      },
-                    ));
+                    Get.to(
+                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key),
+                      fullscreenDialog: true
+                    );
                   }
                 },
                 onTap: (){
                   if (!error){
-                    Navigator.of(context).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context,
-                      Animation<double> animation1,
-                      Animation<double> animation2){
-                        return ImgZoomView(page : page , imageLinks: imageLinks, index: i.key);
-                      },
-                    ));
+                    Get.to(
+                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key),
+                      fullscreenDialog: true
+                    );
                   }
                 },
-                child : Container(
-                  child: Hero(
-                    tag : "$page-${imageLinks[i.key]}",
-                    child: customImage(
-                      imageLinks[i.key],
-                      fit : BoxFit.cover,
-                    ),
+                child : Hero(
+                  tag : "$page-${imageLinks[i.key]}",
+                  child: customImage(
+                    imageLinks[i.key],
+                    fit : BoxFit.cover,
                   ),
                 )
               )
@@ -114,6 +107,7 @@ class _CarouselState extends State<Carousel> {
         child: Align(
           alignment: Alignment.bottomCenter,
           child : Container(
+            clipBehavior: Clip.hardEdge,
             height : size,
             decoration: const BoxDecoration(
               color: LightStyle.blackAlpha,
@@ -125,12 +119,12 @@ class _CarouselState extends State<Carousel> {
               scrollDirection: Axis.horizontal,
               itemCount: imageLinks.length,
               itemBuilder: (context, index) {
-                return TextButton(
+                return IconButton(
                   onPressed: () => _controller.animateToPage(
                     index,
                     curve : Curves.ease
                   ),
-                  child : (imageLinks[index].contains("/sub/read"))?
+                  icon : (imageLinks[index].contains("/sub/read"))?
                   SvgPicture.asset(
                     "assets/icons/post/video.svg",
                     width : size , height : size,

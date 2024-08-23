@@ -1,12 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/interceptor.dart';
-import 'package:nodove_flutter/func/token.dart';
-import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/page/etc/etc.dart';
-import 'package:nodove_flutter/src/page/messenger/messenger.dart';
+import 'package:nodove_flutter/src/page/list/taglist.dart';
+import 'package:nodove_flutter/src/page/messenger/room.dart';
+import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/user/login.dart';
 import 'package:nodove_flutter/src/page/user/userpage.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
@@ -22,9 +19,7 @@ import 'package:nodove_flutter/state/url.dart';
 void main(){
   runApp(const MyApp());
 }
-/*
 
-*/
 class MyApp extends StatelessWidget{
   const MyApp({super.key});
   
@@ -32,6 +27,14 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context){
 
     return GetMaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('ko',"KO")
+      ],
       home : const LoginPage(),
       theme : Themes.light,
       darkTheme: Themes.dark,
@@ -41,11 +44,13 @@ class MyApp extends StatelessWidget{
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
         GetPage(name : "/view/:page" , page : ()=>FeedPage()),
+        GetPage(name : "/tag/:tag" , page : ()=>const TagListPage())
       ],
       initialBinding: InitViewModel(),
     );
   }
 }
+
 
 class MyHome extends StatefulWidget{
   const MyHome({super.key});
@@ -55,35 +60,41 @@ class MyHome extends StatefulWidget{
 }
 List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
-  const MsgPage(key : Key('messengerPage')),
+  const RoomPage(key : Key('messengerPage')),
   const CatePage(page: 0,key : Key('listPage')),
-  const SizedBox.shrink(),
-  const UserPage(id: 'bocchi',key : Key('userPage')),
+  const NotiPage(key : Key("notiPage")),
+  const UserPage(key : Key('userPage')),
 ];
 
 class _MyHomeState extends State<MyHome>{
-  final PageState index = PageState();
-
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    
     return Scaffold(
       bottomNavigationBar: const BottomNavbar(),
-      body : Obx((){
-        return IndexedStack(
-          index: PageState.page.index.value,
-          children: pages.map((page){
-            return Navigator(
-              onGenerateRoute: (_){
-                return MaterialPageRoute(
-                  builder: (builder){
-                    return page;
-                  },
-                );
-              },
-            );
-          }).toList(),
+      body : 
+      Obx((){
+        return PopScope(
+          canPop: (PageState.page.index.value == 0),
+          onPopInvoked: (b){
+            if (!b){
+              PageState.page.setIndex(0);
+            }
+          },
+          child: IndexedStack(
+            index: PageState.page.index.value,
+            children: pages.map((page){
+              return Navigator(
+                onGenerateRoute: (_){
+                  return MaterialPageRoute(
+                    builder: (builder){
+                      return page;
+                    },
+                  );
+                },
+              );
+            }).toList(),
+          ),
         );
       }),
     );
@@ -98,8 +109,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int univPage = 15;
-  int companyPage = 16;
+  int univPage = 3;
+  int companyPage = 2;
   int maxSize = 7;
 
   @override
@@ -107,14 +118,18 @@ class _MainPageState extends State<MainPage> {
     NavbarContent navbarOpt = NavbarContent(
       title : navbarTitle(context,"메인",20),
       actions : [
-        searchBtn(context),
+        navbarCommonBtn(
+          context,
+          "assets/icons/navbar/search.svg",
+          cb : (){},
+        ),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,false),
       body: RefreshIndicator(
-        onRefresh: ()=>Future.delayed(Duration(milliseconds: 1000),()=>setState((){})),
+        onRefresh: ()=>Future.delayed(const Duration(milliseconds: 1000),()=>setState((){})),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(

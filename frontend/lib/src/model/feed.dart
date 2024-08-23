@@ -13,8 +13,8 @@ class Feed{
   final String? status;
   final String createdAt;
   final String updatedAt;
-  final dynamic likeCount;
-  final dynamic commentCount;
+  final int likeCount;
+  final int commentCount;
   final List<dynamic> hashtags;
   final List<dynamic> imageLinks;
   final bool private;
@@ -82,18 +82,34 @@ class Feed{
 }
 
 class FeedWrite{
-  final int page;
   final String title;
-  final DateTime created_at;
   final String content;
-  final Pos position;
+  final String caption;
+  final bool isPrivate;
+  final String status;
+  final List<String> tags;
+  final List<String> imageLinks;
+  final int postCategory;
+
   FeedWrite({
     required this.title,
-    required this.page,
-    required this.created_at,
-    required this.content,
-    required this.position
+    this.content = "",
+    this.caption = "",
+    this.isPrivate = false,
+    this.status = "published",
+    required this.tags,
+    required this.imageLinks,
+    required this.postCategory,
   });
+
+  factory FeedWrite.defaultState(){
+    return FeedWrite(
+      title : "",
+      tags : [],
+      imageLinks: [],
+      postCategory: 0,
+    );
+  }
 }
 
 class Pos{
@@ -104,5 +120,15 @@ class Pos{
     required this.name,
     required this.lat,
     required this.lng
+  });
+}
+
+class PageUrl{
+  final String url;
+  final String opt;
+
+  PageUrl({
+    required this.url,
+    this.opt = ""
   });
 }

@@ -23,10 +23,9 @@ class ApiInterceptors extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async{
     log(err.toString());
-    log(err.response!.statusCode.toString());
     final dio = Dio();
     const storage = FlutterSecureStorage();
-    final tokenError = (err.response!.statusCode == 401); 
+    final tokenError = (err.response?.statusCode == 401); 
     final fetchOpt = err.requestOptions;
     final String? refresh = await storage.read(key: "refreshToken");
     
@@ -62,6 +61,8 @@ class ApiInterceptors extends Interceptor {
       if (res['parsed'] != null){
         user.setIndex(res['parsed']['userId']);
         print(user.id);
+      } else{
+        print("아이디 찾기 실패");
       }
     }
     

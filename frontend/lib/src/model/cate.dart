@@ -5,6 +5,7 @@ class Categories {
   List<dynamic> children;
   int depth;
   String parentCategoryName;
+  bool subscribed;
 
   Categories({
     required this.categoryId,
@@ -12,7 +13,8 @@ class Categories {
     required this.categoryDescription,
     required this.children,
     required this.depth,
-    required this.parentCategoryName
+    required this.parentCategoryName,
+    this.subscribed = false
   });
 
   factory Categories.fromJson(Map<String,dynamic> json){

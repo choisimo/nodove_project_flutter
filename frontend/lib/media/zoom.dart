@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:lottie/lottie.dart';
@@ -19,8 +20,11 @@ class ImgZoomView extends StatefulWidget {
 
 class _ImgZoomViewState extends State<ImgZoomView> {
   late PageController _controller;
+ 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.width;
     _controller = PageController(initialPage: widget.index);
     return Scaffold(
       body : PageView.builder(
@@ -44,10 +48,11 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                     },
                   ).image,
                   onScaleEnd: (BuildContext context,ScaleEndDetails details,PhotoViewControllerValue value){
-                    if (value.scale! < 0.05){
+                    if (value.scale! < 0.3){
                       Get.back();
                     }
                   },
+                  
                   heroAttributes: PhotoViewHeroAttributes(tag: "${widget.page}-${widget.imageLinks[widget.index]}"),
                   loadingBuilder:(context, event) => const Center(
                     child : SizedBox(
@@ -66,26 +71,91 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                 child: Container(
                   width : 32,
                   height : 32,
-                  decoration: const BoxDecoration(
-                    color : Color.fromRGBO(56, 56, 56, 0.5),
+                  decoration: BoxDecoration(
+                    color : const Color.fromRGBO(0, 0, 0, 0.25),
+                    border : Border.all(color: LightStyle.white,width: 0.5),
                     borderRadius: RowContainer.radius,
                   ),
-                  margin : const EdgeInsets.only(top: 56,right: 32),
+                  margin : EdgeInsets.symmetric(
+                    vertical: width * 0.1,
+                    horizontal: height * 0.1
+                  ),
                   child : IconButton(
                     onPressed: () => Get.back(),
                     icon : SvgPicture.asset(
                       "assets/icons/common/close.svg",
-                      width : 12,
-                      height : 12,
+                      width : 16,
+                      height : 16,
                       colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     )
                   )
                 )
-              )
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child : imgZoomBottom(context,pageId : widget.page),
+              ),
             ],
           );
         },
-      )
+      ),
     );
   }
+}
+
+Widget imgZoomBottom(BuildContext context,{
+  int? pageId
+}){
+  final double width = MediaQuery.of(context).size.width;
+  final double height = MediaQuery.of(context).size.width;
+  return (pageId != null)?Container(
+    margin : EdgeInsets.symmetric(
+      vertical: width * 0.1,
+      horizontal: height * 0.1
+    ),
+    decoration: BoxDecoration(
+      color : const Color.fromRGBO(0, 0, 0, 0.25),
+      border : Border.all(color: LightStyle.white,width: 0.5),
+      borderRadius: RowContainer.radius
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width : 36,
+          height : 36,
+          child: IconButton(
+            onPressed: (){},
+            icon : SvgPicture.asset(
+              "assets/icons/post/star-empty.svg",
+              width : 32 , height : 32,
+              fit: BoxFit.cover,
+              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+            )
+          ),
+        ),
+        const SizedBox(width : 32),
+        SizedBox(
+         width : 36,
+          height : 36,
+          child: IconButton(
+            onPressed: ()=>showModalBottomSheet(
+              useRootNavigator: true,
+              context: context,
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              builder: (BuildContext context){
+                return ShareModal(id : pageId);
+            }),
+            icon : SvgPicture.asset(
+              "assets/icons/post/share.svg",
+              width : 32 , height : 32,
+              fit: BoxFit.cover,
+              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+            )
+          ),
+        ),
+      ],
+    ),
+  ):const SizedBox.shrink();
 }
