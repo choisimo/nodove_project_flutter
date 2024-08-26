@@ -14,6 +14,7 @@ import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:shimmer/shimmer.dart';
+import "dart:math" as math;
 
 class CatePage extends StatefulWidget {
   final int page;
@@ -23,103 +24,30 @@ class CatePage extends StatefulWidget {
   State<CatePage> createState() => _CatePageState();
 }
 
-class _CatePageState extends State<CatePage> {
-
+class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin {
+  late TabController tabController =
+  TabController(
+    length: 2,
+    vsync: this,
+    initialIndex: 0,
+  );
+  ScrollController _scrollController = ScrollController();
+  CateListModel con = Get.put(CateListModel());
+  Future<void> refresh() async{
+    con.getCate(
+      page : widget.page,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     Get.put(PageState());
-    bool popupOpen = false;
     final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
     final arg = arguments['backName'];
 
     NavbarContent navbarOpt = NavbarContent(
       title : (arg !=null )?
       navbarTitle(context, arg, 20)
-      :PopupMenuButton(
-        color : Theme.of(context).colorScheme.onPrimary,
-        shadowColor: Colors.transparent,
-        onOpened: () => setState((){popupOpen=true;}),
-        onCanceled: () => setState((){popupOpen=false;}),
-        shape : TooltipShape(
-          vertical : 125,
-          borderColor : Theme.of(context).colorScheme.shadow
-        ),
-        offset : const Offset(0,36),
-        itemBuilder: (BuildContext context) {
-          return [
-            PopupMenuItem(
-              child: Row(
-                children : [
-                  SizedBox(
-                    width : 24,
-                    child: SvgPicture.asset(
-                      "assets/icons/navbar/menu.svg",
-                      width : 10 , height : 10,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                    ),
-                  ),
-                  navbarTitle(context,"카테고리",20)
-                ]
-              ),
-              onTap: () {
-                print('카테고리 선택');
-              },
-            ),
-            PopupMenuItem(
-              child: Row(
-                children :[
-                  SizedBox(
-                    width : 24,
-                    child: SvgPicture.asset(
-                      "assets/icons/navbar/hashtag.svg",
-                      width : 12 , height : 12,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                    ),
-                  ),
-                  navbarTitle(context,"태그",20)
-                ]
-              ),
-              onTap: () {
-                print('태그 선택');
-              }
-            ),
-            PopupMenuItem(
-              child: Row(
-                children :[
-                  SizedBox(
-                    width : 24,
-                    child: SvgPicture.asset(
-                      "assets/icons/navbar/navi.svg",
-                      width : 12 , height : 12,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                    ),
-                  ),
-                  navbarTitle(context,"내 위치",20)
-                ]
-              ),
-              onTap: () {
-                print('위치 선택');
-              }
-            ),
-          ];
-        },
-        child: Row(
-          children : [
-            navbarTitle(context,"카테고리",20),
-            Rotate(
-              angle : (popupOpen)?270:90,
-              child: SizedBox(
-                width : 20,
-                child: SvgPicture.asset(
-                  "assets/icons/common/right.svg",
-                  width : 12 , height : 12,
-                   colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                ),
-              ),
-            ),
-          ]
-        )
-      ),
+      :navbarTitle(context,"카테고리",20),
       actions : [
         navbarCommonBtn(
           context,
@@ -132,9 +60,56 @@ class _CatePageState extends State<CatePage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: plusButton(),
       appBar: navbarTop(context,navbarOpt,false),
-      body : CateList(
-        page : widget.page,
-      ),
+      body : customRefreshIndicator(
+        context, 
+        onRefresh: ()=>refresh(),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  labelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  controller: tabController,
+                  labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  indicatorWeight: 0.5,
+                  unselectedLabelColor: Theme.of(context).colorScheme.secondary,
+                  tabs: const [
+                    Tab(text: "최신"),
+                    Tab(text: "구독"),
+                  ],
+                ),
+              ),
+              pinned: true,
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child : TabBarView(
+                  controller: tabController,
+                  children: [
+                    CateList(
+                      page : widget.page,
+                    ),
+                    const Text("빈 텍스트")
+                  ],
+                )
+              )
+            )
+          ],
+        )
+      )
     );
   }
   Widget plusButton(){
@@ -153,9 +128,15 @@ class _CatePageState extends State<CatePage> {
 
 class CateList extends StatefulWidget {
   final int page;
+  final String? url;
+  final String? opt;
+  final int? selection;
   const CateList({
     super.key,
     required this.page,
+    this.url,
+    this.opt,
+    this.selection
   });
 
   @override
@@ -172,43 +153,48 @@ class _CateListState extends State<CateList> {
     super.initState();
   }
   Future<void> refresh() async{
-    con.getCate(widget.page);
+    con.getCate(
+      page : widget.page,
+      url : widget.url,
+      opt : widget.opt
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return customRefreshIndicator(
-      context,
-      onRefresh: ()=>refresh(),
-      child: Obx((){
-          list = con.catelist;
-          if (con.isFetching.isTrue){
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 7,
-              itemBuilder: (context,index){
-                return const CateRowSkel();
-              }
-            );
-          } else if (list.isEmpty){
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 1,
-              itemBuilder: (context,index){
-                return const Text("카테고리가 없어요");
-              }
-            );
-          } else{
-            return ListView.builder(
-              itemCount: list.length,
-              itemBuilder :(context, index) {
-                return CateRow(props: list[index],key : Key("${list[index].categoryId}"));
-              },
-            );
+    return Obx((){
+      list = con.catelist;
+      if (con.isFetching.isTrue){
+        return ListView.builder(
+          shrinkWrap: (widget.selection != null),
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 7,
+          itemBuilder: (context,index){
+            return const CateRowSkel();
           }
-        }
-      )
-    );
+        );
+      } else if (list.isEmpty){
+        return ListView.builder(
+          shrinkWrap: (widget.selection != null),
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 1,
+          itemBuilder: (context,index){
+            return const Text("카테고리가 없어요");
+          }
+        );
+      } else{
+        print(list);
+        return ListView.builder(
+          shrinkWrap: (widget.selection != null),
+          physics: (widget.selection != null)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
+          itemCount: math.min(widget.selection??list.length,list.length),
+          itemBuilder :(context, index) {
+            return CateRow(props: list[index],key : Key("${list[index].categoryId}"));
+          },
+        );
+      }
+    }
+  );
   }
 }
 class CateRow extends StatefulWidget {
@@ -342,7 +328,7 @@ class _CateRowState extends State<CateRow> {
                   icon: SvgPicture.asset(
                     "assets/icons/common/right.svg",
                     width : 16 , height : 16,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   ),
                   onPressed: ()=>Navigator.push(
                     context,
@@ -436,3 +422,28 @@ class CateRowSkel extends StatelessWidget {
     );
   }
 }
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+    _SliverAppBarDelegate(this._tabBar);
+
+    final TabBar _tabBar;
+
+    @override
+    double get minExtent => _tabBar.preferredSize.height;
+    @override
+    double get maxExtent => _tabBar.preferredSize.height;
+
+    @override
+    Widget build(
+        BuildContext context, double shrinkOffset, bool overlapsContent) {
+      return Container(
+        color : Theme.of(context).colorScheme.onPrimary,
+        child: _tabBar,
+      );
+    }
+
+    @override
+    bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+      return false;
+    }
+  }

@@ -355,7 +355,7 @@ class _FeedListState extends State<FeedList> {
             itemBuilder: (context,index) {
               return const Text("피드가 없어요");
             });
-        } else{
+        } else {
           return CustomScrollView(
             controller: _scrollController,
             physics: (widget.scrollEnabled)?const AlwaysScrollableScrollPhysics():
@@ -379,10 +379,12 @@ class _FeedListState extends State<FeedList> {
 class CollectedVList extends StatefulWidget {
   final String url;
   final String opt;
+  final String? title;
   const CollectedVList({
     super.key,
     required this.url,
-    required this.opt
+    required this.opt,
+    this.title
   });
 
   @override
@@ -411,37 +413,58 @@ class _CollectedVListState extends State<CollectedVList> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Obx((){
-        if(con.isFetching.isTrue||con.feedList.isEmpty){
-          return SizedBox(
-            height : 298,
-            child: ListView.builder(
-              itemCount: 5,
-              scrollDirection: Axis.horizontal,
-              itemBuilder:(context,index){
-                return Shimmer.fromColors(
-                  baseColor: Theme.of(context).colorScheme.surface,
-                  highlightColor: Theme.of(context).colorScheme.onPrimary,
-                  child: const CollectedVRowSkel()
-                );
-              }
-            ),
-          );
-        } else{
-          return SizedBox(
-            height : 298,
-            child: ListView.builder(
-              shrinkWrap : true,
-              itemCount: con.feedList.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder:(context,index){
-                return CollectedVRow(props: con.feedList[index]);
-              }
-            ),
-          );
-        }
-      });
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.title??"",
+            style : TextStyle(
+              fontSize : 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface
+            )
+          )
+        ),
+        Obx((){
+          if(con.isFetching.isTrue){
+            return SizedBox(
+              height : 298,
+              child: ListView.builder(
+                itemCount: 5,
+                scrollDirection: Axis.horizontal,
+                itemBuilder:(context,index){
+                  return Shimmer.fromColors(
+                    baseColor: Theme.of(context).colorScheme.surface,
+                    highlightColor: Theme.of(context).colorScheme.onPrimary,
+                    child: const CollectedVRowSkel()
+                  );
+                }
+              ),
+            );
+          } else if(con.feedList.isEmpty){
+            return const SizedBox(
+              height : 298,
+              child : Center(child: Text("피드가 없어요..."))
+            );
+          }
+          else{
+            return SizedBox(
+              height : 298,
+              child: ListView.builder(
+                shrinkWrap : true,
+                itemCount: con.feedList.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder:(context,index){
+                  return CollectedVRow(props: con.feedList[index]);
+                }
+              ),
+            );
+          }
+        })
+      ],
+    );
+    
   }
 }
 

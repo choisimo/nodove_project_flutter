@@ -9,6 +9,7 @@ import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/notification/notisetting.dart';
 import 'package:nodove_flutter/src/page/user/userpage.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -31,7 +32,10 @@ class NotiPage extends StatelessWidget {
         navbarCommonBtn(
           context,
           "assets/icons/common/setting.svg",
-          cb : (){},
+          cb : ()=>Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_)=>const NotiSettingPage())
+          ),
         ),
       ]
     );
@@ -68,45 +72,45 @@ class _NotiListState extends State<NotiList> {
     return customRefreshIndicator(
       context,
       onRefresh: ()=>initLoad(),
-      child: Obx((){
-        if (con.isFetching.isTrue){
-          return ListView.builder(
-            itemCount: 5,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context,index){
-              return Shimmer.fromColors(
-                baseColor: Theme.of(context).colorScheme.surface,
-                highlightColor: Theme.of(context).colorScheme.onPrimary,
-                child: Container(
-                  height : 96,
-                  margin : const EdgeInsets.symmetric(vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color : Theme.of(context).colorScheme.onPrimary,
-                    boxShadow: [
-                      BoxShadow(
-                        color : Theme.of(context).colorScheme.shadow,
-                        offset: RowContainer.offset,
-                        blurRadius: RowContainer.blurRadius
-                      )
-                    ],
-                  ),
-                )
-              );
-            }
-          );
-        } else if (con.notilist.isEmpty){
-          return ListView.builder(
-            itemCount: 1,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (context,index) {
-             return const Text("알림이 없어요");
-            }
-          );
-        } else {
-          return SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: ListView.builder(
-              shrinkWrap: true,
+      child: SizedBox(
+        height : MediaQuery.of(context).size.height,
+        child : Obx((){
+          if (con.isFetching.isTrue){
+            return ListView.builder(
+              itemCount: 5,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context,index){
+                return Shimmer.fromColors(
+                  baseColor: Theme.of(context).colorScheme.surface,
+                  highlightColor: Theme.of(context).colorScheme.onPrimary,
+                  child: Container(
+                    height : 96,
+                    margin : const EdgeInsets.symmetric(vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color : Theme.of(context).colorScheme.onPrimary,
+                      boxShadow: [
+                        BoxShadow(
+                          color : Theme.of(context).colorScheme.shadow,
+                          offset: RowContainer.offset,
+                          blurRadius: RowContainer.blurRadius
+                        )
+                      ],
+                    ),
+                  )
+                );
+              }
+            );
+          } else if (con.notilist.isEmpty){
+            return ListView.builder(
+              itemCount: 1,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context,index) {
+              return const Text("알림이 없어요");
+              }
+            );
+          } else {
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: con.notilist.length,
               itemBuilder:(BuildContext context,int index){
                 return Dismissible(
@@ -139,10 +143,10 @@ class _NotiListState extends State<NotiList> {
                   )
                 );
               }
-            ),
-          );
-        }
-      }),
+            );
+          }
+        }),
+      )
     );
   }
 }
@@ -159,9 +163,7 @@ class NotiRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final NotiListModel con = Get.put(NotiListModel());
     return GestureDetector(
-      onTap: (){
-
-      },
+      onTap: ()=>Get.to(()=>FeedPage(page: notification.postId,)),
       onLongPress: (){
         showModalBottomSheet(
           useRootNavigator : true,
@@ -184,7 +186,7 @@ class NotiRow extends StatelessWidget {
                   title: "유저 보기",
                   cb: (){
                     Get.back();
-                    //Get.toNamed(()=>);
+                    //Get.toNamed(()=>UserPage(id : notification.));
                   },
                 ),
                 const MenuTitle(title: "이 알림"),
@@ -230,9 +232,9 @@ class NotiRow extends StatelessWidget {
                     children: [
                       Text(
                         notification.senderNickname,
-                        style : const TextStyle(
+                        style : TextStyle(
                           fontSize: 18,
-                          color : CommonStyle.second,
+                          color : Theme.of(context).colorScheme.onPrimaryFixed,
                           fontWeight: FontWeight.bold,
                         )
                       ),

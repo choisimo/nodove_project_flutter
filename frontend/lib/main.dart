@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/src/page/list/mainlist.dart';
 import 'package:nodove_flutter/src/page/list/taglist.dart';
 import 'package:nodove_flutter/src/page/messenger/room.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
@@ -61,7 +62,7 @@ class MyHome extends StatefulWidget{
 List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
   const RoomPage(key : Key('messengerPage')),
-  const CatePage(page: 0,key : Key('listPage')),
+  const FeedMainPage(key : Key('listPage')),
   const NotiPage(key : Key("notiPage")),
   const UserPage(key : Key('userPage')),
 ];
@@ -136,11 +137,13 @@ class _MainPageState extends State<MainPage> {
             children: [
               CollectedVList(
                 url : "${Url.apiUrl}${Url.feedList}",
-                opt : "pageSize=$maxSize&categoryId=$companyPage"
+                opt : "pageSize=$maxSize&categoryId=$companyPage",
+                title : "대학홍보"
               ),
               CollectedVList(
                 url : "${Url.apiUrl}${Url.feedList}",
-                opt : "pageSize=$maxSize&categoryId=$univPage"
+                opt : "pageSize=$maxSize&categoryId=$univPage",
+                title : "창업정보"
               ),
             ]
           ),

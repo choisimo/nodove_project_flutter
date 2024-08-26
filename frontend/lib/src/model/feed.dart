@@ -13,8 +13,8 @@ class Feed{
   final String? status;
   final String createdAt;
   final String updatedAt;
-  final int likeCount;
-  final int commentCount;
+  final dynamic likeCount;
+  final dynamic commentCount;
   final List<dynamic> hashtags;
   final List<dynamic> imageLinks;
   final bool private;
@@ -31,8 +31,8 @@ class Feed{
     this.status,
     required this.createdAt,
     required this.updatedAt,
-    required this.likeCount,
-    required this.commentCount,
+    this.likeCount = 0,
+    this.commentCount = 0,
     required this.hashtags,
     required this.imageLinks,
     required this.private,

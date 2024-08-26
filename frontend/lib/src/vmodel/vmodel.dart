@@ -203,8 +203,8 @@ class UserInfoModel extends GetxController{
     "phone": null,
     "email": null,
     "role": "USER",
-    "birthDate": null,
-    "gender": null,
+    "birthDate": DateTime.now(),
+    "gender": 'M',
     "profile": null,
     "code": null,
     "private": false,
@@ -226,6 +226,10 @@ class UserInfoModel extends GetxController{
       joinForm[key] = value;
     }
   }
+  Future<bool> postJoin() async{
+    final result = await _feedRepo.postJoin(joinForm);
+    return result;
+  }
 }
 class CateListModel extends GetxController{
   final FeedRepo _feedrepo = FeedRepo();
@@ -235,17 +239,17 @@ class CateListModel extends GetxController{
   RxBool isLastAppend = false.obs;
   RxBool isSubscribed = false.obs;
 
-  Future<void> getCate(int page) async{
+  Future<void> getCate({int page = 0,String? url,String? opt}) async{
     List<Categories> list = [];
+    final optStr = opt??"";
+    String urlStr = "";
     isFetching(true);
     if (page > 0){
-      String opt = "";
-      String url = "${Url.apiUrl}/categories/getAllCategoriesByParentId/$page";
-      list = await _feedrepo.getCateList(url,opt,true);
+      urlStr = url??"${Url.apiUrl}/categories/getAllCategoriesByParentId/$page";
+      list = await _feedrepo.getCateList(urlStr,optStr,true);
     } else {
-      String opt = "";
-      String url = "${Url.apiUrl}/categories/getDepth1Categories";
-      list = await _feedrepo.getCateList(url,opt,false);
+      urlStr = url??"${Url.apiUrl}/categories/getDepth1Categories";
+      list = await _feedrepo.getCateList(urlStr,optStr,false);
     }
     isFetching(false);
     if (list.isNotEmpty){

@@ -65,6 +65,9 @@ class Themes{
         foregroundColor: LightStyle.backStr
       )
     ),
+    switchTheme: const SwitchThemeData(
+      trackColor: WidgetStatePropertyAll(CommonStyle.first),
+    ),
     cardColor: LightStyle.white,
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
@@ -86,6 +89,9 @@ class Themes{
     dividerColor: DarkStyle.backStr,
     appBarTheme : const AppBarTheme(
       backgroundColor: DarkStyle.white
+    ),
+    switchTheme: const SwitchThemeData(
+      trackColor: WidgetStatePropertyAll(CommonStyle.third),
     ),
     cardColor: DarkStyle.white,
     textButtonTheme: TextButtonThemeData(

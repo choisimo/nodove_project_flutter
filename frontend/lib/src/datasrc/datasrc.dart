@@ -24,6 +24,7 @@ class DataSrc{
   
   Future<List<Feed>?> getFeedList(int page,String url,String opt) async{
     try{
+      print("$url/$page?$opt");
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
@@ -96,6 +97,7 @@ class DataSrc{
 
   Future<List<Categories>> getCateList(String url,String opt,bool child) async{
     try{
+      print("$url$opt");
       final res = await dio.get("$url$opt");
       final data = (child)?res.data[0]['children']:res.data;
       return data.map<Categories>((json)=>Categories.fromJson(json)).toList();
@@ -165,6 +167,41 @@ class DataSrc{
     }catch(e){
       log("불러오기 에러 : $e");
       return User.defaultState();
+    }
+  }
+
+  Future<bool> postJoin(Map<String,dynamic> formData) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.post(
+        "${Url.apiUrl}/join",
+        data : formData
+      );
+      if (res.statusCode == 200){
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e){
+      return false;
+    }
+  }
+
+  Future<bool> postCode(String email) async{
+    try{
+      final res = await dio.post(
+        "${Url.apiUrl}/emailSend",
+        data : {
+          "email" : email
+        }
+      );
+      if (res.statusCode == 200){
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e){
+      return false;
     }
   }
 
