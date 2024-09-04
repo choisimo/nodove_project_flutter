@@ -243,4 +243,16 @@ class DataSrc{
       return [];
     }
   }
+
+  Future<List<Noti>> getChatRoomList() async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.get(
+        "${Url.apiUrl}/restrict/user/getAllUnReadAlarms"
+      );
+      return res.data.map<Noti>((json)=>Noti.fromJson(json)).toList();
+    }catch(e){
+      return [];
+    }
+  }
 }

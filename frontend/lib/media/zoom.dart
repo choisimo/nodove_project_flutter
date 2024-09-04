@@ -48,7 +48,7 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                     },
                   ).image,
                   onScaleEnd: (BuildContext context,ScaleEndDetails details,PhotoViewControllerValue value){
-                    if (value.scale! < 0.3){
+                    if (value.scale! < 0.2){
                       Get.back();
                     }
                   },

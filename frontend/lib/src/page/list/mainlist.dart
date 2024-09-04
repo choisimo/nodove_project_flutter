@@ -5,6 +5,7 @@ import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/list/feedlist.dart';
+import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 
@@ -100,6 +101,9 @@ class FeedMainList extends StatelessWidget {
               ),
             ),
           ) 
+        ),
+        SliverToBoxAdapter(
+          child: mapPreview(context),
         ),
         SliverToBoxAdapter(
           child : GestureDetector(

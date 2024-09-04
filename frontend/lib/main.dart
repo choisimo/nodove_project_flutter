@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/page/list/mainlist.dart';
 import 'package:nodove_flutter/src/page/list/taglist.dart';
@@ -17,8 +19,30 @@ import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 
-void main(){
+void main() async{
+  await _initializeMap();
   runApp(const MyApp());
+}
+
+Future<void> _initializeMap() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await NaverMapSdk.instance.initialize(
+    clientId: "g69k6e2jkr",
+    onAuthFailed: (ex) => print("네이버 로그인 실패$ex"),
+  );
+}
+
+Future<void> requestLocationPermission() async{
+  LocationPermission permission = await Geolocator.checkPermission();
+  
+  if (permission == LocationPermission.denied){
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied){
+      return;
+    }
+  }
+
+  
 }
 
 class MyApp extends StatelessWidget{

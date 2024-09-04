@@ -66,7 +66,12 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     int size = 15;
-    List<String> tabList = ["홈","피드","구독","활동"];
+    List<Widget> tabList = const [
+      Tab(text: "홈"),
+      Tab(text: "피드"),
+      Tab(text: "구독"),
+      Tab(text: "활동"),
+    ];
     return Container(
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
@@ -100,12 +105,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                       labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
                       indicatorWeight: 0.5,
                       unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-                      tabs: const [
-                        Tab(text: "홈"),
-                        Tab(text: "피드"),
-                        Tab(text: "구독"),
-                        Tab(text: "활동"),
-                      ],
+                      tabs: tabList,
                     ),
                   ),
                   pinned: true,
@@ -134,12 +134,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                     labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     indicatorWeight: 0.5,
                     unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-                    tabs: const [
-                      Tab(text: "홈"),
-                      Tab(text: "피드"),
-                      Tab(text: "구독"),
-                      Tab(text: "활동"),
-                    ],
+                    tabs: tabList,
                   ),
                 ),
                 pinned: true,

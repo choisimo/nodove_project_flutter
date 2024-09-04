@@ -54,6 +54,9 @@ dependencies:
   flutter_quill : 
   sign_in_with_apple : 
   fluttertoast : 
+  flutter_naver_map : 
+  video_player :
+  geolocator : 
 
 dev_dependencies:
   flutter_test:

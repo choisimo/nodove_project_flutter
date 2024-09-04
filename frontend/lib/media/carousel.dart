@@ -50,7 +50,10 @@ class _CarouselState extends State<Carousel> {
       items: imageLinks.asMap().entries.map((i){
         return Builder(
           builder: (BuildContext context) {
-            return SizedBox(
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSecondary
+              ),
               width : MediaQuery.of(context).size.width,
               child : GestureDetector(
                 onScaleStart: (detail){
@@ -73,7 +76,7 @@ class _CarouselState extends State<Carousel> {
                   tag : "$page-${imageLinks[i.key]}",
                   child: customImage(
                     imageLinks[i.key],
-                    fit : BoxFit.cover,
+                    fit : BoxFit.contain,
                   ),
                 )
               )
