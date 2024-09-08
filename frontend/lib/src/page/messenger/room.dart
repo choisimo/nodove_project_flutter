@@ -97,7 +97,7 @@ class RoomRow extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            room.user.nickname,
+                            room.user.username,
                             style : TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

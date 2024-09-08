@@ -63,7 +63,7 @@ Widget nextBtn(BuildContext context,{String? displayText,Function? callback}){
 
 class etcBtn extends StatefulWidget {
   final Function? cb;
-  final int id;
+  final dynamic id;
   const etcBtn({super.key , this.cb , required this.id});
 
   @override
@@ -74,7 +74,7 @@ class _etcBtnState extends State<etcBtn> {
   @override
   Widget build(BuildContext context) {
     final Function? cb = widget.cb;
-    final int id = widget.id;
+    final String id = widget.id;
     return SizedBox(
       width : 42,
       height : 42,

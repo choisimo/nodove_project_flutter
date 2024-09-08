@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
@@ -289,5 +290,26 @@ class NotiListModel extends GetxController{
   }
   Future<void> deleteNotification(int index) async{
     notilist.removeAt(index);
+  }
+}
+
+class RoomListModel extends GetxController{
+  final FeedRepo _feedrepo = FeedRepo();
+  RxList<Room> roomlist = <Room>[].obs;
+  RxBool isFetching = false.obs;
+  RxBool isFragFetching = false.obs;
+  RxBool isLastAppend = false.obs;
+
+  Future<void> getNofification() async{
+    if (isFetching.isFalse){
+      isFetching(true);
+      List<Room> list = await _feedrepo.getUserRooms();
+      isFetching(false);
+      if (list.isNotEmpty){
+        roomlist(list);
+      } else{
+        roomlist([]);
+      }
+    }
   }
 }

@@ -1,16 +1,15 @@
 import 'dart:developer';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
-import 'package:nodove_flutter/src/model/tag.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -244,13 +243,13 @@ class DataSrc{
     }
   }
 
-  Future<List<Noti>> getChatRoomList() async{
+  Future<List<Room>> getChatRoomList() async{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get(
-        "${Url.apiUrl}/restrict/user/getAllUnReadAlarms"
+        "${Url.chatUrl}/chat/user/restrict/room/userRooms"
       );
-      return res.data.map<Noti>((json)=>Noti.fromJson(json)).toList();
+      return res.data.map<Room>((json)=>Room.fromJson(json)).toList();
     }catch(e){
       return [];
     }

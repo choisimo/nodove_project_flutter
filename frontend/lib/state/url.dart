@@ -1,7 +1,9 @@
 class Url{
   static const selfUrl = "localhost";
   static const serverUrl = "https://career-block.com";
+  static const chatServerUrl = "http://localhost:5050";
   static const apiUrl = "/api";
+  static const chatUrl = "/chat";
   static const clientList = "/list";
   static const feedList = "/getPostByList";
   static const feedPage = "/getPostByPostId";

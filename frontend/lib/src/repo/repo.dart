@@ -2,6 +2,7 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
@@ -47,5 +48,8 @@ class FeedRepo{
   }
   Future<List<Noti>> getNotiList(){
     return _source.getNotificationList();
-  } 
+  }
+  Future<List<Room>> getUserRooms(){
+    return _source.getChatRoomList();
+  }
 }
