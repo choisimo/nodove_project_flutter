@@ -74,7 +74,7 @@ class _etcBtnState extends State<etcBtn> {
   @override
   Widget build(BuildContext context) {
     final Function? cb = widget.cb;
-    final String id = widget.id;
+    final dynamic id = widget.id;
     return SizedBox(
       width : 42,
       height : 42,
@@ -98,7 +98,7 @@ class _etcBtnState extends State<etcBtn> {
         )
       ),
     );
-    }
+  }
 }
 
 PopupMenuItem popupMenu(BuildContext context,{

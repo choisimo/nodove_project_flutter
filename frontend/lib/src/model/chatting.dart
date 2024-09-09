@@ -2,8 +2,8 @@ import 'package:nodove_flutter/src/model/user.dart';
 
 class Room{
   final String roomId;
-  final String? roomName;
-  final String? profile;
+  final String roomName;
+  final String profile;
   final ChatUser user;
   final ChatContent lastMsg;
   
@@ -11,8 +11,8 @@ class Room{
     required this.roomId,
     required this.user,
     required this.lastMsg,
-    this.roomName,
-    this.profile,
+    required this.roomName,
+    required this.profile,
   });
 
   factory Room.fromJson(Map<String,dynamic> json){
@@ -21,17 +21,17 @@ class Room{
     final lastMsg = room['lastMessage'];
     return Room(
       roomId: json['id'],
-      roomName : room['id'],
+      roomName : room['roomName'],
       profile : room['profile'],
       user : ChatUser(
         id : user['id'],
         userId : user['userId'],
         username : user['username'],
         lastOnline : user['lastOnline'],
-        profile : user['profile'],
+        profile : user['profileImage'],
       ),
       lastMsg: ChatContent(
-        chatId: lastMsg['id'],
+        chatId: lastMsg['id']??0,
         content : lastMsg['content'],
         createdAt: lastMsg['timestamp']
       )
@@ -67,7 +67,7 @@ class ChatUser{
   final String userId;
   final String username;
   final String profile;
-  final DateTime lastOnline;
+  final dynamic lastOnline;
   final String id;
 
   ChatUser({
@@ -80,7 +80,7 @@ class ChatUser{
 }
 
 class LastMsg{
-  final int id;
+  final dynamic id;
   final String content;
   final String timestamp;
 

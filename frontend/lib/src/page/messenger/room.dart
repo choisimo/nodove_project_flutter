@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/dateTime.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
@@ -8,6 +9,7 @@ import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/src/page/messenger/message.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/dummy.dart';
 
@@ -22,7 +24,21 @@ class RoomPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,false,),
-      body : const RoomList()
+      body : const RoomList(),
+      floatingActionButton: plusButton(context),
+    );
+  }
+  Widget plusButton(BuildContext context){
+    return FloatingActionButton(
+      heroTag: 'chattingRoom',
+      onPressed: (){},
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+      child : SvgPicture.asset(
+        'assets/icons/navbar/noBorderAdd.svg',
+        width : 24,
+        height : 24,
+        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+      )
     );
   }
 }
@@ -35,12 +51,20 @@ class RoomList extends StatefulWidget {
 }
 
 class _RoomListState extends State<RoomList> {
+  RoomListModel con = Get.put(RoomListModel());
+
+  @override
+  void initState() {
+    con.getRoomList();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    final list = Dump.friendLists;
-    return customRefreshIndicator(
+    final list = con.roomlist;
+    return Obx(()=>
+    customRefreshIndicator(
       context,
-      onRefresh: ()=>Future.sync(()=>setState((){})),
+      onRefresh: ()=>Future.sync(()=>con.getRoomList()),
       child : CustomScrollView(
         slivers: [
           SliverList.builder(
@@ -52,7 +76,7 @@ class _RoomListState extends State<RoomList> {
         ],
         physics: const AlwaysScrollableScrollPhysics(),
       )
-    );
+    ));
   }
 }
 
@@ -85,10 +109,20 @@ class RoomRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Profile(
-                  profile : room.user.profile,
-                  width : 56,height : 56,
-                  borderRadius: 2,
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Profile(
+                      profile : room.profile,
+                      width : 64,height : 64,
+                      borderRadius: 2,
+                    ),
+                    Profile(
+                      profile : room.user.profile,
+                      width : 32,height : 32,
+                      borderRadius: 1,
+                    )
+                  ],
                 ),
                 Expanded(
                   child: Column(
@@ -96,13 +130,16 @@ class RoomRow extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            room.user.username,
-                            style : TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary
-                            )
+                          Flexible(
+                            child: Text(
+                              room.roomName.split("_")[0],
+                              overflow: TextOverflow.ellipsis,
+                              style : TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary
+                              )
+                            ),
                           ),
                           const SizedBox(width : 4),
                           Text(

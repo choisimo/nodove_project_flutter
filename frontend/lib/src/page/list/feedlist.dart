@@ -201,6 +201,7 @@ class _FeedListPageState extends State<FeedListPage>{
   Widget plusButton(){
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     return FloatingActionButton(
+      heroTag: 'feedList',
       onPressed: () => Get.to(
         ()=>const WritePage(),
         fullscreenDialog: true,

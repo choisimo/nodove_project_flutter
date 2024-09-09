@@ -241,7 +241,7 @@ class NotiRow extends StatelessWidget {
                       Text(
                         "님이 내 피드에 댓글을 남기셨어요",
                         style : TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           color : Theme.of(context).colorScheme.primary,
                         )
                       )

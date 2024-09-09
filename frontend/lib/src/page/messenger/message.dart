@@ -7,6 +7,7 @@ import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/page/list/feedrow.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/dummy.dart';
 
@@ -24,7 +25,7 @@ class MessagePage extends StatelessWidget {
         context,
         callback: ()=>Get.back()
       ),
-      title : navbarTitle(context,room.roomName??room.user.username,16),
+      title : navbarTitle(context,room.roomName.split("_")[0],16),
       actions: [
         etcBtn(id: room.roomId)
       ]
@@ -52,22 +53,23 @@ class MessageList extends StatefulWidget {
 
 class _MessageListState extends State<MessageList> {
   ScrollController scrollController = ScrollController();
+  RoomListModel con = Get.put(RoomListModel());
   @override
   Widget build(BuildContext context) {
     
-    final list = Dump.chatLists;
+    final list = con.roomlist;
     return CustomScrollView(
       primary: false,
       physics: const AlwaysScrollableScrollPhysics(),
       controller: scrollController,
       reverse: true,
       slivers: [
-        SliverList(
+        /*SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => Message(chat : list[index]),
             childCount: list.length,
           ),
-        )
+        )*/
       ],
     );
   }

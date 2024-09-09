@@ -66,6 +66,7 @@ class _FeedPageState extends State<FeedPage>{
     int page = widget.page??int.parse(Get.parameters['page']??'3');
     PageUrl url = ViewPageState.page.comment.value;
     return FloatingActionButton(
+      heroTag: 'comment',
       onPressed: (){
         showModalBottomSheet(
           enableDrag: true,

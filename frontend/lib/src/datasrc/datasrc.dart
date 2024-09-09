@@ -23,7 +23,6 @@ class DataSrc{
   
   Future<List<Feed>?> getFeedList(int page,String url,String opt) async{
     try{
-      print("$url/$page?$opt");
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
@@ -96,7 +95,6 @@ class DataSrc{
 
   Future<List<Categories>> getCateList(String url,String opt,bool child) async{
     try{
-      print("$url$opt");
       final res = await dio.get("$url$opt");
       final data = (child)?res.data[0]['children']:res.data;
       return data.map<Categories>((json)=>Categories.fromJson(json)).toList();
@@ -247,10 +245,12 @@ class DataSrc{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get(
-        "${Url.chatUrl}/chat/user/restrict/room/userRooms"
+        "${Url.chatServerUrl}${Url.chatUrl}/user/restrict/room/userRooms"
       );
-      return res.data.map<Room>((json)=>Room.fromJson(json)).toList();
+      final list = res.data.map<Room>((json)=>Room.fromJson(json)).toList();
+      return list;
     }catch(e){
+      print(e);
       return [];
     }
   }

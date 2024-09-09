@@ -117,7 +117,6 @@ class FeedImageModel extends GetxController{
   void postImages(List<XFile> images) async{
     try{
       final list = await _feedrepo.postImagesRepo(images);
-      print(list);
       imageList.addAll(list);
     } catch (error){
       print("업로드에러 : $error");
@@ -300,7 +299,7 @@ class RoomListModel extends GetxController{
   RxBool isFragFetching = false.obs;
   RxBool isLastAppend = false.obs;
 
-  Future<void> getNofification() async{
+  Future<void> getRoomList() async{
     if (isFetching.isFalse){
       isFetching(true);
       List<Room> list = await _feedrepo.getUserRooms();
