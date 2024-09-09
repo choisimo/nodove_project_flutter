@@ -25,7 +25,7 @@ class MessagePage extends StatelessWidget {
         context,
         callback: ()=>Get.back()
       ),
-      title : navbarTitle(context,room.roomName.split("_")[0],16),
+      title : navbarTitle(context,room.roomName.split("_")[0],18),
       actions: [
         etcBtn(id: room.roomId)
       ]

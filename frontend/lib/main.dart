@@ -41,8 +41,6 @@ Future<void> requestLocationPermission() async{
       return;
     }
   }
-
-  
 }
 
 class MyApp extends StatelessWidget{

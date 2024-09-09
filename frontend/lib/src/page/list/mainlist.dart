@@ -62,7 +62,7 @@ class FeedMainList extends StatelessWidget {
           child : GestureDetector(
             onTap: ()=>Navigator.push(
               context,
-              MaterialPageRoute(builder: (_)=>const CatePage(page: 0))
+              MaterialPageRoute(builder: (_)=>const MapPage())
             ),
             child: Container(
               decoration : boxDecoration,
@@ -103,7 +103,7 @@ class FeedMainList extends StatelessWidget {
           ) 
         ),
         SliverToBoxAdapter(
-          child: mapPreview(context),
+          child: mapPreview(context)
         ),
         SliverToBoxAdapter(
           child : GestureDetector(

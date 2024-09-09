@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/userpage.dart';
@@ -10,7 +9,6 @@ import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/media/carousel.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
-import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
 import 'package:nodove_flutter/tag/tagrow.dart';
 import 'package:nodove_flutter/func/dateTime.dart';

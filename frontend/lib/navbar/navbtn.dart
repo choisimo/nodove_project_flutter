@@ -56,7 +56,7 @@ Widget nextBtn(BuildContext context,{String? displayText,Function? callback}){
         'assets/icons/common/right.svg',
         width : 20,
         height : 20,
-        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimary,BlendMode.srcIn),
       )
   );
 }
