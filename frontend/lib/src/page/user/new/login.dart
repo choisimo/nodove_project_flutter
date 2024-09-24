@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,7 +7,8 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
-import 'package:nodove_flutter/src/page/user/join.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -33,7 +36,9 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         print("아이디 찾기 오류");
       }
-    }
+    } /*else{
+      Get.off(()=>const MyHome());
+    }*/
   }
 
   @override
@@ -46,15 +51,38 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body : FutureBuilder(
-        future : token,
-        builder: (BuildContext context,AsyncSnapshot snapshot) {
-          return SafeArea(child: 
-          (snapshot.hasData)?
-          const SizedBox.shrink()
-          :const LoginForm()
-          );
-        }
+      body : Stack(
+        children: [
+          /*Container(
+            decoration: const BoxDecoration(
+              image : DecorationImage(
+                image : ExactAssetImage(
+                  "assets/images/background.jpg",
+                ),
+                fit : BoxFit.fitHeight,
+                alignment: Alignment(-0.5,0)
+              )
+            ),
+            child : BackdropFilter(
+              filter : ImageFilter.blur(sigmaX: 10 , sigmaY: 10),
+              child: const SizedBox(
+                width : double.infinity,
+                height : double.infinity
+              )
+            ),
+          ),
+          */
+          FutureBuilder(
+            future : token,
+            builder: (BuildContext context,AsyncSnapshot snapshot) {
+              return SafeArea(child: 
+              (snapshot.hasData)?
+              const SizedBox.shrink()
+              :const LoginForm()
+              );
+            }
+          ),
+        ],
       )
     );
   }
@@ -123,44 +151,21 @@ class LoginForm extends StatelessWidget {
                   const Text("로 로그인")
                 ],
               ),
-              TextFormField(
+              commonTextInput(
+                context,
                 onChanged: (str){
                   id = str;
                 },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: RowContainer.radius,
-                    borderSide: BorderSide(
-                      color : Theme.of(context).colorScheme.secondary,
-                      width : 1
-                    )
-                  ),
-                  focusColor: Colors.transparent,
-                  hintText: "아이디",
-                  hintStyle: TextStyle(
-                    color : Theme.of(context).colorScheme.onSurface
-                  )
-                ),
-                keyboardType: TextInputType.text,
+                placeholder: "아이디",
+                keyboard: TextInputType.text,
               ),
-              TextFormField(
+              commonTextInput(
+                context,
                 onChanged: (str){
                   pw = str;
                 },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: RowContainer.radius,
-                    borderSide: BorderSide(
-                      color : Theme.of(context).colorScheme.secondary,
-                      width : 1
-                    )
-                  ),
-                  hintText: "비밀번호",
-                  hintStyle: TextStyle(
-                    color : Theme.of(context).colorScheme.onSurface
-                  )
-                ),
-                obscureText : true 
+                placeholder: "비밀번호",
+                obscureText : true,
               ),
               SizedBox(
                 width : double.infinity,

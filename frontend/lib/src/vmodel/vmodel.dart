@@ -8,8 +8,10 @@ import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
+import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -17,7 +19,7 @@ import 'package:nodove_flutter/state/url.dart';
 class InitViewModel implements Bindings{
   @override
   void dependencies(){
-    Get.create<FeedListModel>(()=>FeedListModel());
+    Get.create<FeedListModel>(()=>FeedListModel(),permanent: false);
     Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
     Get.create<UserInfoModel>(()=> UserInfoModel());
     Get.lazyPut<FeedImageModel>(()=>FeedImageModel());
@@ -113,7 +115,17 @@ class FeedListModel extends GetxController {
 class FeedImageModel extends GetxController{
   final FeedRepo _feedrepo = FeedRepo();
   RxList<dynamic> imageList = <dynamic>[].obs;
-  
+  Rx<String> profile = "".obs;
+
+  void postProfile(XFile image) async{
+    try{
+      final list = await _feedrepo.postImagesRepo([image]);
+      profile(list[0]);
+    } catch (error){
+      print("업로드에러 : $error");
+    }
+  }
+
   void postImages(List<XFile> images) async{
     try{
       final list = await _feedrepo.postImagesRepo(images);
@@ -190,6 +202,27 @@ class CommentPageModel extends GetxController {
   }
 }
 
+class AddRoomModel extends GetxController{
+  final RxMap<String,dynamic> addRoomForm = {
+    "roomName" : "",
+    "profileImage" : null,
+    "isGroup" : false,
+    "memberIds" : []
+  }.obs;
+  void setAddRoom(String key,dynamic value){
+    addRoomForm.addAll({key : value});
+  }
+  Future<bool> addRoom() async{
+    if (addRoomForm['roomName'].length > 0){
+      final result = await DataSrc().postRoom(addRoomForm);
+      return result;
+    } else{
+      showToast("대화 주제를 적어주세요");
+      return false;
+    }
+  }
+}
+
 class UserInfoModel extends GetxController{
   final FeedRepo _feedRepo = FeedRepo();
   Rx<User> userInfo = User.defaultState().obs;
@@ -231,6 +264,7 @@ class UserInfoModel extends GetxController{
     return result;
   }
 }
+
 class CateListModel extends GetxController{
   final FeedRepo _feedrepo = FeedRepo();
   RxList<Categories> catelist = <Categories>[].obs;
@@ -310,5 +344,66 @@ class RoomListModel extends GetxController{
         roomlist([]);
       }
     }
+  }
+
+}
+
+class RecruitListModel extends GetxController{
+  final FeedRepo _feedrepo = FeedRepo();
+  RxList<RecruitFeed> recruitlist = <RecruitFeed>[].obs;
+  late Rx<RecruitFeed?> content;
+  RxBool isFetching = false.obs;
+  RxBool isFragFetching = false.obs;
+  RxBool isLastAppend = false.obs;
+
+  Future<void> deleteRecruitmentFeed(id) async{
+    await _feedrepo.deleteRecruitmentFeed(id);
+    recruitlist.refresh();
+  }
+  Future<void> editRecruitmentFeed(formData,id) async{
+    await _feedrepo.editRecruitmentFeed(formData,id);
+    recruitlist.refresh();
+  }
+
+  Future<void> getRecruitmentPage(id) async{
+    isFetching(true);
+    RecruitFeed feedPage = await _feedrepo.getRecruitmentPage(id);
+    isFetching(false);
+    content(feedPage);
+  }
+
+  Future<void> getRecruitmentFirst(int page,int size) async{
+    try{
+      isLastAppend(false);
+      isFetching(true);
+      final list = await _feedrepo.getRecruitmentList(page,size);
+
+      if (list != null){
+        recruitlist(list);
+        isFetching(false);
+      }
+      else {recruitlist([]);}
+    }catch(error){
+      print(error);
+    }
+  }
+
+  Future<List<RecruitFeed>> getRecruitmentList(int page,int size) async{
+    if (isLastAppend.isFalse&&isFetching.isFalse&&isFragFetching.isFalse){
+      isFragFetching(true);
+      final list = await _feedrepo.getRecruitmentList(page,size);
+      isFragFetching(false);
+      if (list != null){
+        return list;
+      }
+      else {isLastAppend(true); return [];}
+      
+    } else {return [];}
+  }
+  Future<void> appendLastPage(List<RecruitFeed> newData) async{
+    recruitlist.addAll(newData);
+  }
+  Future<void> appendPage(List<RecruitFeed> newData) async{
+    recruitlist.addAll(newData);
   }
 }

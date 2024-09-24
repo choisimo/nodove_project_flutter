@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
+import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
+import 'package:nodove_flutter/src/page/map/map.dart';
+import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
+import 'package:nodove_flutter/src/page/setting/setting.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -29,18 +35,20 @@ class FeedListPage extends StatefulWidget{
 class _FeedListPageState extends State<FeedListPage>{
   final storage = const FlutterSecureStorage();
   late bool collected = false;
-  final int size = 10;
+  int size = 10;
 
   @override
   void initState() {
-    _checkcollected();
+    _checksettings();
     super.initState();
   }
 
-  void _checkcollected() async{
+  void _checksettings() async{
     String? c = await storage.read(key: 'collectedView');
+    String? s = await storage.read(key: 'ContentSize');
     setState((){
       collected = ((c == null)||(c == 'false'))?false:true;
+      size = (s != null)?int.parse(s):10;
     });
   }
 
@@ -50,7 +58,7 @@ class _FeedListPageState extends State<FeedListPage>{
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : backBtn(context,callback: (){Navigator.of(context).pop();}),
+      leading : backBtn(context,callback: ()=>Navigator.of(context).pop()),
       actions: [
         navbarCommonBtn(
           context,
@@ -90,112 +98,94 @@ class _FeedListPageState extends State<FeedListPage>{
   }
   Widget drawer(){
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    final List<Widget> widgetList = [
+      MenuBtn(
+        context : context, iconSize: 12,
+        iconSrc: "assets/icons/navbar/menu.svg",
+        title : "하위 카테고리",
+        cb : ()=>Navigator.of(context).push(
+          MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
+        )
+      ),
+      MenuBtn(
+        context : context, iconSize: 12,
+        iconSrc: "assets/icons/navbar/hashtag.svg",
+        title : "해시태그",
+        cb : (){}
+      ),
+      MenuBtn(
+        context : context, iconSize: 12,
+        iconSrc: "assets/icons/navbar/navi.svg",
+        title : "내 위치",
+        cb : ()=>Navigator.of(context).push(
+          MaterialPageRoute(builder: (_)=>const MapPage())
+        )
+      )
+    ];
     final DataSrc src = DataSrc();
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       child : SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FutureBuilder(
-              future: src.getCateList(
-                "/api/categories/getAllCategoriesByParentId/", 
-                cateid.toString(),
-                false
-              ),
-              builder:(BuildContext context,AsyncSnapshot snapshot) {
-                if (snapshot.data !=null && snapshot.data.length > 0){
-                  List<dynamic> child = snapshot.data![0].children;
-                  return Column(
-                    children: [
-                      const Profile(profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",
-                        width: 96,
-                        height: 96
-                      ),
-                      Text(
-                        snapshot.data![0].categoryName,
-                        style : const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                      Text(
-                        '"${snapshot.data![0].categoryDescription}"',
-                      ),
-                      SizedBox(
-                        height : 64,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FutureBuilder(
+                future: src.getCateList(
+                  "/api/categories/getAllCategoriesByParentId/", 
+                  cateid.toString(),
+                  false
+                ),
+                builder:(BuildContext context,AsyncSnapshot snapshot) {
+                  if (snapshot.data !=null && snapshot.data.length > 0){
+                    List<dynamic> child = snapshot.data![0].children;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text("이미지로 보기"),
-                            Switch(
-                              value: collected,
-                              onChanged: (b)=>
-                              setState((){
-                                collected = !collected;
-                                storage.write(key : 'collectedView',value : collected.toString());
-                              })
+                            IconButton(
+                              onPressed: ()=>Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_)=>const NotiPage())
+                              ),
+                              icon: SvgPicture.asset("assets/icons/navbar/alert.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
+                            ),
+                            IconButton(
+                              onPressed: ()=>Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_)=>const FeedSettingPage())
+                              ),
+                              icon: SvgPicture.asset("assets/icons/common/setting.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
                             )
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        width : double.infinity,
-                        height : MediaQuery.of(context).size.height * 0.45,
-                        child: ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: child.length,
-                          itemBuilder:(context, index) {
-                            return TextButton(
-                              onPressed: ()=> Get.toNamed("/list/${child[index]['categoryId']}",),
-                              child : Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Profile(profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",width : 42,height:42),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Text(child[index]['categoryName'],
-                                          style : const TextStyle(
-                                            fontSize: 20
-                                          )
-                                        ),
-                                        Text('"${child[index]['categoryDescription']}"',
-                                          style : const TextStyle(
-                                            fontSize: 16
-                                          )
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            );
-                          },
+                        const Profile(profile: "",
+                          width: 96,
+                          height: 96,
+                          borderRadius: 2,
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: (){},
-                            icon: SvgPicture.asset("assets/icons/common/setting.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
+                        Text(
+                          snapshot.data![0].categoryName,
+                          style : const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
                           )
-                        ],
-                      )
-                    ],
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
-                }
-              },
-            ),
-          ],
-        ),
-      )
+                        ),
+                        Text(
+                          '"${snapshot.data![0].categoryDescription}"',
+                        ),
+                        ...List.generate(widgetList.length, (index)=>widgetList[index])
+                      ],
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
+                  }
+                },
+              ),
+            ],
+          ),
+      ),
     );
   }
   Widget plusButton(){
@@ -240,7 +230,7 @@ class FeedList extends StatefulWidget {
 }
 
 class _FeedListState extends State<FeedList> {
-  final FeedListModel con = Get.put(FeedListModel());
+  final FeedListModel con = Get.put(FeedListModel(),permanent: false);
   ScrollController _scrollController = ScrollController();
   int pageKey = 0;
 
@@ -323,7 +313,6 @@ class _FeedListState extends State<FeedList> {
           );
         } else{
           return CustomScrollView(
-            primary: false,
             physics: (widget.scrollEnabled)?
             const AlwaysScrollableScrollPhysics():
             const NeverScrollableScrollPhysics(),
@@ -481,3 +470,46 @@ class _CollectedVListState extends State<CollectedVList> {
         },
       )
 */
+
+Widget nestedCategoryView (
+  BuildContext context,
+  List<dynamic> child,
+){
+  return SizedBox(
+    width : double.infinity,
+    height : MediaQuery.of(context).size.height * 0.45,
+    child: ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: child.length,
+      itemBuilder:(context, index) {
+        return TextButton(
+          onPressed: ()=> Get.toNamed("/list/${child[index]['categoryId']}",),
+          child : Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Profile(profile: "",width : 42,height:42),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(child[index]['categoryName'],
+                      style : const TextStyle(
+                        fontSize: 20
+                      )
+                    ),
+                    Text('"${child[index]['categoryDescription']}"',
+                      style : const TextStyle(
+                        fontSize: 16
+                      )
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )
+        );
+      },
+    ),
+  );
+}

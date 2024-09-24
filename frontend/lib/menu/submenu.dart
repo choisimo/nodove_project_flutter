@@ -6,6 +6,7 @@ class MenuBtn extends StatefulWidget {
   final BuildContext context;
   final Function cb;
   final String? iconSrc;
+  final double? iconSize;
   final String title;
   final Color? tcolor;
   const MenuBtn({
@@ -14,7 +15,8 @@ class MenuBtn extends StatefulWidget {
     required this.cb,
     this.iconSrc,
     required this.title,
-    this.tcolor
+    this.tcolor,
+    this.iconSize = 24,
   });
 
   @override
@@ -30,6 +32,7 @@ class _MenuBtnState extends State<MenuBtn> {
     final String? iconSrc = widget.iconSrc;
     final String title = widget.title;
     final Color? tcolor = widget.tcolor;
+    final double? iconSize = widget.iconSize;
     return Container(
       width : MediaQuery.of(context).size.width * 0.95,
       height : 42,
@@ -52,13 +55,14 @@ class _MenuBtnState extends State<MenuBtn> {
                 (iconSrc!= null)?
                 SvgPicture.asset(
                   iconSrc,
-                  width : 24,
-                  height : 24,
+                  width : iconSize,
+                  height : iconSize,
                   colorFilter: ColorFilter.mode(
                     tcolor??Theme.of(context).colorScheme.onSurface ,
                     BlendMode.srcIn
                   ),
                 ): const SizedBox.shrink(),
+                const SizedBox(width : 8),
                 Container(
                   constraints: BoxConstraints(
                     minWidth: constraints.maxWidth * 0.25,

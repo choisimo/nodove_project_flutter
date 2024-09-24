@@ -6,6 +6,7 @@ import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
+import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 
 class FeedRepo{
@@ -51,5 +52,17 @@ class FeedRepo{
   }
   Future<List<Room>> getUserRooms(){
     return _source.getChatRoomList();
+  }
+  Future<List<RecruitFeed>> getRecruitmentList(int page , int size){
+    return _source.getRecruitmentList(page,size);
+  }
+  Future<RecruitFeed> getRecruitmentPage(String id){
+    return _source.getRecruitmentPage(id);
+  }
+  Future<void> deleteRecruitmentFeed(String id) {
+    return _source.deleteRecruitmentFeed(id);
+  }
+  Future<void> editRecruitmentFeed(Map<String,dynamic> formData,String id) {
+    return _source.editRecruitmentFeed(formData,id);
   }
 }

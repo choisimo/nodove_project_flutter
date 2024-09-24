@@ -1,7 +1,14 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 Widget customImage(
@@ -15,7 +22,7 @@ Widget customImage(
   }
 ){
   return 
-    (src.isNotEmpty)?
+    (src.contains("http"))?
     Image.network(
       src,
       fit: fit??BoxFit.contain,
@@ -39,10 +46,17 @@ Widget customImage(
         );
       },
     ):Image.asset(
-      "assets/images/logo.png",
+      src,
       fit: fit??BoxFit.contain,
-      width : width??200,
-      height : height??200,
+      width : width,
+      height : height,
+      errorBuilder: 
+      (context, error, stackTrace){
+        return alt??LottieBuilder.asset(
+          "assets/icons/common/loading.json",
+          width : 64 , height : 64
+        );
+      },
     );
 }
 
@@ -134,14 +148,16 @@ Widget customDialog(
   );
 }
 
-void showToast(String msg){
+void showToast(
+  String msg){
+  final context = GlobalContext.navigatorState.currentContext!;
   Fluttertoast.showToast(
     msg : msg,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.TOP,
     timeInSecForIosWeb: 1,
-    backgroundColor: const Color.fromRGBO(0,0,0,0.5),
-    textColor : Colors.white,
+    backgroundColor: Theme.of(context).colorScheme.primary,
+    textColor : Theme.of(context).colorScheme.onPrimary,
     fontSize : 20,
   );
 }
@@ -149,7 +165,7 @@ void showToast(String msg){
 Widget customRefreshIndicator(
   BuildContext context,{
     bool enabled = true,
-    required Function onRefresh,
+    Function? onRefresh,
     Widget? child,
     Color? strokeColor,
     Color? backgroundColor
@@ -159,7 +175,7 @@ Widget customRefreshIndicator(
     notificationPredicate: (_)=>enabled,
     color : strokeColor??Theme.of(context).colorScheme.onSurface,
     backgroundColor : backgroundColor??Theme.of(context).colorScheme.onPrimary,
-    onRefresh: ()=>onRefresh.call(),
+    onRefresh: ()=>Future.sync(()=>onRefresh?.call()),
     child : child!
   );
 }
@@ -221,4 +237,172 @@ Widget dialogBottomBtn(
     onPressed: ()=>onPressed?.call(),
     child : child
   );
+}
+
+Widget commonTextInput(
+  BuildContext context,{
+    String? placeholder,
+    TextStyle? placeholderStyle,
+    String? key,
+    TextStyle? style,
+    List<TextInputFormatter>? filter,
+    Function? onChanged,
+    int? maxLength,
+    int? maxLines,
+    TextInputType? keyboard,
+    String? initialValue,
+    bool? enabled,
+    bool obscureText = false,
+    double? borderWidth = 0.5,
+    Color? bColor,
+  }
+){
+  final borderColor = bColor??Theme.of(context).colorScheme.onSurface;
+  final TextStyle textStyle = TextStyle(
+    color: Theme.of(context).colorScheme.onSurface,
+  );
+  return TextFormField(
+    initialValue: initialValue,
+    keyboardType: keyboard,
+    maxLength: maxLength,
+    style : style,
+    inputFormatters: filter,
+    obscureText : obscureText,
+    decoration: InputDecoration(
+      counterText: "",
+      focusedBorder: (borderWidth != null)
+      ?OutlineInputBorder(
+        borderRadius: RowContainer.radius,
+        borderSide: BorderSide(
+          color : borderColor,
+          width : borderWidth
+        )
+      ):InputBorder.none,
+      hintText: placeholder,
+      hintStyle: placeholderStyle??textStyle,
+      border: (borderWidth != null)
+      ?OutlineInputBorder(
+        borderRadius: RowContainer.radius,
+        borderSide: BorderSide(
+          color : borderColor,
+          width : borderWidth
+        )
+      ):InputBorder.none,
+      focusColor: Colors.transparent,
+    ),
+    onChanged:(value) => onChanged?.call(value),
+  );
+}
+
+
+Widget profileSetting(
+  BuildContext context,{
+    double width = 104,
+    double height = 104,
+    double iconWidth = 32,
+    double iconHeight = 32,
+    Function(String)? onUpdated,
+    String? current
+  }
+){
+  final ImagePicker _picker = ImagePicker();
+  final FeedImageModel _imageModel = Get.put(FeedImageModel());
+  void profileUpload() async{
+    XFile? selectImage = await _picker.pickImage(
+      source : ImageSource.gallery,
+      maxWidth: 1920,
+      maxHeight: 1080,
+      imageQuality: 30,
+    );
+    if (selectImage != null){
+      _imageModel.postProfile(selectImage);
+      onUpdated?.call(_imageModel.profile.value);
+    }
+  }
+
+  return Stack(
+    alignment: Alignment.bottomRight,
+    children: [
+      Profile(
+        profile : current??"",
+        width : 104,
+        height : 104,
+        borderRadius: 4.0,
+      ),
+      SizedBox(
+        width : 32,
+        height : 32,
+        child : IconButton(
+          style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          ),
+          onPressed: ()=>profileUpload(),
+          icon: SvgPicture.asset(
+            "assets/icons/post/picture.svg",
+            width : 24 , height : 24,
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).colorScheme.onPrimaryFixed,
+              BlendMode.srcIn
+            ),
+          ),
+        )
+      )
+    ],
+  );
+}
+
+class CustomToggle extends StatefulWidget {
+  final List<Widget> childState;
+  final List<Color> childColors;
+  final Function? onChanged;
+  final int? initialIndex;
+  const CustomToggle({
+    super.key,
+    required this.childState,
+    required this.childColors,
+    this.onChanged,
+    this.initialIndex = 0,
+  });
+
+  @override
+  State<CustomToggle> createState() => _CustomToggleState();
+}
+
+class _CustomToggleState extends State<CustomToggle> {
+  int index = 0;
+
+  @override
+  void initState() {
+    setState((){
+      index = widget.initialIndex!;
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> state = widget.childState;
+    List<Color> colors = widget.childColors;
+    return GestureDetector(
+      onTap : (){
+        setState((){
+        if (index < state.length - 1){
+          index += 1;
+        } else {
+          index = 0;
+        }});
+        widget.onChanged?.call(index);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width : 50,
+        height : 25,
+        decoration: BoxDecoration(
+          color : colors[index],
+          borderRadius: RowContainer.radius
+        ),
+        child : Center(child: state[index])
+      ),
+    );
+  }
 }

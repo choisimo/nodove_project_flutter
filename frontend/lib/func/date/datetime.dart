@@ -25,6 +25,20 @@ String getDateDiff(String string){
       return '${createdAt.year}.${createdAt.month}.${createdAt.day}';
     }
 }
+String getFutureDiff(String string){
+    DateTime createdAt = getDateTime(string);
+    final date = DateTime.now();
+    final compared = createdAt.difference(date);
+    if (compared.inMinutes < 1) {
+      return '${compared.inSeconds}초';
+    } else if (compared.inHours < 1) {
+      return '${compared.inMinutes} 분';
+    } else if (compared.inDays < 1) {
+      return '${compared.inHours} 시간';
+    } else {
+      return '${createdAt.year}.${createdAt.month}.${createdAt.day}';
+    }
+}
 String getDateFull(String string){
     DateTime createdAt = getDateTime(string);
     return DateFormat("yyyy월 MM월 dd일 hh시 mm분").format(createdAt);

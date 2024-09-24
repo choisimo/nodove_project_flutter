@@ -8,8 +8,8 @@ import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/writecate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feedlist.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -92,19 +92,15 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
               ),
               pinned: true,
             ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child : TabBarView(
-                  controller: tabController,
-                  children: [
-                    CateList(
-                      page : widget.page,
-                    ),
-                    const Text("빈 텍스트")
-                  ],
-                )
+            SliverFillRemaining(
+              child: TabBarView(
+                controller: tabController,
+                children: [
+                  CateList(
+                    page : widget.page,
+                  ),
+                  const Text("빈 텍스트")
+                ],
               )
             )
           ],
@@ -183,7 +179,6 @@ class _CateListState extends State<CateList> {
           }
         );
       } else{
-        print(list);
         return ListView.builder(
           shrinkWrap: (widget.selection != null),
           physics: (widget.selection != null)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),

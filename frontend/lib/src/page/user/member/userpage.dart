@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
@@ -8,10 +9,10 @@ import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feedlist.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
-import 'package:nodove_flutter/src/page/user/editpage.dart';
-import 'package:nodove_flutter/src/page/user/login.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/user/member/editpage.dart';
+import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -89,31 +90,31 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 child : userButtons(context,user)
               ),
               SliverPersistentHeader(
-                  delegate: _SliverAppBarDelegate(
-                    TabBar(
-                      labelStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                      unselectedLabelStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      controller: tabController,
-                      labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                      indicatorWeight: 0.5,
-                      unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-                      tabs: tabList,
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
+                    indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    controller: tabController,
+                    labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    indicatorWeight: 0.5,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+                    tabs: tabList,
                   ),
-                  pinned: true,
                 ),
+                pinned: true,
+              ),
             ];
           } else {
             sliverList = [
-              customSliverAppbarSkel(context),
+              customSliverAppbarSkel(context,widget.id),
               SliverToBoxAdapter(
                 child : userInfoWithProfileSkel(context),
               ),
@@ -141,28 +142,32 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
               ),
             ];
           }
-          return NestedScrollView(
-            controller: scrollController,
-            headerSliverBuilder : (BuildContext context , bool isScrolled){
-              return sliverList;
-            },
-            body : 
-            (user.userId.isNotEmpty)?
-            TabBarView(
-              controller: tabController,
-              children: [
-                const Text("tab1"),
-                FeedList(
-                  collected: true,
-                  url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
-                  opt : "pageSize=$size",
-                  scrollController : scrollController,
-                  scrollEnabled: true,
-                ),
-                const Text("tab3"),
-                const Text("tab4"),
-              ],
-            ):const SizedBox.shrink()
+          return customRefreshIndicator(context,
+            onRefresh: (){},
+            child: NestedScrollView(
+              controller: scrollController,
+              headerSliverBuilder : (BuildContext context , bool isScrolled){
+                return sliverList;
+              },
+              body : SizedBox(
+                width : MediaQuery.of(context).size.width,
+                child: (user.userId.isNotEmpty)?TabBarView(
+                  controller: tabController,
+                  children: [
+                    const Text("tab1"),
+                    FeedList(
+                      collected: true,
+                      url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
+                      opt : "pageSize=$size",
+                      scrollController : scrollController,
+                      scrollEnabled: false,
+                    ),
+                    const Text("tab3"),
+                    const Text("tab4"),
+                  ],
+                ):const SizedBox.shrink(),
+              )
+            ),
           );
         }
       ),
@@ -187,16 +192,14 @@ Widget customSliverAppbar(BuildContext context ,User info,String? id){
         return [
           popupMenu(
             context,
-            iconSrc: "assets/icons/post/share.svg",
-            title: navbarTitle(context,"복사",20),
+            title: navbarTitle(context, "복사", 16),
             cb : () => copyLink(
               "${Url.serverUrl}${Url.clientUser}?user=${info.userId}",
             )
           ), 
           popupMenu(
             context,
-            iconSrc: "assets/icons/navbar/user.svg",
-            title: navbarTitle(context,"로그아웃",20),
+            title: navbarTitle(context, "로그아웃", 16),
             cb : ()=> showUserDialog(context)
           ), 
         ];
@@ -386,19 +389,9 @@ void showUserDialog (BuildContext context){
   );
 }
 
-Widget customSliverAppbarSkel(BuildContext context){
+Widget customSliverAppbarSkel(BuildContext context,String? id){
   return SliverAppBar(
-    flexibleSpace: FlexibleSpaceBar(
-    background: Shimmer.fromColors(
-        baseColor: Theme.of(context).colorScheme.surface,
-        highlightColor: Theme.of(context).colorScheme.onPrimary,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimaryFixed
-          ),
-        ),
-      ),
-    ),
+    leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
     floating: true,
     pinned: true,
     snap: true,

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/dateTime.dart';
+import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -112,17 +112,15 @@ class _EditUserState extends State<EditUser> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimaryFixed
                     ),
-                    child : TextFormField(
-                      keyboardType: TextInputType.multiline,
+                    child : commonTextInput(
+                      context,
+                      keyboard: TextInputType.multiline,
                       maxLines: null,
                       style : statusStyle,
-                      key : const Key("상태메세지"),
+                      key : "상태메세지",
                       initialValue: "상태메세지",
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "나에 대한 한마디를 추가해보세요",
-                        hintStyle: statusStyle
-                      ),
+                      placeholder: "나에 대한 한마디를 추가해보세요",
+                      placeholderStyle: statusStyle
                     ),
                   ),
                 ),
@@ -130,31 +128,22 @@ class _EditUserState extends State<EditUser> {
                   onTap: (){
                     
                   },
-                  child : Profile(
-                    profile : user.profile,
-                    width : 104,
-                    height : 104,
-                    borderRadius: 4.0,
+                  child : profileSetting(
+                    context,
+                    current : user.profile,
+                    onUpdated: (image){
+
+                    }
                   )
                 ),
                 const SizedBox(height : 8),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: RowContainer.radius,
-                    border : Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 0.5
-                    )
-                  ),
+                SizedBox(
                   width : maxWidth * 0.9,
-                  child: TextFormField(
-                    key : Key(user.nickname),
+                  child: commonTextInput(
+                    context,
+                    key : user.nickname,
                     initialValue: user.nickname,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "닉네임을 적어주세요",
-                      hintStyle: textStyle
-                    ),
+                    placeholder: "닉네임을 적어주세요",
                   ),
                 ),
                 Container(
@@ -246,48 +235,26 @@ class _EditUserState extends State<EditUser> {
                   )
                 ),
                 const SizedBox(height : 8),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: RowContainer.radius,
-                    border : Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 0.5
-                    )
-                  ),
+                SizedBox(
                   width : maxWidth * 0.9,
-                  child : TextFormField(
-                    keyboardType: TextInputType.phone,
+                  child : commonTextInput(
+                    context,
+                    keyboard: TextInputType.phone,
                     maxLength: 17,
-                    inputFormatters: <TextInputFormatter>[
+                    filter: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
                     ], //
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      counterText: "",
-                      hintText: "전화번호를 적어주세요",
-                      hintStyle: textStyle
-                    ),
+                    placeholder: "전화번호를 적어주세요"
                   ),
                 ),
                 const SizedBox(height : 8),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: RowContainer.radius,
-                    border : Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 0.5
-                    )
-                  ),
+                SizedBox(
                   width : maxWidth * 0.9,
-                  child : TextFormField(
-                    keyboardType: TextInputType.emailAddress,
+                  child : commonTextInput(
+                    context,
+                    keyboard: TextInputType.emailAddress,
                     maxLength: 17,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      counterText: "",
-                      hintText: "이메일을 적어주세요",
-                      hintStyle: textStyle
-                    ),
+                    placeholder: "이메일을 적어주세요"
                   ),
                 ),
                 Container(

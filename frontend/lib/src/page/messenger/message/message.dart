@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/dateTime.dart';
+import 'package:nodove_flutter/func/date/dateTime.dart';
+import 'package:nodove_flutter/func/socket/socket.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:nodove_flutter/state/dummy.dart';
+import 'package:nodove_flutter/state/user.dart';
 
-class MessagePage extends StatelessWidget {
+
+class MessagePage extends StatefulWidget {
   final Room room;
   const MessagePage({
     required this.room,
@@ -19,7 +21,27 @@ class MessagePage extends StatelessWidget {
   });
 
   @override
+  State<MessagePage> createState() => _MessagePageState();
+}
+
+class _MessagePageState extends State<MessagePage>
+with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  SocketIO socket = SocketIO();
+  int pageKey = 0;
+  int size = 15;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final Room room = widget.room;
+      socket.loadingPrevious(room.roomId,pageKey,size);
+    });
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    final Room room = widget.room;
     NavbarContent navbarOpt = NavbarContent(
       leading: backBtn(
         context,
@@ -28,6 +50,7 @@ class MessagePage extends StatelessWidget {
       title : navbarTitle(context,room.roomName.split("_")[0],18),
       actions: [
         etcBtn(id: room.roomId)
+        
       ]
     );
     return GestureDetector(
@@ -37,7 +60,9 @@ class MessagePage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: navbarTop(context, navbarOpt, true),
           body : const MessageList(),
-          bottomNavigationBar: const MessageBottomWrite(),
+          bottomNavigationBar: MessageBottomWrite(
+            socket : socket , room : room
+          ),
         ),
       ),
     );
@@ -45,18 +70,20 @@ class MessagePage extends StatelessWidget {
 }
 
 class MessageList extends StatefulWidget {
-  const MessageList({super.key});
+  const MessageList({
+    super.key,
+  });
 
   @override
   State<MessageList> createState() => _MessageListState();
 }
 
-class _MessageListState extends State<MessageList> {
+class _MessageListState extends State<MessageList>{
   ScrollController scrollController = ScrollController();
   RoomListModel con = Get.put(RoomListModel());
+
   @override
   Widget build(BuildContext context) {
-    
     final list = con.roomlist;
     return CustomScrollView(
       primary: false,
@@ -76,7 +103,13 @@ class _MessageListState extends State<MessageList> {
 }
 
 class MessageBottomWrite extends StatefulWidget {
-  const MessageBottomWrite({super.key});
+  final Room room;
+  final SocketIO socket;
+  const MessageBottomWrite({
+    super.key,
+    required this.socket,
+    required this.room
+  });
 
   @override
   State<MessageBottomWrite> createState() => _MessageBottomWriteState();
@@ -85,6 +118,8 @@ class MessageBottomWrite extends StatefulWidget {
 class _MessageBottomWriteState extends State<MessageBottomWrite> {
   @override
   Widget build(BuildContext context) {
+    SocketIO socket = widget.socket;
+    final userState = Get.put(UserState());
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary
@@ -94,7 +129,11 @@ class _MessageBottomWriteState extends State<MessageBottomWrite> {
         child: CustomWrite(
           focus: false,
           callback: (content){
-        
+            socket.sendMessage({
+              "sender": userState.id.value,
+              "content": content,
+              "roomId": widget.room.roomId
+            });
           },
         ),
       ),

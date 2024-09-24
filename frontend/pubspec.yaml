@@ -55,8 +55,10 @@ dependencies:
   sign_in_with_apple : 
   fluttertoast : 
   flutter_naver_map : 
-  video_player :
+  video_player : 
   geolocator : 
+  flutter_native_splash: ^2.4.1
+  socket_io_client: ^2.0.3+1
 
 dev_dependencies:
   flutter_test:
@@ -100,3 +102,7 @@ flutter:
   # example:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+  color: "#edf1f8"
+  color_dark : "#232323"
+  image: "assets/images/logo.png"

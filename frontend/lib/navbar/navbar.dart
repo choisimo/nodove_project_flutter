@@ -27,6 +27,7 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
       shadowColor : Theme.of(context).colorScheme.shadow,
+      scrolledUnderElevation: 0.0,
   )
   :
   AppBar(
@@ -35,6 +36,7 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
       shadowColor : Theme.of(context).colorScheme.shadow,
+      scrolledUnderElevation: 0.0,
   );
 }
 
@@ -59,6 +61,7 @@ class BottomNavbar extends GetView<PageState>{
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
           type: BottomNavigationBarType.fixed,
           unselectedItemColor:Theme.of(context).colorScheme.onSurface,
+          selectedItemColor: Theme.of(context).colorScheme.onPrimaryFixed,
           currentIndex: controller.index.value,
           onTap : controller.setIndex,
           unselectedLabelStyle: const TextStyle(fontSize: 14),
@@ -97,29 +100,29 @@ class BottomNavbar extends GetView<PageState>{
             BottomNavigationBarItem(
               label: '피드',
               icon: SvgPicture.asset(
-                'assets/icons/navbar/menu.svg',
-                width : 18,
-                height : 18,
+                'assets/icons/navbar/summarize.svg',
+                width : 22,
+                height : 22,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
-                'assets/icons/navbar/menu.svg',
-                width : 18,
-                height : 18,
+                'assets/icons/navbar/summarize.svg',
+                width : 22,
+                height : 22,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
             BottomNavigationBarItem(
-              label: '알림',
+              label: '채용',
               icon: SvgPicture.asset(
-                'assets/icons/navbar/alert.svg',
-                width : 24,
+                'assets/icons/user/company.svg',
+                width : 21,
                 height :21,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
-                'assets/icons/navbar/alert.svg',
-                width : 24,
+                'assets/icons/user/company.svg',
+                width : 21,
                 height : 21,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),

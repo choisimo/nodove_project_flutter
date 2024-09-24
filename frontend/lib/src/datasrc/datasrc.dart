@@ -10,6 +10,7 @@ import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
+import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -252,6 +253,87 @@ class DataSrc{
     }catch(e){
       print(e);
       return [];
+    }
+  }
+
+  Future<bool> postRoom(Map<dynamic,dynamic> formData) async {
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.post(
+        '${Url.chatServerUrl}${Url.chatUrl}/user/restrict/room/create',
+        data : jsonEncode(formData)
+      );
+      if (res.statusCode == 200){
+        return true;
+      } else{
+        return false;
+      }
+    }catch(e){
+      showToast("피드를 올릴 수 없어요😢");
+      print(e);
+      return false;
+    }
+  }
+
+  Future<List<RecruitFeed>> getRecruitmentList(int page , int size) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.get(
+        "${Url.recruitServerUrl}/post/getAll?page=$page&size=$size"
+      );
+      final list = res.data.map<RecruitFeed>((json)=>RecruitFeed.fromJson(json)).toList();
+      return list;
+    }catch(e){
+      print(e);
+      return [];
+    }
+  }
+
+  Future<RecruitFeed> getRecruitmentPage(String id) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.get(
+        "${Url.recruitServerUrl}/post/get?id=$id"
+      );
+      final list = res.data.map<RecruitFeed>((json)=>RecruitFeed.fromJson(json)).toList();
+      return list;
+    }catch(e){
+      print(e);
+      return RecruitFeed.defaultState();
+    }
+  }
+
+    Future<void> deleteRecruitmentFeed(String id) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.delete(
+        '${Url.recruitServerUrl}/post${Url.deleteFeed}/$id',
+      );
+      if(res.statusCode == 200){
+        showToast("삭제가 완료되었습니다");
+      } else{
+        showToast("피드를 삭제 할 수 없어요😢");
+      }
+    }catch(e){
+      showToast("피드를 삭제 할 수 없어요😢");
+      print(e);
+    }
+  }
+  Future<void> editRecruitmentFeed(Map<dynamic,dynamic> formData,String id) async{
+    try{
+      dio.interceptors.add(ApiInterceptors());
+      final res = await dio.post(
+        '${Url.recruitServerUrl}/post/${Url.updateFeed}/$id',
+        data : jsonEncode(formData)
+      );
+      if(res.statusCode == 200){
+        showToast("수정이 완료되었습니다");
+      } else{
+        showToast("피드를 수정 할 수 없어요😢");
+      }
+    }catch(e){
+      showToast("피드를 수정 할 수 없어요😢");
+      print(e);
     }
   }
 }

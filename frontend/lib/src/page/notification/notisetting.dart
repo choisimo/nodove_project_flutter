@@ -19,12 +19,31 @@ class NotiSettingPage extends StatelessWidget {
   }
 }
 
-class NotiSettingList extends StatelessWidget {
+class NotiSettingList extends StatefulWidget {
   const NotiSettingList({super.key});
 
   @override
+  State<NotiSettingList> createState() => _NotiSettingListState();
+}
+
+class _NotiSettingListState extends State<NotiSettingList> {
+  @override
   Widget build(BuildContext context) {
     bool newFeed = true;
+    TextStyle title = TextStyle(
+      fontSize : 14,
+      fontWeight: FontWeight.bold,
+      color: Theme.of(context).colorScheme.onSurface
+    );
+    TextStyle content = const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle important = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.normal,
+      color: Theme.of(context).colorScheme.error
+    );
     return SingleChildScrollView(
       child : Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,16 +51,17 @@ class NotiSettingList extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
-            child: const Text(
+            child: Text(
               "알림 필터링",
-              style: TextStyle(
-                fontSize : 18,
-              ),
+              style: title,
             ),
           ),
           notiRow(
             context,
-            leading : navbarTitle(context,"새 피드",18),
+            leading : Text(
+              "새 피드",
+              style: content,
+            ),
             actions : Switch(
               value: newFeed,
               onChanged: (b){
@@ -51,7 +71,10 @@ class NotiSettingList extends StatelessWidget {
           ),
           notiRow(
             context,
-            leading : navbarTitle(context,"새 댓글",18),
+            leading : Text(
+              "새 댓글",
+              style: content,
+            ),
             actions : Switch(
               value: newFeed,
               onChanged: (b){
@@ -61,7 +84,10 @@ class NotiSettingList extends StatelessWidget {
           ),
           notiRow(
             context,
-            leading : navbarTitle(context,"광고성 메세지",18),
+            leading : Text(
+              "광고성 메세지",
+              style: content,
+            ),
             actions : Switch(
               value: newFeed,
               onChanged: (b){
@@ -71,14 +97,34 @@ class NotiSettingList extends StatelessWidget {
           ),
           notiRow(
             context,
-            leading : navbarTitle(context,"응애",18),
+            leading : Text(
+              "허",
+              style: content,
+            ),
             actions : Switch(
               value: newFeed,
               onChanged: (b){
                 
               }
             )
-          )
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              "알림 지우기",
+              style: title,
+            ),
+          ),
+          GestureDetector(
+            onTap : (){},
+            child: notiRow(
+              context,
+              title: Text(
+                "알림 모두 지우기",
+                style: important,
+              ),
+            ),
+          ),
         ],
       )
     );

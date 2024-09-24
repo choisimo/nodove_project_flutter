@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 
 class WriteCatePage extends StatelessWidget {
   const WriteCatePage({
@@ -35,6 +36,21 @@ class WriteCate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return SingleChildScrollView(
+      child : Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height : 8),
+          SizedBox(
+            width : MediaQuery.of(context).size.width * 0.9,
+            child: commonTextInput(context,
+              placeholder: "카테고리 제목을 입력해주세요",
+            ),
+          )
+        ],
+      )
+    );
   }
 }

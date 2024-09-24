@@ -3,14 +3,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+class GlobalContext{
+  static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
+}
+
 class LightStyle{
   static const Color white = Color.fromRGBO(255, 255, 255 , 1);
   static const Color grey = Color.fromRGBO(233 , 233, 233, 1);
   static const Color darkGrey = Color.fromRGBO(144, 144, 144, 1);
   static const Color black = Color.fromRGBO(56, 56, 56 , 1);
   static const Color blackAlpha = Color.fromRGBO(56, 56, 56 , 0.75);
-  static const Color back = Color.fromRGBO(237,241,248, 1);
-  static const Color backStr = Color.fromRGBO(116 , 135, 168, 1);
+  static const Color back = Color.fromRGBO(237, 241, 248, 1);
+  static const Color backStr = Color.fromRGBO(116, 135, 168, 1);
   static const Color backAlpha = Color.fromRGBO(237 , 241, 248, 0.5);
 
 }
@@ -50,6 +54,29 @@ class RowContainer{
   static const Color background = LightStyle.white;
 }
 
+class RowTextStyle{
+  static const TextStyle title = TextStyle(
+    fontSize : 18,
+  );
+  static const TextStyle userId = TextStyle(
+    fontSize : 16,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle content = TextStyle(
+    fontSize : 16,
+    fontWeight: FontWeight.normal
+  );
+  static const TextStyle subContent = TextStyle(
+    fontSize : 14,
+    fontWeight: FontWeight.normal,
+  );
+  static const TextStyle link = TextStyle(
+    color : CommonStyle.sky,
+    fontSize : 14,
+    decoration: TextDecoration.underline
+  );
+}
+
 class Themes{
   static final ThemeData light = ThemeData.light(
     useMaterial3: true,
@@ -65,8 +92,12 @@ class Themes{
         foregroundColor: LightStyle.backStr
       )
     ),
-    switchTheme: const SwitchThemeData(
-      trackColor: WidgetStatePropertyAll(CommonStyle.first),
+    switchTheme: SwitchThemeData(
+      trackColor: WidgetStateProperty.resolveWith((state){
+        return state.contains(WidgetState.selected)
+        ? CommonStyle.first
+        : null;
+      }),
     ),
     cardColor: LightStyle.white,
     colorScheme: const ColorScheme(

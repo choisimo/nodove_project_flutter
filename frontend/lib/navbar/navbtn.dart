@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
-import 'package:nodove_flutter/src/page/list/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'dart:math' as math;
 
@@ -18,7 +18,8 @@ Widget navbarTitle(
       title,
       style : TextStyle(
         color : color??Theme.of(context).colorScheme.onSurface,
-        fontSize : fontSize??18
+        fontSize : fontSize??18,
+        fontWeight: FontWeight.bold
       )
     ),
   );
@@ -110,14 +111,15 @@ PopupMenuItem popupMenu(BuildContext context,{
   return PopupMenuItem(
     child: Row(
       children : [
+        (iconSrc != null)?
         SizedBox(
           width : 24,
           child: SvgPicture.asset(
-            iconSrc??"assets/icons/post/share.svg",
+            iconSrc,
             width : 12 , height : 12,
             colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
           ),
-        ),
+        ):const SizedBox.shrink(),
         title??const SizedBox.shrink()
       ]
     ),

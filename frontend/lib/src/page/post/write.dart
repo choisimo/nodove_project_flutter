@@ -10,12 +10,12 @@ import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/state/page.dart';
-import 'package:nodove_flutter/tag/tagrow.dart';
+import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 
 class WritePage extends StatefulWidget {
   const WritePage({super.key});

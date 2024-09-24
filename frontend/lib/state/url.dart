@@ -1,7 +1,10 @@
 class Url{
   static const selfUrl = "localhost";
-  static const serverUrl = "https://career-block.com";
+  static const serverUrl = "http://localhost:8080";
   static const chatServerUrl = "http://localhost:5050";
+  static const chatServerSocketUrl = "ws://localhost:5055";
+  static const recruitServerUrl = "http://localhost:3080";
+  static const fileServerUrl = "http://file.nodove.com";
   static const apiUrl = "/api";
   static const chatUrl = "/chat";
   static const clientList = "/list";
