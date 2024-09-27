@@ -139,24 +139,6 @@ class DataSrc{
     }
   }
 
-  Future<void> PostLogin(Map<String,String> formData) async{
-    try{
-      dio.interceptors.add(ApiInterceptors());
-      final res = await dio.post(
-        "/login",
-        data : formData
-      );
-      if (res.statusCode == 200){
-        Get.off(()=>const MyHome());
-      } else {
-        log("로그인 실패");
-      }
-    } catch(e){
-      showToast("로그인 할 수 없어요😢");
-      log("로그인 에러 : $e");
-    }
-  }
-
   Future<User> getUserInfo(String id) async{
     try{
       dio.interceptors.add(ApiInterceptors());
@@ -168,40 +150,9 @@ class DataSrc{
     }
   }
 
-  Future<bool> postJoin(Map<String,dynamic> formData) async{
-    try{
-      dio.interceptors.add(ApiInterceptors());
-      final res = await dio.post(
-        "${Url.apiUrl}/join",
-        data : formData
-      );
-      if (res.statusCode == 200){
-        return true;
-      } else {
-        return false;
-      }
-    } catch(e){
-      return false;
-    }
-  }
+  
 
-  Future<bool> postCode(String email) async{
-    try{
-      final res = await dio.post(
-        "${Url.apiUrl}/emailSend",
-        data : {
-          "email" : email
-        }
-      );
-      if (res.statusCode == 200){
-        return true;
-      } else {
-        return false;
-      }
-    } catch(e){
-      return false;
-    }
-  }
+  
 
   Future<List<dynamic>> postImagesData(List<XFile> images) async{
     try{
@@ -219,9 +170,9 @@ class DataSrc{
           );
       }
       FormData formdata = FormData.fromMap({"file" : uploadList});
-      
+      print("${Url.fileServerUrl}${Url.fileServeUrl}${Url.fileUrl}/images");
       final res = await dio.post(
-        "${Url.apiUrl}/restrict/user/postFileUpload",
+        "${Url.fileServerUrl}${Url.fileServeUrl}${Url.fileUrl}/images",
         data : formdata
       );
       return res.data;

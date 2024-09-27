@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -255,6 +257,8 @@ Widget commonTextInput(
     bool obscureText = false,
     double? borderWidth = 0.5,
     Color? bColor,
+    int minLength = 0,
+    String? Function(String?)? validator
   }
 ){
   final borderColor = bColor??Theme.of(context).colorScheme.onSurface;
@@ -266,6 +270,8 @@ Widget commonTextInput(
     keyboardType: keyboard,
     maxLength: maxLength,
     style : style,
+    autovalidateMode: AutovalidateMode.always,
+    validator: validator,
     inputFormatters: filter,
     obscureText : obscureText,
     decoration: InputDecoration(

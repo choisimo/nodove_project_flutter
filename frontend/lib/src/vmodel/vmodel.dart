@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
@@ -259,8 +260,35 @@ class UserInfoModel extends GetxController{
       joinForm[key] = value;
     }
   }
+
+  void resetJoinForm(){
+    joinForm({
+      "userId": null,
+      "userPw": null,
+      "userName": null,
+      "nickname": null,
+      "phone": null,
+      "email": null,
+      "role": "USER",
+      "birthDate": DateTime.now(),
+      "gender": 'M',
+      "profile": null,
+      "code": null,
+      "private": false,
+      "isPrivate": false
+    });
+  }
+
   Future<bool> postJoin() async{
-    final result = await _feedRepo.postJoin(joinForm);
+    final result = await AuthDataSrc().postJoin(joinForm);
+    return result;
+  } 
+  Future<bool> isUserIdDuplicate(String userId) async{
+    final result = await AuthDataSrc().isUserIdDuplicate(userId);
+    return result;
+  }
+  Future<bool> isUserNameDuplicate(String username) async{
+    final result = await AuthDataSrc().isUserNameDuplicate(username);
     return result;
   }
 }

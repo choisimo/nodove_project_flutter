@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
+import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
@@ -180,7 +181,7 @@ class LoginForm extends StatelessWidget {
                   ),
                   onPressed: () async{
                     if(id.isNotEmpty&&pw.isNotEmpty){
-                      await DataSrc().PostLogin({
+                      await AuthDataSrc().postLogin({
                         'userId' : id,
                         'password' : pw,
                       });

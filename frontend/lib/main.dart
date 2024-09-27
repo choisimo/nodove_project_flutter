@@ -31,7 +31,6 @@ void main() async{
 }
 
 Future<void> _initializeMap() async{
-  
   await NaverMapSdk.instance.initialize(
     clientId: "g69k6e2jkr",
     onAuthFailed: (ex) => print("네이버 로그인 실패$ex"),

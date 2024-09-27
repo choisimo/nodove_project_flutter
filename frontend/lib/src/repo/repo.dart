@@ -1,5 +1,6 @@
 
 import 'package:image_picker/image_picker.dart';
+import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
@@ -36,9 +37,6 @@ class FeedRepo{
   }
   Future<User> getUserInfo(id){
     return _source.getUserInfo(id);
-  }
-  Future<bool> postJoin(Map<String,dynamic> formData) async{
-    return _source.postJoin(formData);
   }
   
   Future<void> postComment(Map<String,dynamic> formData){
