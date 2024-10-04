@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -22,11 +20,9 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async{
-    log(err.toString());
-    final dio = Dio();
-    const storage = FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     final tokenError = (err.response?.statusCode == 401); 
-    final fetchOpt = err.requestOptions;
+    
     final String? refresh = await storage.read(key: "refreshToken");
     
     if(refresh == null){
@@ -34,20 +30,20 @@ class ApiInterceptors extends Interceptor {
     }
     
     if (tokenError){
-      log("토큰에러! 재시도중...");
+      print("토큰에러! 재시도중...");
       Future.delayed(const Duration(milliseconds: 1000));
       try{
-        final response = await dio.fetch(fetchOpt);
-        return handler.resolve(response);
+        Dio dio = Dio();
+        final fetchOpt = err.requestOptions;
+        final res = await dio.fetch(fetchOpt);
+        handler.resolve(res);
       }catch(e){
         await storage.delete(key: 'userToken');
         await storage.delete(key: 'refreshToken');
-        Get.off(()=>LoginPage());
-
+        Get.off(()=>const LoginPage());
       }
-      
     }
-    super.onError(err, handler);
+    return super.onError(err, handler);
   }
 
   @override

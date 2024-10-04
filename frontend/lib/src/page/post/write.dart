@@ -37,14 +37,14 @@ class _WritePageState extends State<WritePage> {
     List<List<Widget>> pageTopNavBtn = [[
         backBtn(context,displayText: "추가", callback : (){setState((){page += 1;});}),
         nextBtn(context,displayText: "쓰기", callback : (){
-          formData.postWrite();
+          formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
         })
       ],[
         backBtn(context,displayText: "본문", callback : (){setState((){page -= 1;});}),
         nextBtn(context,displayText: "쓰기", callback : (){
-          formData.postWrite();
+          formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
         })

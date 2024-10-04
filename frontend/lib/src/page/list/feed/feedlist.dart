@@ -460,15 +460,15 @@ class _CollectedVListState extends State<CollectedVList> {
 
 /*
 :ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index){
-          return Shimmer.fromColors(
-            child: FeedRow(props: Feed.defaultState(),),
-            baseColor: Theme.of(context).colorScheme.onSecondary,
-            highlightColor: Theme.of(context).colorScheme.onPrimary
-          );
-        },
-      )
+  itemCount: 5,
+  itemBuilder: (context, index){
+    return Shimmer.fromColors(
+      child: FeedRow(props: Feed.defaultState(),),
+      baseColor: Theme.of(context).colorScheme.onSecondary,
+      highlightColor: Theme.of(context).colorScheme.onPrimary
+    );
+  },
+)
 */
 
 Widget nestedCategoryView (

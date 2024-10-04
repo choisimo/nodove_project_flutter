@@ -1,12 +1,9 @@
 import 'dart:developer';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart' hide FormData hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
-import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
-import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
@@ -42,9 +39,10 @@ class DataSrc{
       return null;
     }
   }
-  Future<bool> postFeed(Map<dynamic,dynamic> formData) async {
+  Future<bool> postFeed(Map<String,dynamic> formData) async {
     try{
       dio.interceptors.add(ApiInterceptors());
+      print(formData.toString());
       final res = await dio.post(
         '${Url.apiUrl}/restrict/user/write',
         data : jsonEncode(formData)
@@ -193,38 +191,6 @@ class DataSrc{
     }
   }
 
-  Future<List<Room>> getChatRoomList() async{
-    try{
-      dio.interceptors.add(ApiInterceptors());
-      final res = await dio.get(
-        "${Url.chatServerUrl}${Url.chatUrl}/user/restrict/room/userRooms"
-      );
-      final list = res.data.map<Room>((json)=>Room.fromJson(json)).toList();
-      return list;
-    }catch(e){
-      print(e);
-      return [];
-    }
-  }
-
-  Future<bool> postRoom(Map<dynamic,dynamic> formData) async {
-    try{
-      dio.interceptors.add(ApiInterceptors());
-      final res = await dio.post(
-        '${Url.chatServerUrl}${Url.chatUrl}/user/restrict/room/create',
-        data : jsonEncode(formData)
-      );
-      if (res.statusCode == 200){
-        return true;
-      } else{
-        return false;
-      }
-    }catch(e){
-      showToast("피드를 올릴 수 없어요😢");
-      print(e);
-      return false;
-    }
-  }
 
   Future<List<RecruitFeed>> getRecruitmentList(int page , int size) async{
     try{

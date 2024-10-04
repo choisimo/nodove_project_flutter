@@ -1,6 +1,7 @@
 
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
+import 'package:nodove_flutter/src/datasrc/chat.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
@@ -19,7 +20,7 @@ class FeedRepo{
   Future<Feed?> getFeedPage(url,opt) {
     return _source.getFeedPage(url,opt);
   }
-  Future<bool> postFeed(Map<dynamic,dynamic> formData){
+  Future<bool> postFeed(Map<String,dynamic> formData){
     return _source.postFeed(formData);
   }
   Future<void> deleteFeed(int page) {
@@ -48,9 +49,6 @@ class FeedRepo{
   Future<List<Noti>> getNotiList(){
     return _source.getNotificationList();
   }
-  Future<List<Room>> getUserRooms(){
-    return _source.getChatRoomList();
-  }
   Future<List<RecruitFeed>> getRecruitmentList(int page , int size){
     return _source.getRecruitmentList(page,size);
   }
@@ -62,5 +60,13 @@ class FeedRepo{
   }
   Future<void> editRecruitmentFeed(Map<String,dynamic> formData,String id) {
     return _source.editRecruitmentFeed(formData,id);
+  }
+}
+
+class ChatRepo{
+  final ChatDataSrc _source = ChatDataSrc();
+
+  Future<List<Room>> getUserRooms(){
+    return _source.getChatRoomList();
   }
 }

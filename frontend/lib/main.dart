@@ -171,16 +171,7 @@ class _MainPageState extends State<MainPage> {
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
-              CollectedVList(
-                url : "${Url.apiUrl}${Url.feedList}",
-                opt : "pageSize=$maxSize&categoryId=$companyPage",
-                title : "대학홍보"
-              ),
-              CollectedVList(
-                url : "${Url.apiUrl}${Url.feedList}",
-                opt : "pageSize=$maxSize&categoryId=$univPage",
-                title : "창업정보"
-              ),
+              
             ]
           ),
         ),

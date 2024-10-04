@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
+import 'package:nodove_flutter/src/datasrc/chat.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
@@ -36,7 +37,7 @@ class FeedListModel extends GetxController {
   RxBool isFetching = false.obs;
   RxBool isFragFetching = false.obs;
   RxBool isLastAppend = false.obs;
-  RxMap<dynamic,dynamic> writeForm = {
+  RxMap<String,dynamic> writeForm = {
     'title' : "",
     'content' : "",
     'postHashtags' : [], "caption" : "TEMP",
@@ -44,11 +45,12 @@ class FeedListModel extends GetxController {
   }.obs;
   Rx<Feed> content = Feed.defaultState().obs;
 
-  void setForm(String type,dynamic value){
+  Future<void> setForm(String type,dynamic value) async{
     writeForm[type] = value;
+    print(writeForm);
   }
 
-  void postWrite() async {
+  Future<void> postWrite(Map<String,dynamic> writeForm) async {
     await _feedrepo.postFeed(writeForm);
     feedList.refresh();
   }
@@ -215,7 +217,7 @@ class AddRoomModel extends GetxController{
   }
   Future<bool> addRoom() async{
     if (addRoomForm['roomName'].length > 0){
-      final result = await DataSrc().postRoom(addRoomForm);
+      final result = await ChatDataSrc().postRoom(addRoomForm);
       return result;
     } else{
       showToast("대화 주제를 적어주세요");
@@ -355,7 +357,7 @@ class NotiListModel extends GetxController{
 }
 
 class RoomListModel extends GetxController{
-  final FeedRepo _feedrepo = FeedRepo();
+  final ChatRepo _chatrepo = ChatRepo();
   RxList<Room> roomlist = <Room>[].obs;
   RxBool isFetching = false.obs;
   RxBool isFragFetching = false.obs;
@@ -364,7 +366,7 @@ class RoomListModel extends GetxController{
   Future<void> getRoomList() async{
     if (isFetching.isFalse){
       isFetching(true);
-      List<Room> list = await _feedrepo.getUserRooms();
+      List<Room> list = await _chatrepo.getUserRooms();
       isFetching(false);
       if (list.isNotEmpty){
         roomlist(list);

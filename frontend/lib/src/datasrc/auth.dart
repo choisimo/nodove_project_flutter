@@ -14,16 +14,16 @@ class AuthDataSrc{
     receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
   ));
 
-  Future<bool> isUserIdDuplicate(String string) async{
+  Future<bool> isUserIdDuplicate(String string) async{ // userId 중복 체크 요청
     try{
-      dio.interceptors.add(ApiInterceptors());
-      final res = await dio.post(
+      dio.interceptors.add(ApiInterceptors()); // 에러 핸들링을 위한 인터셉터 추가
+      final res = await dio.post(   // Post 요청
         "/api/check/userId/IsDuplicate",
         data : {
           "userId" : string
         }
       );
-      if (res.statusCode == 200){
+      if (res.statusCode == 200){   // 결과 200시 데이터 반환 아닐시 false 반환
         return res.data;
       } else {
         return false;
@@ -33,7 +33,7 @@ class AuthDataSrc{
       return false;
     }
   }
-  Future<bool> isUserNameDuplicate(String string) async{
+  Future<bool> isUserNameDuplicate(String string) async{  // username 중복 체크 요청
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.post(
@@ -53,9 +53,9 @@ class AuthDataSrc{
     }
   }
   
-  Future<void> postLogin(Map<String,String> formData) async{
+  Future<void> postLogin(Map<String,String> formData) async{  //유저 로그인 요청
     try{
-      dio.interceptors.add(ApiInterceptors());
+      dio.interceptors.add(ApiInterceptors());  
       final res = await dio.post(
         "/auth/login",
         data : formData
@@ -71,7 +71,7 @@ class AuthDataSrc{
     }
   }
 
-  Future<bool> postJoin(Map<String,dynamic> formData) async{
+  Future<bool> postJoin(Map<String,dynamic> formData) async{  //유저 가입 요청
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.post(
@@ -88,7 +88,7 @@ class AuthDataSrc{
     }
   }
 
-  Future<bool> postCode(String email) async{
+  Future<bool> postCode(String email) async{  //이메일 확인용 코드 발송 요청
     try{
       final res = await dio.post(
         "/api/emailSend",
