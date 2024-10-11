@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
@@ -12,6 +11,9 @@ import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
+import 'package:nodove_flutter/state/page.dart';
+import 'package:top_snackbar_flutter/safe_area_values.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 Widget customImage(
   String src,
@@ -150,17 +152,46 @@ Widget customDialog(
   );
 }
 
-void showToast(
-  String msg){
-  final context = GlobalContext.navigatorState.currentContext!;
-  Fluttertoast.showToast(
-    msg : msg,
-    toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.TOP,
-    timeInSecForIosWeb: 1,
-    backgroundColor: Theme.of(context).colorScheme.primary,
-    textColor : Theme.of(context).colorScheme.onPrimary,
-    fontSize : 20,
+void showToast(String msg) {
+  BuildContext context = GlobalContext.navigatorState.currentContext!;
+  showTopSnackBar(
+    Overlay.of(context),
+    toast(context, msg),
+    safeAreaValues: const SafeAreaValues(top: false),
+    curve: Curves.fastEaseInToSlowEaseOut,
+    dismissType: DismissType.onSwipe,
+    animationDuration: const Duration(milliseconds: 500),
+    padding: const EdgeInsets.all(0),
+  );
+}
+Widget toast(BuildContext context, String msg) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.onPrimary,
+      borderRadius: RowContainer.radius,
+      boxShadow: [
+        BoxShadow(
+          color : Theme.of(context).colorScheme.shadow,
+          offset: RowContainer.offset,
+          blurRadius: RowContainer.blurRadius
+        )
+      ]
+    ),
+    width: double.infinity,
+    child: SafeArea(
+      child: SizedBox(
+        height: 42,
+        child: Center(
+          child: Text(
+            msg,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 18,
+              decoration: TextDecoration.none),
+          ),
+        ),
+      ),
+    ),
   );
 }
 

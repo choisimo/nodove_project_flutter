@@ -84,6 +84,7 @@ class Themes{
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     dividerColor: LightStyle.backStr,
+    hoverColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
       backgroundColor: LightStyle.white
     ),
@@ -118,6 +119,7 @@ class Themes{
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     dividerColor: DarkStyle.backStr,
+    hoverColor: Colors.transparent,
     appBarTheme : const AppBarTheme(
       backgroundColor: DarkStyle.white
     ),

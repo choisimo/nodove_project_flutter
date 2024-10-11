@@ -18,7 +18,7 @@ class ApiInterceptors extends Interceptor {
     super.onRequest(options, handler);
   }
 
-  @override
+  /*@override
   void onError(DioException err, ErrorInterceptorHandler handler) async{
     const FlutterSecureStorage storage = FlutterSecureStorage();
     final tokenError = (err.response?.statusCode == 401); 
@@ -44,7 +44,7 @@ class ApiInterceptors extends Interceptor {
       }
     }
     return super.onError(err, handler);
-  }
+  }*/
 
   @override
   void onResponse(response, ResponseInterceptorHandler handler) async{

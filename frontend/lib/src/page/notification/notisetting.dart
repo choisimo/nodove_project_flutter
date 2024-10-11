@@ -50,7 +50,7 @@ class _NotiSettingListState extends State<NotiSettingList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.all(8),
             child: Text(
               "알림 필터링",
               style: title,

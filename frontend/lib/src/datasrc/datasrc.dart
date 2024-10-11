@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart' hide MultipartFile hide FormData;
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
@@ -10,6 +12,7 @@ import 'package:nodove_flutter/src/model/notification.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/state/url.dart';
 
 class DataSrc{
@@ -53,6 +56,7 @@ class DataSrc{
         return false;
       }
     }catch(e){
+      await RefreshToken();
       showToast("피드를 올릴 수 없어요😢");
       print(e);
       return false;
@@ -70,6 +74,7 @@ class DataSrc{
         showToast("피드를 삭제 할 수 없어요😢");
       }
     }catch(e){
+      await RefreshToken();
       showToast("피드를 삭제 할 수 없어요😢");
       print(e);
     }
@@ -87,6 +92,7 @@ class DataSrc{
         showToast("피드를 수정 할 수 없어요😢");
       }
     }catch(e){
+      await RefreshToken();
       showToast("피드를 수정 할 수 없어요😢");
       print(e);
     }
@@ -107,6 +113,7 @@ class DataSrc{
       final res = await dio.get("$url$opt");
       return res.data;
     }catch(e){
+      await RefreshToken();
       showToast("오류가 발생했어요😢");
       return Categories.initialState();
     }
@@ -118,6 +125,7 @@ class DataSrc{
       final data = res.data['comments'];
       return data.map<Comment>((json)=>Comment.fromJson(json)).toList();
     }catch(e){
+      await RefreshToken();
       showToast("오류가 발생했어요😢");
       log(e.toString());
       return [];
@@ -132,6 +140,7 @@ class DataSrc{
         data : formData,
       );
     }catch(e){
+      await RefreshToken();
       showToast("댓글을 작성 할 수 없어요😢");
       log("댓글 작성 에러 : $e");
     }
@@ -143,12 +152,29 @@ class DataSrc{
       final res = await dio.get("${Url.apiUrl}/restrict/user/userInfo?userId=$id");
       return User.fromJson(res.data);
     }catch(e){
+      await RefreshToken();
       log("불러오기 에러 : $e");
       return User.defaultState();
     }
   }
 
   
+  Future<void> RefreshToken() async{
+    dio.interceptors.add(ApiInterceptors());
+    const storage = FlutterSecureStorage();
+    try{
+      await dio.get(
+        "/token",
+      ).then((_){
+        Get.reload();
+      });
+    }
+    catch(e){
+        await storage.delete(key: 'userToken');
+        await storage.delete(key: 'refreshToken');
+        Get.off(()=>const LoginPage());
+    }
+  }
 
   
 
@@ -196,7 +222,7 @@ class DataSrc{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get(
-        "${Url.recruitServerUrl}/post/getAll?page=$page&size=$size"
+        "${Url.recruitServerUrl}/feed/all?page=$page&size=$size"
       );
       final list = res.data.map<RecruitFeed>((json)=>RecruitFeed.fromJson(json)).toList();
       return list;
@@ -210,7 +236,7 @@ class DataSrc{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get(
-        "${Url.recruitServerUrl}/post/get?id=$id"
+        "${Url.recruitServerUrl}/feed?id=$id"
       );
       final list = res.data.map<RecruitFeed>((json)=>RecruitFeed.fromJson(json)).toList();
       return list;
@@ -232,6 +258,7 @@ class DataSrc{
         showToast("피드를 삭제 할 수 없어요😢");
       }
     }catch(e){
+      await RefreshToken();
       showToast("피드를 삭제 할 수 없어요😢");
       print(e);
     }
@@ -249,6 +276,7 @@ class DataSrc{
         showToast("피드를 수정 할 수 없어요😢");
       }
     }catch(e){
+      await RefreshToken();
       showToast("피드를 수정 할 수 없어요😢");
       print(e);
     }

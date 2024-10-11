@@ -56,6 +56,7 @@ class AuthDataSrc{
   Future<void> postLogin(Map<String,String> formData) async{  //유저 로그인 요청
     try{
       dio.interceptors.add(ApiInterceptors());  
+      print(formData);
       final res = await dio.post(
         "/auth/login",
         data : formData

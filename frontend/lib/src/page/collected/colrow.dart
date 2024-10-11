@@ -17,25 +17,30 @@ class CollectedRow extends StatelessWidget {
   
     return GestureDetector(
       onTap:() => Get.toNamed("/view/${props.id}"),
-      child: Stack(
-        alignment: AlignmentDirectional.center,
-        fit : StackFit.loose,
-        children: [
-          SizedBox(
-            width : maxwidth,
-            height : maxwidth,
-            child: 
-            (imageLinks.isNotEmpty)?
-            Image.network(
-              props.imageLinks[0]??"",
-              fit : BoxFit.cover,
-              errorBuilder :(context, error, stackTrace){
-                return Image.asset("assets/images/logo.png",fit : BoxFit.cover);
-              },
-            ):const SizedBox.shrink(),
-          ),
-          MinimalRow(props : props)
-        ],
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.transparent
+        ),
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          fit : StackFit.loose,
+          children: [
+            SizedBox(
+              width : maxwidth,
+              height : maxwidth,
+              child: 
+              (imageLinks.isNotEmpty)?
+              Image.network(
+                props.imageLinks[0]??"",
+                fit : BoxFit.cover,
+                errorBuilder :(context, error, stackTrace){
+                  return Image.asset("assets/images/logo.png",fit : BoxFit.cover);
+                },
+              ):const SizedBox.shrink(),
+            ),
+            MinimalRow(props : props)
+          ],
+        ),
       ),
     );
   }
@@ -55,8 +60,8 @@ class CollectedVRow extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap:() => Get.toNamed("/view/${props.id}"),
       child: Container(
-        decoration: const BoxDecoration(
-          color : Colors.transparent
+        decoration: BoxDecoration(
+          color : Theme.of(context).colorScheme.onPrimary
         ),
         width : size,
         height : size,

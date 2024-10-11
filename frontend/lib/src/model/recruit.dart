@@ -4,11 +4,12 @@ class RecruitFeed{
   String id;
   String title;
   List<dynamic> images;
-  String content;
+  String? content;
   String url;
   String createdAt;
   String? updatedAt;
-  String until;
+  String from;
+  String to;
   List<dynamic> hashtags;
   List<dynamic> region;
   Company user;
@@ -16,15 +17,16 @@ class RecruitFeed{
   RecruitFeed({
     required this.id,
     required this.title,
-    required this.images,
-    required this.content,
+    this.images = const [],
+    this.content = "",
     required this.url,
     required this.createdAt,
     this.updatedAt,
-    required this.until,
+    required this.from,
+    required this.to,
     required this.user,
-    required this.hashtags,
-    required this.region
+    this.hashtags = const [],
+    this.region = const []
   });
 
   factory RecruitFeed.fromJson(Map<String,dynamic> json){
@@ -38,7 +40,8 @@ class RecruitFeed{
       url : json['url'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
-      until: json['until'],
+      from: json['from'],
+      to: json['to'],
       hashtags: json['tag'],
       region: json['region'],
       user: Company(
@@ -66,7 +69,8 @@ class RecruitFeed{
       url : "",
       createdAt: "",
       updatedAt: "",
-      until: "",
+      from: "",
+      to : "",
       hashtags: [],
       region: [],
       user: Company(
@@ -99,8 +103,8 @@ class Pos{
 class Company{
   String id;
   String name;
-  double rating;
-  String profile;
+  int rating;
+  String? profile;
   String userId;
   Pos pos;
   String createdAt;

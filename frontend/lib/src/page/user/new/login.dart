@@ -76,10 +76,8 @@ class _LoginPageState extends State<LoginPage> {
           FutureBuilder(
             future : token,
             builder: (BuildContext context,AsyncSnapshot snapshot) {
-              return SafeArea(child: 
-              (snapshot.hasData)?
-              const SizedBox.shrink()
-              :const LoginForm()
+              return const SafeArea(child: 
+              LoginForm()
               );
             }
           ),

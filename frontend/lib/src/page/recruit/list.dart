@@ -8,6 +8,7 @@ import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -75,7 +76,6 @@ class _RecruitListPageState extends State<RecruitListPage> {
       ]
     );
     return Scaffold(
-      bottomSheet: const RecruitBottomSheet(),
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: navbarTop(context,navbarOpt,false),
       body: Obx((){
@@ -114,18 +114,19 @@ class _RecruitBottomSheetState extends State<RecruitBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       width : double.infinity,
-      constraints: const BoxConstraints(minHeight: 72),
-      decoration: BoxDecoration(
-        color : Theme.of(context).colorScheme.onPrimary,
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
+      constraints: const BoxConstraints(minHeight: 42),
+      child : Row(
+        children: [
+          TextButton(
+            style : TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              padding: EdgeInsets.all(0)
+            ),
+            onPressed: (){},
+            child: Text("야발"),
           )
         ],
-      ),
-      child : Text("려차")
+      )
     );
   }
 }
@@ -149,6 +150,9 @@ class _RecruitListViewState extends State<RecruitListView> {
       primary: false,
       physics: const AlwaysScrollableScrollPhysics(),
       slivers : [
+        const SliverToBoxAdapter(
+          child : RecruitBottomSheet()
+        ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => FeedRow(feed : feed[index]),
@@ -238,7 +242,7 @@ class FeedRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${getFutureDiff(feed.until)} 까지",
+                  "${getFutureDiff(feed.to)} 까지",
                   style : RowTextStyle.subContent
                 ),
               ],

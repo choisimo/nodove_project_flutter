@@ -27,7 +27,6 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
       shadowColor : Theme.of(context).colorScheme.shadow,
-      scrolledUnderElevation: 0.0,
   )
   :
   AppBar(
@@ -36,7 +35,6 @@ PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
       title : content.title??const SizedBox.shrink(),
       actions : content.actions??[const SizedBox.shrink()],
       shadowColor : Theme.of(context).colorScheme.shadow,
-      scrolledUnderElevation: 0.0,
   );
 }
 

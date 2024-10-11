@@ -69,6 +69,15 @@ class MyApp extends StatelessWidget{
       themeMode: ThemeMode.system,
       navigatorKey: GlobalContext.navigatorState,
       initialRoute: '/',
+      builder: (context, child) {
+        return Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) => child!,
+            )
+          ],
+        );
+      },
       getPages: [
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
@@ -94,12 +103,24 @@ List<Widget> pages = [
   const RecruitListPage(key : Key("RecruitPage")),
   const UserPage(key : Key('userPage')),
 ];
-
 class _MyHomeState extends State<MyHome>{
+  late List<GlobalKey<NavigatorState>> navigatorKeyList;
+
+  @override
+  void initState() {
+    navigatorKeyList =
+        List.generate(pages.length, (index) => GlobalKey<NavigatorState>());
+    super.initState();
+  }
+
+  Future<void> popFunc() async {
+    navigatorKeyList[PageState.page.index.value].currentState!.maybePop();
+  }
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
     return Scaffold(
+      key: navigatorKeyList[PageState.page.index.value],
       bottomNavigationBar: const BottomNavbar(),
       body : 
       Obx((){

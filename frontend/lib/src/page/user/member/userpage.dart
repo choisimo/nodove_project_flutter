@@ -82,7 +82,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
           List<Widget> sliverList;
           if (_con.isFetching.isFalse&&user.userId.isNotEmpty){
             sliverList = [
-              customSliverAppbar(context,user,widget.id),
+              customSliverAppbar(context,user.userId,widget.id),
               SliverToBoxAdapter(
                 child : userInfoWithProfile(context,user)
               ),
@@ -90,7 +90,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 child : userButtons(context,user)
               ),
               SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
+                delegate: SliverAppBarDelegate(
                   TabBar(
                     labelStyle: const TextStyle(
                       fontSize: 16,
@@ -114,12 +114,12 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
             ];
           } else {
             sliverList = [
-              customSliverAppbarSkel(context,widget.id),
+              customSliverAppbar(context,"",null),
               SliverToBoxAdapter(
                 child : userInfoWithProfileSkel(context),
               ),
               SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
+                delegate: SliverAppBarDelegate(
                   TabBar(
                     labelStyle: const TextStyle(
                       fontSize: 16,
@@ -175,10 +175,10 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
   }
 }
 
-Widget customSliverAppbar(BuildContext context ,User info,String? id){
+Widget customSliverAppbar(BuildContext context ,String userId,String? id){
   NavbarContent navbarOpt = NavbarContent(
     leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
-    title : navbarTitle(context,"@${info.userId}",20),
+    title : navbarTitle(context,"@$userId",20),
     actions : [
       PopupMenuButton(
       color : Theme.of(context).colorScheme.onPrimary,
@@ -194,7 +194,7 @@ Widget customSliverAppbar(BuildContext context ,User info,String? id){
             context,
             title: navbarTitle(context, "복사", 16),
             cb : () => copyLink(
-              "${Url.serverUrl}${Url.clientUser}?user=${info.userId}",
+              "${Url.serverUrl}${Url.clientUser}?user=$userId",
             )
           ), 
           popupMenu(
@@ -228,8 +228,8 @@ Widget customSliverAppbar(BuildContext context ,User info,String? id){
   );
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-    _SliverAppBarDelegate(this._tabBar);
+class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+    SliverAppBarDelegate(this._tabBar);
 
     final TabBar _tabBar;
 
@@ -248,7 +248,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     }
 
     @override
-    bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    bool shouldRebuild(SliverAppBarDelegate oldDelegate) {
       return false;
     }
   }

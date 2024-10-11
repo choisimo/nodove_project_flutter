@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/menu/submenu.dart';
 import 'package:nodove_flutter/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
@@ -67,7 +68,7 @@ class _FeedListPageState extends State<FeedListPage>{
           ),
         IconButton(
           onPressed: (){
-            key.currentState!.openEndDrawer();
+            key.currentState?.openEndDrawer();
           },
           icon: SvgPicture.asset(
             "assets/icons/navbar/menu.svg",

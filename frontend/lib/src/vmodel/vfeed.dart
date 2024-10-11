@@ -9,7 +9,8 @@ class TempFeed{
       content : "게시글 테스트입니등",
       url : "",
       createdAt : "2024-09-14 14:00:00",
-      until : "2024-09-18 14:00:00",
+      from : "2024-09-15 14:00:00",
+      to : "2024-09-17 14:00:00",
       hashtags : ["개발","프론트엔드"],
       region: [],
       user: Company(
@@ -33,7 +34,8 @@ class TempFeed{
       content : "게시글 테스트입니등",
       url : "",
       createdAt : "2024-09-14 14:00:00",
-      until : "2024-09-17 14:00:00",
+      from : "2024-09-15 14:00:00",
+      to : "2024-09-17 14:00:00",
       region: [],
       user: Company(
         id : "fduskfdkl",
