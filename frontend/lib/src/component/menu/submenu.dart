@@ -1,38 +1,28 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/state/color.dart';
 
-class MenuBtn extends StatefulWidget {
-  final BuildContext context;
-  final Function cb;
+class menuBtn extends StatelessWidget {
+  final Function? onClick;
   final String? iconSrc;
-  final double? iconSize;
+  final double iconSize;
   final String title;
-  final Color? tcolor;
-  const MenuBtn({
+  final Color? iconColor;
+  final Color? tColor;
+  
+  const menuBtn({
     super.key,
-    required this.context,
-    required this.cb,
+    this.onClick,
     this.iconSrc,
-    required this.title,
-    this.tcolor,
-    this.iconSize = 24,
+    this.iconSize = 18,
+    this.title = "",
+    this.iconColor,
+    this.tColor
   });
 
   @override
-  State<MenuBtn> createState() => _MenuBtnState();
-}
-
-class _MenuBtnState extends State<MenuBtn> {
-  @override
   Widget build(BuildContext context) {
-
-    final BuildContext context = widget.context;
-    final Function cb = widget.cb;
-    final String? iconSrc = widget.iconSrc;
-    final String title = widget.title;
-    final Color? tcolor = widget.tcolor;
-    final double? iconSize = widget.iconSize;
     return Container(
       width : MediaQuery.of(context).size.width * 0.95,
       height : 42,
@@ -41,12 +31,12 @@ class _MenuBtnState extends State<MenuBtn> {
         style : ButtonStyle(
           backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surface),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+            const RoundedRectangleBorder(
+              borderRadius: RowContainer.radius
             )
           )
         ),
-        onPressed: ()=>cb.call(),
+        onPressed: ()=>onClick?.call(),
         child: LayoutBuilder(
           builder: (BuildContext context,BoxConstraints constraints) {
             return Row(
@@ -54,26 +44,25 @@ class _MenuBtnState extends State<MenuBtn> {
               children: [
                 (iconSrc!= null)?
                 SvgPicture.asset(
-                  iconSrc,
+                  iconSrc!,
                   width : iconSize,
                   height : iconSize,
                   colorFilter: ColorFilter.mode(
-                    tcolor??Theme.of(context).colorScheme.onSurface ,
+                    iconColor??Theme.of(context).colorScheme.onSurface,
                     BlendMode.srcIn
                   ),
                 ): const SizedBox.shrink(),
                 const SizedBox(width : 8),
                 Container(
                   constraints: BoxConstraints(
-                    minWidth: constraints.maxWidth * 0.25,
+                    minWidth: constraints.maxWidth * 0.3,
                   ),
                   child : Text(
                     title,
                     textAlign: TextAlign.center,
                     style : TextStyle(
-                      color: tcolor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      color: tColor??Theme.of(context).colorScheme.primary,
+                      fontSize: 16,
                     )
                   ),
                 ),
@@ -97,7 +86,7 @@ class MenuTitle extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontSize : 16,
+          fontSize : 14,
           fontWeight: FontWeight.bold,
           color : Theme.of(context).colorScheme.onSurface,
         ),

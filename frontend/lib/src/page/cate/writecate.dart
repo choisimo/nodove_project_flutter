@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 
 class WriteCatePage extends StatelessWidget {
@@ -12,8 +12,7 @@ class WriteCatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
       actions : [
-        nextBtn(
-          context,
+        NextBtn(
           displayText: "작성",
           callback: (){
             
@@ -23,7 +22,10 @@ class WriteCatePage extends StatelessWidget {
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context, navbarOpt, false),
+      appBar: NavbarTop(
+        navbarOpt,
+        centerTitle :false
+      ),
       body : const WriteCate()
     );
   }

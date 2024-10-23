@@ -3,8 +3,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/func/socket/socket.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
@@ -43,11 +43,12 @@ with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final Room room = widget.room;
     NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(
-        context,
+      leading: BackBtn(
         callback: ()=>Get.back()
       ),
-      title : navbarTitle(context,room.roomName.split("_")[0],18),
+      title : NavbarTitle(
+        room.roomName.split("_")[0]
+      ),
       actions: [
         etcBtn(id: room.roomId)
         
@@ -58,7 +59,7 @@ with SingleTickerProviderStateMixin, WidgetsBindingObserver {
       child: Scaffold(
         body: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          appBar: navbarTop(context, navbarOpt, true),
+          appBar: NavbarTop(navbarOpt, centerTitle : true),
           body : const MessageList(),
           bottomNavigationBar: MessageBottomWrite(
             socket : socket , room : room

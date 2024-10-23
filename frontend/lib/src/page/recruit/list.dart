@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
@@ -64,20 +64,17 @@ class _RecruitListPageState extends State<RecruitListPage> {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title : navbarTitle(
-        context,"채용",20,
-      ),
+      title : const NavbarTitle("채용",),
       actions : [
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/navbar/search.svg",
-          cb : (){},
+          onClick : (){},
         ),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false),
+      appBar: NavbarTop(navbarOpt,centerTitle : false),
       body: Obx((){
         if (con.isFetching.isTrue){
           return const CircularProgressIndicator(
@@ -89,7 +86,7 @@ class _RecruitListPageState extends State<RecruitListPage> {
             child : Text("현재 진행중인 채용이 없어요")
           );
         } else {
-          return customRefreshIndicator(context,
+          return CustomRefreshIndicator(
             onRefresh: ()=>con.getRecruitmentFirst(0, size),
             child: RecruitListView(
               feed : con.recruitlist

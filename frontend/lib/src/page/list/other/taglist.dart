@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 
@@ -45,12 +45,11 @@ class _TagListPageState extends State<TagListPage>{
         centerTitle: false,
         automaticallyImplyLeading: true,
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        leading: backBtn(context,callback: (){Navigator.of(context).pop();}),
+        leading: BackBtn(callback: (){Navigator.of(context).pop();}),
         actions : [
-          navbarCommonBtn(
-          context,
-          "assets/icons/navbar/search.svg",
-          cb : (){},
+          NavbarCommonBtn(
+            "assets/icons/navbar/search.svg",
+            onClick : (){},
           ),
           IconButton(
             onPressed: (){

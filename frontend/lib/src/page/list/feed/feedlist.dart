@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/main.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/menu/submenu.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
-import 'package:nodove_flutter/src/page/setting/setting.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
-import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
@@ -37,6 +34,7 @@ class _FeedListPageState extends State<FeedListPage>{
   final storage = const FlutterSecureStorage();
   late bool collected = false;
   int size = 10;
+  bool search = false;
 
   @override
   void initState() {
@@ -59,33 +57,33 @@ class _FeedListPageState extends State<FeedListPage>{
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : backBtn(context,callback: ()=>Navigator.of(context).pop()),
+      leading : BackBtn(callback: ()=>Navigator.of(context).pop()),
       actions: [
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/navbar/search.svg",
-          cb : (){},
-          ),
-        IconButton(
-          onPressed: (){
+          onClick : (){
+            setState((){
+              search = true;
+            });
+          },
+        ),
+        NavbarCommonBtn(
+          "assets/icons/navbar/menu.svg",
+          onClick : (){
             key.currentState?.openEndDrawer();
           },
-          icon: SvgPicture.asset(
-            "assets/icons/navbar/menu.svg",
-            width : 16 , height : 16,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-          )
-        )
+          width : 14,
+          height : 14
+        ),
       ]
     );
     
     return Scaffold(
       key: key,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(
-        context,
+      appBar: NavbarTop(
         navbarOpt,
-        false
+        centerTitle: false,
       ),
       floatingActionButton: plusButton(),
       body : FeedList(
@@ -100,25 +98,25 @@ class _FeedListPageState extends State<FeedListPage>{
   Widget drawer(){
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     final List<Widget> widgetList = [
-      MenuBtn(
-        context : context, iconSize: 12,
+      menuBtn(
+        iconSize: 12,
         iconSrc: "assets/icons/navbar/menu.svg",
-        title : "하위 카테고리",
-        cb : ()=>Navigator.of(context).push(
+        title : "카테고리",
+        onClick : ()=>Navigator.of(context).push(
           MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
         )
       ),
-      MenuBtn(
-        context : context, iconSize: 12,
+      menuBtn(
+        iconSize: 12,
         iconSrc: "assets/icons/navbar/hashtag.svg",
         title : "해시태그",
-        cb : (){}
+        onClick : (){}
       ),
-      MenuBtn(
-        context : context, iconSize: 12,
+      menuBtn(
+        iconSize: 12,
         iconSrc: "assets/icons/navbar/navi.svg",
         title : "내 위치",
-        cb : ()=>Navigator.of(context).push(
+        onClick : ()=>Navigator.of(context).push(
           MaterialPageRoute(builder: (_)=>const MapPage())
         )
       )
@@ -139,7 +137,6 @@ class _FeedListPageState extends State<FeedListPage>{
                 ),
                 builder:(BuildContext context,AsyncSnapshot snapshot) {
                   if (snapshot.data !=null && snapshot.data.length > 0){
-                    List<dynamic> child = snapshot.data![0].children;
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
@@ -151,13 +148,13 @@ class _FeedListPageState extends State<FeedListPage>{
                               onPressed: ()=>Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_)=>const NotiPage())
                               ),
-                              icon: SvgPicture.asset("assets/icons/navbar/alert.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
+                              icon: const NavbarCommonBtn("assets/icons/navbar/alert.svg")
                             ),
                             IconButton(
                               onPressed: ()=>Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_)=>const FeedSettingPage())
                               ),
-                              icon: SvgPicture.asset("assets/icons/common/setting.svg",width : 20,height : 20,colorFilter:ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn))
+                              icon: const NavbarCommonBtn("assets/icons/common/setting.svg")
                             )
                           ],
                         ),
@@ -176,7 +173,13 @@ class _FeedListPageState extends State<FeedListPage>{
                         Text(
                           '"${snapshot.data![0].categoryDescription}"',
                         ),
-                        ...List.generate(widgetList.length, (index)=>widgetList[index])
+                        SizedBox(
+                          width : MediaQuery.of(context).size.width * 0.7,
+                          child : Column(
+                            children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
+                          )
+                        )
+                        
                       ],
                     );
                   } else {
@@ -282,8 +285,7 @@ class _FeedListState extends State<FeedList> {
   @override
   Widget build(BuildContext context) {
     bool collected = widget.collected;
-    return customRefreshIndicator(
-      context,
+    return CustomRefreshIndicator(
       enabled : widget.scrollEnabled,
       onRefresh: ()=>Future.sync(()=>_initLoad()),
       child : (collected)?
@@ -471,46 +473,3 @@ class _CollectedVListState extends State<CollectedVList> {
   },
 )
 */
-
-Widget nestedCategoryView (
-  BuildContext context,
-  List<dynamic> child,
-){
-  return SizedBox(
-    width : double.infinity,
-    height : MediaQuery.of(context).size.height * 0.45,
-    child: ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: child.length,
-      itemBuilder:(context, index) {
-        return TextButton(
-          onPressed: ()=> Get.toNamed("/list/${child[index]['categoryId']}",),
-          child : Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Profile(profile: "",width : 42,height:42),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(child[index]['categoryName'],
-                      style : const TextStyle(
-                        fontSize: 20
-                      )
-                    ),
-                    Text('"${child[index]['categoryDescription']}"',
-                      style : const TextStyle(
-                        fontSize: 16
-                      )
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
-        );
-      },
-    ),
-  );
-}

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/menu/submenu.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
@@ -22,17 +22,15 @@ class NotiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title : navbarTitle(context,"알림",20),
+      title : const NavbarTitle("알림"),
       actions: [
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/post/delete.svg",
-          cb : (){},
+          onClick : (){},
         ),
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/common/setting.svg",
-          cb : ()=>Navigator.push(
+          onClick : ()=>Navigator.push(
             context,
             MaterialPageRoute(builder: (_)=>const NotiSettingPage())
           ),
@@ -41,7 +39,7 @@ class NotiPage extends StatelessWidget {
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false,),
+      appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body: const NotiList()
     );
   }
@@ -69,8 +67,7 @@ class _NotiListState extends State<NotiList> {
 
   @override
   Widget build(BuildContext context) {
-    return customRefreshIndicator(
-      context,
+    return CustomRefreshIndicator(
       onRefresh: ()=>initLoad(),
       child: SizedBox(
         height : MediaQuery.of(context).size.height,

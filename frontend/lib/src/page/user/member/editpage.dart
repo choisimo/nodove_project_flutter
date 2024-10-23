@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
@@ -23,8 +23,7 @@ class EditUserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
       actions : [
-        nextBtn(
-          context,
+        NextBtn(
           displayText: "수정",
           callback: (){}
         ),
@@ -33,7 +32,7 @@ class EditUserPage extends StatelessWidget {
     return GestureDetector(
       onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: navbarTop(context,navbarOpt, false),
+        appBar: NavbarTop(navbarOpt, centerTitle : false),
         body : const EditUser(),
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -76,8 +75,7 @@ class _EditUserState extends State<EditUser> {
     final TextStyle textStyle = TextStyle(
       color: Theme.of(context).colorScheme.onSurface,
     );
-    return customRefreshIndicator(
-      context,
+    return CustomRefreshIndicator(
       onRefresh: ()=>refreshState(),
       child: Obx((){
         final user = _con.userInfo.value;

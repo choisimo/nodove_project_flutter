@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
+import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
-import 'package:nodove_flutter/media/carousel.dart';
+import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -39,7 +39,7 @@ class _FeedPageState extends State<FeedPage>{
   Widget build(BuildContext context){
     int page = widget.page??int.parse(Get.parameters['page']??'3');
     NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(context,callback: ()=>Navigator.of(context).pop()),
+      leading: BackBtn(callback: ()=>Navigator.of(context).pop()),
       actions : <Widget>[
         etcBtn(
           cb : (id){
@@ -54,7 +54,7 @@ class _FeedPageState extends State<FeedPage>{
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,true),
+      appBar: NavbarTop(navbarOpt,centerTitle : true),
       floatingActionButton: commentButton(),
       body : FeedView(
         page : page,
@@ -86,11 +86,41 @@ class _FeedPageState extends State<FeedPage>{
         );
       },
       backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-      child : SvgPicture.asset(
-        'assets/icons/navbar/msg.svg',
-        width : 24,
-        height : 24,
-        colorFilter: ColorFilter.mode(Colors.white,BlendMode.srcIn),
+      child : SizedBox(
+        width : 52,
+        height : 52,
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Center(
+              child: SvgPicture.asset(
+                'assets/icons/navbar/msg.svg',
+                width : 24,
+                height : 24,
+                colorFilter: ColorFilter.mode(Colors.white,BlendMode.srcIn),
+              ),
+            ),
+            Container(
+              constraints: const BoxConstraints(
+                maxWidth: 28,
+                minWidth: 20
+              ),
+              height : 20,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: RowContainer.radius
+              ),
+              child: Center(
+                child: Text(
+                  vpage.content.value.commentCount.toString(),
+                  style: const TextStyle(
+                    color: CommonStyle.first
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       )
     );
   }
@@ -133,19 +163,13 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     BoxDecoration commonDecor = BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
-      border : Border.symmetric(
-        horizontal: BorderSide(
-          width : 0.5,
-          color : Theme.of(context).colorScheme.onSecondary,
-        )
-      ),
+      boxShadow: rowBorderShadow()
     );
 
     return Obx((){
         final feed = vcon.content.value;
         if (vcon.isFetching.isFalse){
-          return customRefreshIndicator(
-            context,
+          return CustomRefreshIndicator(
             onRefresh: ()=>refresh(),
             strokeColor : Theme.of(context).colorScheme.onSurface,
             backgroundColor : Theme.of(context).colorScheme.onPrimary,
@@ -153,19 +177,15 @@ class _FeedViewState extends State<FeedView> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  const SizedBox(height : 8),
                   Container(
+                    margin : const EdgeInsets.symmetric(vertical: 8),
                     decoration: commonDecor,
                     child:FeedTop(title: feed.title,hashtags: feed.hashtags)
                   ),
-                  const SizedBox(height : 8),
                   Carousel(imageLinks: feed.imageLinks, page: feed.id),
-                  const SizedBox(height : 8),
                   Container(
                     decoration: commonDecor,
-                    constraints:BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height * 0.75
-                    ),
+                    margin : const EdgeInsets.symmetric(vertical: 8),
                     child: Column(
                       children: [
                         pageUserInfo(
@@ -181,13 +201,6 @@ class _FeedViewState extends State<FeedView> {
                           likeCount: feed.likeCount,
                           etcOpt: false,
                           postId: feed.id,
-                        ),
-                        Container(
-                          height : 64,
-                          decoration: BoxDecoration(
-                            border : Border.symmetric(horizontal: BorderSide(width: 0.5,color : Theme.of(context).colorScheme.onSecondary))
-                          ),
-                          child: commentButton(context,id : feed.id,count : feed.commentCount)
                         ),
                       ],
                     )

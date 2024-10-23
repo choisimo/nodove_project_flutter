@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -16,12 +16,11 @@ class AddRoomPage extends StatelessWidget {
     RoomListModel lcon = Get.put(RoomListModel());
     NavbarContent navbarOpt = NavbarContent(
       actions: [
-        nextBtn(
-          context,
+        NextBtn(
           displayText: "시작",
           callback : () async{
             final result = await con.addRoom();
-            Navigator.pop(context);
+            Get.back();
             if (result){
               await lcon.getRoomList();
             }
@@ -31,7 +30,7 @@ class AddRoomPage extends StatelessWidget {
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false,),
+      appBar: NavbarTop(navbarOpt,centerTitle : false),
       body : const AddRoomView()
     );
   }

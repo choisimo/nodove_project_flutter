@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -13,11 +13,11 @@ class FeedSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title: navbarTitle(context, "피드 설정", 18)
+      title: const NavbarTitle("피드 설정")
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false,),
+      appBar: NavbarTop(navbarOpt, centerTitle: false,),
       body: const FeedSettingList()
     );
   }

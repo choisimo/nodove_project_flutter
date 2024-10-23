@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
@@ -35,15 +35,15 @@ class _WritePageState extends State<WritePage> {
     final FeedListModel formData = Get.put(FeedListModel());
     final url = ViewPageState.page.view.value;
     List<List<Widget>> pageTopNavBtn = [[
-        backBtn(context,displayText: "추가", callback : (){setState((){page += 1;});}),
-        nextBtn(context,displayText: "쓰기", callback : (){
+        BackBtn(displayText: "추가", callback : (){setState((){page += 1;});}),
+        NextBtn(displayText: "쓰기", callback : (){
           formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
         })
       ],[
-        backBtn(context,displayText: "본문", callback : (){setState((){page -= 1;});}),
-        nextBtn(context,displayText: "쓰기", callback : (){
+        BackBtn(displayText: "본문", callback : (){setState((){page -= 1;});}),
+        NextBtn(displayText: "쓰기", callback : (){
           formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
@@ -56,7 +56,7 @@ class _WritePageState extends State<WritePage> {
     List<Widget> contentPage = [
       Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: navbarTop(context, navbarOpt, false),
+        appBar: NavbarTop( navbarOpt, centerTitle : false),
         body : WriteContent(controller: _controller,),
         bottomNavigationBar:Container(
           decoration: BoxDecoration(
@@ -136,7 +136,7 @@ class _WritePageState extends State<WritePage> {
       ),
       Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: navbarTop(context, navbarOpt, false),
+        appBar: NavbarTop(navbarOpt,centerTitle : false),
         body : const WriteEtc(),
       ),
     ];
@@ -435,113 +435,119 @@ class _WriteEtcState extends State<WriteEtc>{
   
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              "피드에 덧붙이고 싶은 내용을 적어주세요",
-              style: TextStyle(
-                fontSize : 18,
-                color: Theme.of(context).colorScheme.primary
-              ),
-            ),
-          ),
-          ExpansionTile(
-            title : Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/icons/navbar/navi.svg",
-                  width : 16,height : 16,
-                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                ),
-                const SizedBox(width : 4),
-                const Text("시간과 장소"),
-              ]
-            ),
-            children: [
-              const Text("어떤 시간에 활동하셨나요?"),
-              SizedBox(
-                height : 42,
-                child: SelectedDateButton(
-                  onSubmitted: (dt){
-                    setState((){date = dt;});
-                    Get.back();
-                  },
-                  title : "",
-                  date : date
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(
+                "피드에 덧붙이고 싶은 내용을 적어주세요",
+                style: TextStyle(
+                  fontSize : 18,
+                  color: Theme.of(context).colorScheme.primary
                 ),
               ),
-              const Text("어떤 곳에서 활동하셨나요?"),
-              OutlinedButton(
-                onPressed: (){},
-                child : const Text("장소"),
-              )
-            ],
-          ),
-          const SizedBox(height : 8),
-          ExpansionTile(
-            title : Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/icons/navbar/hashtag.svg",
-                  width : 16,height : 16,
-                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                ),
-                const SizedBox(width : 4),
-                const Text("해시태그"),
-              ]
             ),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ExpansionTile(
+              collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              title : Row(
                 children: [
-                  const Text("내 활동에 "),
-                  Text("#해시태그",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryFixed,
-                  ),),
-                  const Text("도 달아보세요")
-                ],
+                  SvgPicture.asset(
+                    "assets/icons/navbar/navi.svg",
+                    width : 16,height : 16,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                  ),
+                  const SizedBox(width : 4),
+                  const Text("시간과 장소"),
+                ]
               ),
-              tagParts(context)
-            ],
-          ),
-          const SizedBox(height : 8),
-          ExpansionTile(
-            title : Row(
               children: [
-                SvgPicture.asset(
-                  "assets/icons/common/setting.svg",
-                  width : 16,height : 16,
-                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                const Text("어떤 시간에 활동하셨나요?"),
+                SizedBox(
+                  height : 42,
+                  child: SelectedDateButton(
+                    onSubmitted: (dt){
+                      setState((){date = dt;});
+                      Get.back();
+                    },
+                    title : "",
+                    date : date
+                  ),
                 ),
-                const SizedBox(width : 4),
-                const Text("설정"),
+                const Text("어떤 곳에서 활동하셨나요?"),
+                OutlinedButton(
+                  onPressed: (){},
+                  child : const Text("장소"),
+                )
               ],
             ),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ExpansionTile(
+              collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              title : Row(
                 children: [
-                  const Text("나만 볼수 있는 피드로 할까요?"),
-                  Switch(
-                    value: private,
-                    onChanged: (b){
-                      setState((){
-                        private = !private;
-                      });
-                      formData.setForm('isPrivate', private);
-                    }
+                  SvgPicture.asset(
+                    "assets/icons/navbar/hashtag.svg",
+                    width : 16,height : 16,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
                   ),
+                  const SizedBox(width : 4),
+                  const Text("해시태그"),
+                ]
+              ),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("내 활동에 "),
+                    Text("#해시태그",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimaryFixed,
+                    ),),
+                    const Text("도 달아보세요")
+                  ],
+                ),
+                tagParts(context)
+              ],
+            ),
+            ExpansionTile(
+              collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              title : Row(
+                children: [
+                  SvgPicture.asset(
+                    "assets/icons/common/setting.svg",
+                    width : 16,height : 16,
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                  ),
+                  const SizedBox(width : 4),
+                  const Text("설정"),
                 ],
-              )
-            ],
-          ),
-          const SizedBox(height : 8),
-        ],
-      ),
+              ),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("나만 볼수 있는 피드로 할까요?"),
+                    Switch(
+                      value: private,
+                      onChanged: (b){
+                        setState((){
+                          private = !private;
+                        });
+                        formData.setForm('isPrivate', private);
+                      }
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
+      )
     );
   }
   
@@ -560,7 +566,7 @@ class _WriteEtcState extends State<WriteEtc>{
             textInputAction: TextInputAction.go,
             onSubmitted: (text){
               if (text.isNotEmpty){
-                setState((){tagModel.addTag(text);});
+                tagModel.addTag(text);
               }
             },
             controller : controller,
@@ -578,8 +584,8 @@ class _WriteEtcState extends State<WriteEtc>{
                 onPressed: (){
                   if (controller.text.isNotEmpty){
                     tagModel.addTag(controller.text);
-                    print(tagModel.tagList);
                     formData.setForm('postHashtags', tagModel);
+                    controller.text = "";
                   }
                 },
               )

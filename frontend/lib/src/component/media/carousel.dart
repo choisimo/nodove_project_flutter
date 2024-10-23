@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/media/zoom.dart';
+import 'package:nodove_flutter/src/component/media/zoom.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -52,7 +52,7 @@ class _CarouselState extends State<Carousel> {
           builder: (BuildContext context) {
             return Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSecondary
+                color: Theme.of(context).colorScheme.onPrimary
               ),
               width : MediaQuery.of(context).size.width,
               child : GestureDetector(
@@ -112,9 +112,10 @@ class _CarouselState extends State<Carousel> {
           child : Container(
             clipBehavior: Clip.hardEdge,
             height : size,
-            decoration: const BoxDecoration(
-              color: LightStyle.blackAlpha,
-              borderRadius: BorderRadius.all(Radius.circular(size)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onPrimary,
+              borderRadius: const BorderRadius.all(Radius.circular(size)),
+              boxShadow: rowBorderShadow()
             ),
             child: ListView.builder(
               shrinkWrap: true,
@@ -127,17 +128,17 @@ class _CarouselState extends State<Carousel> {
                     index,
                     curve : Curves.ease
                   ),
-                  icon : (imageLinks[index].contains("/sub/read"))?
+                  icon : (imageLinks[index].contains("/serve/attach"))?
                   SvgPicture.asset(
                     "assets/icons/post/video.svg",
                     width : size , height : size,
-                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   )
                   :
                   SvgPicture.asset(
                     "assets/icons/post/picture.svg",
                     width : size , height : size,
-                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   )
                 );
               },

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/menu/submenu.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class MapPage extends StatefulWidget {
@@ -20,8 +20,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : backBtn(context,callback : ()=>Navigator.of(context).pop()),
-      title : navbarTitle(context, "내 위치", 18),
+      leading : BackBtn(callback : ()=>Navigator.of(context).pop()),
+      title : const NavbarTitle("내 위치"),
       actions: [
         IconButton(
           onPressed: (){
@@ -37,7 +37,7 @@ class _MapPageState extends State<MapPage> {
     );
     return Scaffold(
       key : key,
-      appBar: navbarTop(context, navbarOpt, false),
+      appBar: NavbarTop(navbarOpt, centerTitle : false),
       body : const MapView(),
       bottomSheet: const MapViewBottom(),
     );

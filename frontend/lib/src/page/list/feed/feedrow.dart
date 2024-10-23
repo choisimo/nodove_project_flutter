@@ -6,8 +6,8 @@ import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
-import 'package:nodove_flutter/menu/submenu.dart';
-import 'package:nodove_flutter/media/carousel.dart';
+import 'package:nodove_flutter/src/component/menu/submenu.dart';
+import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -15,6 +15,7 @@ import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
+import "dart:math" as math;
 
 class FeedRow extends StatelessWidget {
   final Feed props;
@@ -38,13 +39,7 @@ class FeedRow extends StatelessWidget {
         margin : const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: [
-            BoxShadow(
-              color : Theme.of(context).colorScheme.shadow,
-              offset: RowContainer.offset,
-              blurRadius: RowContainer.blurRadius
-            )
-          ],
+          boxShadow: rowBorderShadow(),
         ),
         child: Column(
           children: [
@@ -313,8 +308,8 @@ class Profile extends StatelessWidget {
   const Profile({
     super.key ,
     required this.profile ,
-    required this.width ,
-    required this.height,
+    this.width = 32,
+    this.height = 32,
     this.borderRadius,
   });
 
@@ -332,7 +327,7 @@ class Profile extends StatelessWidget {
           ),
           fit: BoxFit.cover
         ),
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.all(Radius.circular(math.min(width / 3,RowContainer.radiusV))),
         border : Border.all(
           color : Theme.of(context).colorScheme.onPrimaryFixed,
           width : borderRadius??1.0
@@ -410,12 +405,10 @@ class ModalMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MenuBtn(
-      context : context,
-      cb : ()=>cb?.call(),
+    return menuBtn(
+      onClick : ()=>cb?.call(),
       iconSrc : iconSrc,
       title : title,
-      tcolor : Theme.of(context).colorScheme.onSurface
     );
   }
 }
@@ -453,20 +446,18 @@ void feedDeleteConfirm(BuildContext context,int postId){
     context : context,
     builder: (context){
       return customDialog(
-        context,
         title : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            dialogCloseBtn(
-              context,
+            DialogCloseBtn(
               onPressed: ()=>Get.back(),
             ),
           ],
         ),
-        content : Column(
+        content : const Column(
           children: [
-            dialogStrTitle("삭제할까요?"),
-            dialogStrContent("삭제된 피드는 다시 복구 할 수 없어요"),
+            DialogStrTitle("삭제할까요?"),
+            DialogStrContent("삭제된 피드는 다시 복구 할 수 없어요"),
           ],
         ),
         bottomBtns: [

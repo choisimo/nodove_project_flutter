@@ -51,6 +51,7 @@ class RowContainer{
   static const Offset offset = Offset(0,2);
   static const double blurRadius = 6.0;
   static const BorderRadius radius = BorderRadius.all(Radius.circular(12));
+  static const double radiusV = 12;
   static const Color background = LightStyle.white;
 }
 

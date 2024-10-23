@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class NotiSettingPage extends StatelessWidget {
@@ -9,11 +9,11 @@ class NotiSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title: navbarTitle(context, "알림 설정", 18)
+      title: const NavbarTitle("알림 설정")
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false,),
+      appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body: const NotiSettingList()
     );
   }

@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -37,8 +37,7 @@ class JoinPage extends StatelessWidget {
     bool canPop = false;
     NavbarContent navbarOpt = NavbarContent(
       actions : [
-        nextBtn(
-          context,
+        NextBtn(
           displayText: (page<pageWidget.length - 2)?"다음":"제출",
           callback: (){
             if (page<pageWidget.length - 2){
@@ -68,12 +67,10 @@ class JoinPage extends StatelessWidget {
               context: context,
               builder: (BuildContext context){
                 return customDialog(
-                  context,
                   title : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      dialogCloseBtn(
-                        context,
+                      DialogCloseBtn(
                         onPressed: ()=>Get.back(),
                       ),
                     ],
@@ -88,7 +85,7 @@ class JoinPage extends StatelessWidget {
                     TextButton(
                       onPressed: (){
                         canPop = true;
-                        Get.offAll(()=>LoginPage());
+                        Get.offAll(()=>const LoginPage());
                       },
                       child: const Text("뒤로가기")
                     )
@@ -106,7 +103,7 @@ class JoinPage extends StatelessWidget {
       child: GestureDetector(
         onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          appBar: navbarTop(context,navbarOpt, false),
+          appBar: NavbarTop(navbarOpt, centerTitle : false),
           body : SingleChildScrollView(
             child:pageWidget[page],
           ),

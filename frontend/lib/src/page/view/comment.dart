@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -80,8 +80,7 @@ class _CommentListState extends State<CommentList> {
     PageUrl url = ViewPageState.page.comment.value;
     return LayoutBuilder(
       builder: (context,constraint) {
-        return customRefreshIndicator(
-          context,
+        return CustomRefreshIndicator(
           onRefresh: ()=>Future.sync(()=>con.getCommentFirst(url.url,url.opt)),
           child: GetX<CommentPageModel>(
             builder:(context){
@@ -155,7 +154,7 @@ class _CommentRowState extends State<CommentRow> {
                         )
                       ),
                       const SizedBox(width : 2),
-                      etcCommonBtn(context , fontSize : 10)
+                      const EtcCommonBtn()
                     ],
                   ),
                 ),
@@ -184,7 +183,7 @@ class _CommentRowState extends State<CommentRow> {
                     child : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("답글 ${props.replies!.length}개 보기"),
+                        const Text("자세히 보기"),
                         const SizedBox(width : 6),
                         SvgPicture.asset(
                           "assets/icons/common/right.svg",

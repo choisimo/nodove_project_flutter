@@ -14,8 +14,8 @@ import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -119,16 +119,27 @@ class _MyHomeState extends State<MyHome>{
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
+    bool canPop = true;
     return Scaffold(
       key: navigatorKeyList[PageState.page.index.value],
       bottomNavigationBar: const BottomNavbar(),
       body : 
       Obx((){
         return PopScope(
-          canPop: (PageState.page.index.value == 0),
+          canPop: canPop,
           onPopInvoked: (b){
-            if (!b){
-              PageState.page.setIndex(0);
+            if (Navigator.of(context,rootNavigator: true) == Navigator.of(context)
+            ){
+              final index = PageState.page.index.value;
+              if (index == 0){
+                setState((){canPop = true;});
+              } else {
+                setState((){canPop = false;});
+                PageState.page.setIndex(0);
+              }
+              
+            } else {
+              setState((){canPop = true;});
             }
           },
           child: IndexedStack(
@@ -166,26 +177,27 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title : navbarTitle(context,"메인",20),
+      title : const NavbarTitle("메인"),
       actions : [
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/navbar/alert.svg",
-          cb : ()=>Navigator.of(context).push(
+          onClick : ()=>Navigator.of(context).push(
             MaterialPageRoute(builder: (_)=>const NotiPage(key : Key("notiPage")))
           ),
-          width : 22, height : 22
+          width : 18, height : 18
         ),
-        navbarCommonBtn(
-          context,
+        NavbarCommonBtn(
           "assets/icons/navbar/search.svg",
-          cb : (){},
+          onClick : (){},
         ),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false),
+      appBar: NavbarTop(
+        navbarOpt,
+        centerTitle : false,
+      ),
       body: RefreshIndicator(
         onRefresh: ()=>Future.delayed(const Duration(milliseconds: 1000),()=>setState((){})),
         child: SingleChildScrollView(

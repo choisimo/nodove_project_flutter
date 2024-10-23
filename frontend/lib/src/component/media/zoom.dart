@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:photo_view/photo_view.dart';
@@ -37,32 +37,32 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                 axis : Axis.vertical,
                 child: PhotoView(
                   minScale: PhotoViewComputedScale.contained,
-                  imageProvider: Image.network(
+                  imageProvider: customImgProvider(
                     widget.imageLinks[index],
                     fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace){
-                      return LottieBuilder.asset(
-                        "assets/icons/common/loading.json",
-                        width : 64 , height : 64
-                      );
-                    },
-                  ).image,
+                    loading: LottieBuilder.asset(
+                      "assets/icons/common/loading.json",
+                      width : 64 , height : 64
+                    )
+                  ),
                   onScaleEnd: (BuildContext context,ScaleEndDetails details,PhotoViewControllerValue value){
                     if (value.scale! < 0.2){
                       Get.back();
                     }
                   },
-                  
                   heroAttributes: PhotoViewHeroAttributes(tag: "${widget.page}-${widget.imageLinks[widget.index]}"),
-                  loadingBuilder:(context, event) => const Center(
+                  loadingBuilder:(context, event) => Center(
                     child : SizedBox(
                       width : 32,
                       height : 32,
                       child : CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: CommonStyle.first,
+                        color: Theme.of(context).colorScheme.onPrimaryFixed
                       )
                     )
+                  ),
+                  backgroundDecoration: BoxDecoration(
+                    color : Theme.of(context).colorScheme.onPrimary
                   ),
                 ),
               ),
@@ -72,8 +72,8 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                   width : 32,
                   height : 32,
                   decoration: BoxDecoration(
-                    color : const Color.fromRGBO(0, 0, 0, 0.25),
-                    border : Border.all(color: LightStyle.white,width: 0.5),
+                    color : Theme.of(context).colorScheme.onPrimary,
+                    boxShadow: rowBorderShadow(),
                     borderRadius: RowContainer.radius,
                   ),
                   margin : EdgeInsets.symmetric(
@@ -86,7 +86,7 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                       "assets/icons/common/close.svg",
                       width : 16,
                       height : 16,
-                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                     )
                   )
                 )
@@ -114,8 +114,8 @@ Widget imgZoomBottom(BuildContext context,{
       horizontal: height * 0.1
     ),
     decoration: BoxDecoration(
-      color : const Color.fromRGBO(0, 0, 0, 0.25),
-      border : Border.all(color: LightStyle.white,width: 0.5),
+      color : Theme.of(context).colorScheme.onPrimary,
+      boxShadow: rowBorderShadow(),
       borderRadius: RowContainer.radius
     ),
     child: Row(
@@ -131,7 +131,7 @@ Widget imgZoomBottom(BuildContext context,{
               "assets/icons/post/star-empty.svg",
               width : 32 , height : 32,
               fit: BoxFit.cover,
-              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
             )
           ),
         ),
@@ -151,7 +151,7 @@ Widget imgZoomBottom(BuildContext context,{
               "assets/icons/post/share.svg",
               width : 32 , height : 32,
               fit: BoxFit.cover,
-              colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
             )
           ),
         ),

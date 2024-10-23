@@ -37,9 +37,9 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         print("아이디 찾기 오류");
       }
-    } /*else{
+    } else{
       Get.off(()=>const MyHome());
-    }*/
+    }
   }
 
   @override

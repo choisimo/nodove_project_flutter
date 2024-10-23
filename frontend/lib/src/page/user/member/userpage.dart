@@ -1,12 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
@@ -142,7 +141,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
               ),
             ];
           }
-          return customRefreshIndicator(context,
+          return CustomRefreshIndicator(
             onRefresh: (){},
             child: NestedScrollView(
               controller: scrollController,
@@ -178,7 +177,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
 Widget customSliverAppbar(BuildContext context ,String userId,String? id){
   NavbarContent navbarOpt = NavbarContent(
     leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
-    title : navbarTitle(context,"@$userId",20),
+    title : NavbarTitle("@$userId"),
     actions : [
       PopupMenuButton(
       color : Theme.of(context).colorScheme.onPrimary,
@@ -192,15 +191,15 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
         return [
           popupMenu(
             context,
-            title: navbarTitle(context, "복사", 16),
-            cb : () => copyLink(
+            title: const NavbarTitle("복사", fontSize : 16),
+            onClick : () => copyLink(
               "${Url.serverUrl}${Url.clientUser}?user=$userId",
             )
           ), 
           popupMenu(
             context,
-            title: navbarTitle(context, "로그아웃", 16),
-            cb : ()=> showUserDialog(context)
+            title: const NavbarTitle("로그아웃", fontSize : 16),
+            onClick : ()=> showUserDialog(context)
           ), 
         ];
       },
@@ -349,20 +348,18 @@ void showUserDialog (BuildContext context){
     context: context, 
     builder:(context){
       return customDialog(
-        context,
         title : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            dialogCloseBtn(
-              context,
+            DialogCloseBtn(
               onPressed: ()=>Get.back(),
             ),
           ],
         ),
-        content : Column(
+        content : const Column(
           children: [
-            dialogStrTitle("로그아웃할까요?"),
-            dialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
+            DialogStrTitle("로그아웃할까요?"),
+            DialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
           ],
         ),
         bottomBtns: [

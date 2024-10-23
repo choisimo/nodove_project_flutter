@@ -8,34 +8,61 @@ class NavbarContent{
   final Widget? title;
   final Widget? leading;
   final List<Widget>? actions;
+  
 
   NavbarContent({
     this.title,
     this.leading,
-    this.actions
+    this.actions,
   });
 }
 
-PreferredSizeWidget navbarTop(context,NavbarContent content,bool centerTitle){
-  return 
-  (centerTitle)?
-  AppBar(
-      centerTitle: centerTitle,
-      automaticallyImplyLeading: true,
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      leading: content.leading??const SizedBox.shrink(),
-      title : content.title??const SizedBox.shrink(),
-      actions : content.actions??[const SizedBox.shrink()],
-      shadowColor : Theme.of(context).colorScheme.shadow,
-  )
-  :
-  AppBar(
-      centerTitle: centerTitle,
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      title : content.title??const SizedBox.shrink(),
-      actions : content.actions??[const SizedBox.shrink()],
-      shadowColor : Theme.of(context).colorScheme.shadow,
-  );
+class NavbarTop extends StatefulWidget implements PreferredSizeWidget {
+  final NavbarContent content;
+  final bool centerTitle;
+  final Color? color;
+  final Color shadowColor;
+  final double elevation;
+
+  const NavbarTop(this.content,{
+    super.key,
+    this.centerTitle = false,
+    this.color,
+    this.shadowColor = Colors.transparent,
+    this.elevation = 0.0
+  });
+
+  @override
+  State<NavbarTop> createState() => _NavbarTopState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(54);
+}
+
+class _NavbarTopState extends State<NavbarTop> {
+  @override
+  Widget build(BuildContext context) {
+    return 
+    (widget.centerTitle)?
+    AppBar(
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: !widget.centerTitle,
+      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
+      leading: widget.content.leading,
+      title : widget.content.title??const SizedBox.shrink(),
+      actions : widget.content.actions??[const SizedBox.shrink()],
+      shadowColor : widget.shadowColor,
+      elevation: widget.elevation,
+    ):AppBar(
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: !widget.centerTitle,
+      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
+      title : widget.content.title??const SizedBox.shrink(),
+      actions : widget.content.actions??[const SizedBox.shrink()],
+      shadowColor : widget.shadowColor,
+      elevation: widget.elevation,
+    );
+  }
 }
 
 class BottomNavbar extends GetView<PageState>{
@@ -69,14 +96,14 @@ class BottomNavbar extends GetView<PageState>{
               label: "홈",
               icon: SvgPicture.asset(
                 'assets/icons/navbar/home.svg',
-                width : 21,
-                height : 21,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
                 'assets/icons/navbar/home.svg',
-                width : 21,
-                height : 21,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
@@ -84,14 +111,14 @@ class BottomNavbar extends GetView<PageState>{
               label: '메신저',
               icon: SvgPicture.asset(
                 'assets/icons/navbar/msg.svg',
-                width : 21,
-                height : 21,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
                 'assets/icons/navbar/msg.svg',
-                width : 21,
-                height : 21,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
@@ -99,14 +126,14 @@ class BottomNavbar extends GetView<PageState>{
               label: '피드',
               icon: SvgPicture.asset(
                 'assets/icons/navbar/summarize.svg',
-                width : 22,
-                height : 22,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
                 'assets/icons/navbar/summarize.svg',
-                width : 22,
-                height : 22,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
@@ -114,14 +141,14 @@ class BottomNavbar extends GetView<PageState>{
               label: '채용',
               icon: SvgPicture.asset(
                 'assets/icons/user/company.svg',
-                width : 21,
-                height :21,
+                width : 16,
+                height :16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
               ),
               activeIcon: SvgPicture.asset(
                 'assets/icons/user/company.svg',
-                width : 21,
-                height : 21,
+                width : 16,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),
@@ -130,13 +157,13 @@ class BottomNavbar extends GetView<PageState>{
               icon: SvgPicture.asset(
                 'assets/icons/navbar/user.svg',
                 width : 24,
-                height : 21,
+                height : 16,
                 colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn)
               ),
               activeIcon: SvgPicture.asset(
                   'assets/icons/navbar/user.svg',
                   width : 24,
-                  height : 21,
+                  height : 16,
                   colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
               ),
             ),

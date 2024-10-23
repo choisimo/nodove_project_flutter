@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -21,13 +22,7 @@ class MinimalRow extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: [
-            BoxShadow(
-              color : Theme.of(context).colorScheme.shadow,
-              offset: RowContainer.offset,
-              blurRadius: RowContainer.blurRadius
-            )
-          ],
+          boxShadow: rowBorderShadow(),
           borderRadius: RowContainer.radius
         ),
         child : LayoutBuilder(
@@ -97,7 +92,6 @@ class MinimalRow extends StatelessWidget {
                               Text(
                                 "${props.commentCount??0}",
                                 style : const TextStyle(
-                                  fontSize : 16,
                                   fontWeight: FontWeight.bold,
                                 )
                               ),

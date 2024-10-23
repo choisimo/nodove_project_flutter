@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/writecate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -44,67 +44,62 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
     final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
     final arg = arguments['backName'];
 
-    NavbarContent navbarOpt = NavbarContent(
-      title : (arg !=null )?
-      navbarTitle(context, arg, 20)
-      :navbarTitle(context,"카테고리",20),
-      actions : [
-        navbarCommonBtn(
-          context,
-          "assets/icons/navbar/search.svg",
-          cb : (){},
-        ),
-      ]
-    );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: plusButton(),
-      appBar: navbarTop(context,navbarOpt,false),
-      body : customRefreshIndicator(
-        context, 
-        onRefresh: ()=>refresh(),
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverPersistentHeader(
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  labelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                  unselectedLabelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  controller: tabController,
-                  labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                  indicatorWeight: 0.5,
-                  unselectedLabelColor: Theme.of(context).colorScheme.secondary,
-                  tabs: const [
-                    Tab(text: "최신"),
-                    Tab(text: "구독"),
-                  ],
-                ),
+      body : CustomScrollView(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            centerTitle: false,
+            title : (arg !=null )?
+            NavbarTitle(arg)
+            :const NavbarTitle("카테고리"),
+            actions : [
+              NavbarCommonBtn(
+                "assets/icons/navbar/search.svg",
+                onClick : (){},
               ),
-              pinned: true,
-            ),
-            SliverFillRemaining(
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  CateList(
-                    page : widget.page,
+            ]
+          ),
+          SliverToBoxAdapter(
+            child: Row(
+              children: [
+                TextButton(
+                  style : TextButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary
                   ),
-                  const Text("빈 텍스트")
-                ],
-              )
+                  onPressed: ()=>setState(()=>tabController.index = 0),
+                  child : const Text("최신")
+                ),
+                const SizedBox(width : 4,),
+                TextButton(
+                  style : TextButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary
+                  ),
+                  onPressed: ()=>setState(()=>tabController.index = 1),
+                  child : const Text("구독")
+                )
+              ]
+            ,),
+          ),
+          SliverFillRemaining(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                CustomRefreshIndicator(
+                  onRefresh: ()=>refresh(),
+                  child: CateList(
+                    page : widget.page,
+                    scroll: false,
+                  ),
+                ),
+                const Text("빈 텍스트")
+              ],
             )
-          ],
-        )
+          )
+        ],
       )
     );
   }
@@ -127,12 +122,14 @@ class CateList extends StatefulWidget {
   final String? url;
   final String? opt;
   final int? selection;
+  final bool scroll;
   const CateList({
     super.key,
     required this.page,
     this.url,
     this.opt,
-    this.selection
+    this.selection,
+    this.scroll = true
   });
 
   @override
@@ -171,6 +168,7 @@ class _CateListState extends State<CateList> {
         );
       } else if (list.isEmpty){
         return ListView.builder(
+          padding: const EdgeInsets.all(0),
           shrinkWrap: (widget.selection != null),
           physics: const NeverScrollableScrollPhysics(),
           itemCount: 1,
@@ -180,8 +178,9 @@ class _CateListState extends State<CateList> {
         );
       } else{
         return ListView.builder(
+          padding: const EdgeInsets.all(0),
           shrinkWrap: (widget.selection != null),
-          physics: (widget.selection != null)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
+          physics: (widget.selection != null||!widget.scroll)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
           itemCount: math.min(widget.selection??list.length,list.length),
           itemBuilder :(context, index) {
             return CateRow(props: list[index],key : Key("${list[index].categoryId}"));
@@ -218,15 +217,9 @@ class _CateRowState extends State<CateRow> {
         MaterialPageRoute(builder: (_)=>FeedListPage(page : props.categoryId))
       ),
       child : Container(
-      height : 96,
+      height : 64,
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ],
+        boxShadow: rowBorderShadow(),
         color : Theme.of(context).colorScheme.onPrimary,
       ),
       child : LayoutBuilder(
@@ -236,9 +229,9 @@ class _CateRowState extends State<CateRow> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Profile(
-                profile: "https://www.jbnu.ac.kr/kor/images/227_10.jpg",
-                width: 56,
-                height: 56
+                profile: "https://top.jbnu.ac.kr/sites/archinst/atchmnfl/bbs/5131/thumbnail/temp_1707368024381100.png",
+                width: 42,
+                height: 42
               ),
               Expanded(
                 child: SizedBox(
@@ -252,7 +245,7 @@ class _CateRowState extends State<CateRow> {
                         maxLines: 1,
                         textAlign: TextAlign.start,
                         style : TextStyle(
-                          fontSize : 18,
+                          fontSize : 16,
                           color : Theme.of(context).colorScheme.onPrimaryFixed,
                         )
                       ),
@@ -261,7 +254,7 @@ class _CateRowState extends State<CateRow> {
                         maxLines: 2,
                         textAlign: TextAlign.start,
                         style : TextStyle(
-                          fontSize : 14,
+                          fontSize : 12,
                           color : Theme.of(context).colorScheme.primary,
                         )
                       ),
@@ -271,7 +264,7 @@ class _CateRowState extends State<CateRow> {
               ),
               SizedBox(
                 width : constraint.minWidth * 0.15,
-                height : 42,
+                height : 32,
                 child : (true)?
                 TextButton(
                   onPressed: (){
@@ -287,7 +280,8 @@ class _CateRowState extends State<CateRow> {
                   child: const Text(
                     "구독됨",
                     style : TextStyle(
-                      color: Colors.white
+                      color: Colors.white,
+                      fontSize : 16,
                     )
                   ),
                 )

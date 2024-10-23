@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -22,11 +22,11 @@ class RoomPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title : navbarTitle(context,"메신저",20),
+      title : const NavbarTitle("메신저"),
       actions: [
-        navbarCommonBtn(context,
+        NavbarCommonBtn(
         "assets/icons/user/normalusr.svg",
-        cb : (){}
+        onClick : (){}
         ),
         PopupMenuButton(
           color : Theme.of(context).colorScheme.onPrimary,
@@ -40,8 +40,8 @@ class RoomPage extends StatelessWidget {
             return [
               popupMenu(
                 context,
-                title: navbarTitle(context,"대화하기",16),
-                cb : ()=>Navigator.of(context).push(
+                title: const NavbarTitle("대화하기",fontSize : 16),
+                onClick : ()=>Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_)=>const AddRoomPage(),
                     fullscreenDialog: true
@@ -50,22 +50,22 @@ class RoomPage extends StatelessWidget {
               ), 
               popupMenu(
                 context,
-                title: navbarTitle(context,"혼잣말..",16),
-                cb : ()=> {}
+                title: const NavbarTitle("혼잣말..",fontSize : 16),
+                onClick : ()=> {}
               ), 
             ];
           },
           icon: SvgPicture.asset(
             "assets/icons/navbar/noBorderAdd.svg",
             width : 18, height : 18,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
           ),
         ),
       ]
     );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: navbarTop(context,navbarOpt,false,),
+      appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body : const RoomList(),
     );
   }
@@ -90,8 +90,7 @@ class _RoomListState extends State<RoomList> {
   Widget build(BuildContext context) {
     
     return Obx(()=>
-    customRefreshIndicator(
-      context,
+    CustomRefreshIndicator(
       onRefresh: ()=>Future.sync(()=>con.getRoomList()),
       child : roomList(context)
     ));

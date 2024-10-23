@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/collected/minimalrow.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -83,7 +84,14 @@ class CollectedVRow extends StatelessWidget {
                 )
               ),
             ),
-            MinimalRow(props : props)
+            MinimalRow(props : props),
+            SizedBox(
+              width : size,
+              height : size,
+              child: EtcCommonBtn(
+                iconColor: Theme.of(context).colorScheme.primary
+              ),
+            )
           ],
         ),
       )

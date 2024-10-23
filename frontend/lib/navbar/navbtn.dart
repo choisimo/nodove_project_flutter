@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
-import 'package:nodove_flutter/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'dart:math' as math;
 
 Widget navbarTitle(
@@ -17,9 +17,8 @@ Widget navbarTitle(
     child: Text(
       title,
       style : TextStyle(
-        color : color??Theme.of(context).colorScheme.onSurface,
+        color : color??Theme.of(context).colorScheme.primary,
         fontSize : fontSize??18,
-        fontWeight: FontWeight.bold
       )
     ),
   );
@@ -31,14 +30,15 @@ Widget backBtn(BuildContext context,{String? displayText,Function? callback}){
     child : (displayText != null)?
     Text(
       displayText,
-      style: const TextStyle(
-        fontSize: 18
+      style: TextStyle(
+        fontSize: 18,
+        color : Theme.of(context).colorScheme.primary
       ),
     )
     :SvgPicture.asset(
       'assets/icons/common/left.svg',
-      width : 20,
-      height : 20,
+      width : 18,
+      height : 18,
       colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
     )
   );
@@ -50,13 +50,14 @@ Widget nextBtn(BuildContext context,{String? displayText,Function? callback}){
     child : (displayText != null)?
     Text(
       displayText,
-      style: const TextStyle(
-        fontSize: 18
+      style: TextStyle(
+        fontSize: 18,
+        color : Theme.of(context).colorScheme.primary
       ),
     ):SvgPicture.asset(
         'assets/icons/common/right.svg',
-        width : 20,
-        height : 20,
+        width : 18,
+        height : 18,
         colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimary,BlendMode.srcIn),
       )
   );
@@ -146,7 +147,7 @@ Widget etcCommonBtn(
         style : TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onSurface
+          color: Theme.of(context).colorScheme.primary,
         )
       ),
     ),
@@ -158,8 +159,8 @@ Widget navbarCommonBtn(
   String src,
   {
     Function? cb,
-    double width = 20,
-    double height = 20,
+    double width = 18,
+    double height = 18,
     Color? iconColor
   }){
   return IconButton(
@@ -169,7 +170,7 @@ Widget navbarCommonBtn(
       width : width,
       height : height,
       colorFilter: ColorFilter.mode(
-        iconColor??Theme.of(context).colorScheme.onSurface,
+        iconColor??Theme.of(context).colorScheme.primary,
         BlendMode.srcIn
       ),
     )
