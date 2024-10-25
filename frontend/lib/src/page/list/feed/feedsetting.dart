@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -82,20 +83,27 @@ class _FeedSettingListState extends State<FeedSettingList> {
               style: title,
             ),
           ),
-          notiRow(
-            context,
-            leading : Text(
-              "간략하게",
-              style: content,
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: rowBorderLine()
+              )
             ),
-            actions : Switch(
-              value: collected,
-              onChanged: (b)=>
-              setState((){
-                collected = !collected;
-                storage.write(key : 'collectedView',value : collected.toString());
-              })
-            )
+            child: notiRow(
+              context,
+              leading : Text(
+                "간략하게",
+                style: content,
+              ),
+              actions : Switch(
+                value: collected,
+                onChanged: (b)=>
+                setState((){
+                  collected = !collected;
+                  storage.write(key : 'collectedView',value : collected.toString());
+                })
+              )
+            ),
           ),
           notiRow(
             context,
@@ -103,7 +111,7 @@ class _FeedSettingListState extends State<FeedSettingList> {
               "피드 갯수",
               style: content,
             ),
-            actions : Text("여벌")
+            actions : const Text("여벌")
           ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
@@ -112,16 +120,23 @@ class _FeedSettingListState extends State<FeedSettingList> {
               style: title,
             ),
           ),
-          GestureDetector(
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: rowBorderLine()
+              )
+            ),
+            child : GestureDetector(
             onTap : (){},
             child: notiRow(
-              context,
-              title: Text(
-                "설정 초기화",
-                style: important,
+                context,
+                title: Text(
+                  "설정 초기화",
+                  style: important,
+                ),
               ),
             ),
-          ),
+          )
         ],
       )
     );
@@ -136,13 +151,9 @@ class _FeedSettingListState extends State<FeedSettingList> {
     return Container(
       height : 42,
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ],
+        border: Border(
+          bottom: rowBorderLine()
+        ),
         color : Theme.of(context).colorScheme.onPrimary,
       ),
       child : LayoutBuilder(

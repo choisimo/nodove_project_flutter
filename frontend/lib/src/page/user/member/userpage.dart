@@ -154,12 +154,17 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                   controller: tabController,
                   children: [
                     const Text("tab1"),
-                    FeedList(
-                      collected: true,
-                      url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
-                      opt : "pageSize=$size",
-                      scrollController : scrollController,
-                      scrollEnabled: false,
+                    CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: scrollController,
+                      slivers: [
+                        FeedList(
+                          collected: true,
+                          url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
+                          opt : "pageSize=$size",
+                          scrollEnabled: false,
+                        ),
+                      ]
                     ),
                     const Text("tab3"),
                     const Text("tab4"),

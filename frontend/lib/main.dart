@@ -200,8 +200,8 @@ class _MainPageState extends State<MainPage> {
       ),
       body: RefreshIndicator(
         onRefresh: ()=>Future.delayed(const Duration(milliseconds: 1000),()=>setState((){})),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+        child: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               

@@ -110,7 +110,7 @@ class _MapViewBottomState extends State<MapViewBottom> with SingleTickerProvider
       SizedBox(
         width : double.infinity,
         height : MediaQuery.of(context).size.height * 0.3,
-        child : Column(
+        child : const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
 

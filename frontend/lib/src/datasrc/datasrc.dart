@@ -12,7 +12,6 @@ import 'package:nodove_flutter/src/model/notification.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/state/url.dart';
 
 class DataSrc{

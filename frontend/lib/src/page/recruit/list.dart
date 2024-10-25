@@ -117,10 +117,10 @@ class _RecruitBottomSheetState extends State<RecruitBottomSheet> {
           TextButton(
             style : TextButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              padding: EdgeInsets.all(0)
+              padding: const EdgeInsets.all(0)
             ),
             onPressed: (){},
-            child: Text("야발"),
+            child: const Text("야발"),
           )
         ],
       )

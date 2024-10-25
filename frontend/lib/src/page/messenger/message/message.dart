@@ -91,7 +91,7 @@ class _MessageListState extends State<MessageList>{
       physics: const AlwaysScrollableScrollPhysics(),
       controller: scrollController,
       reverse: true,
-      slivers: [
+      slivers: const [
         /*SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => Message(chat : list[index]),

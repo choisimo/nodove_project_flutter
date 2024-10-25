@@ -167,12 +167,13 @@ class FeedMainList extends StatelessWidget {
     }
   ){
     BoxDecoration boxDecoration = BoxDecoration(
-      boxShadow: rowBorderShadow(),
+      border: Border(
+        bottom: rowBorderLine()
+      ),
       color : Theme.of(context).colorScheme.onPrimary,
     );
     return Container(
       decoration : boxDecoration,
-      margin: const EdgeInsets.symmetric(vertical: 8),
       child : Column(
         children: children!,
       )
@@ -182,6 +183,7 @@ class FeedMainList extends StatelessWidget {
   Widget titleRow(
     BuildContext context,{
       String? title,
+      double? fontSize = 16,
       String? iconSrc,
       double? iconWidth = 16,
       double? iconHeight = 16,
@@ -213,7 +215,8 @@ class FeedMainList extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize : 18,
+                    fontSize : fontSize,
+                    fontWeight: FontWeight.bold,
                     color : Theme.of(context).colorScheme.primary
                   ),
                 ):const SizedBox.shrink(),
@@ -238,7 +241,7 @@ class SearchPart extends StatelessWidget {
           height : 42,
           margin:const EdgeInsets.only(top : 8),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Colors.transparent,
             border : Border.all(
               color : Theme.of(context).colorScheme.onPrimaryFixed
             ),

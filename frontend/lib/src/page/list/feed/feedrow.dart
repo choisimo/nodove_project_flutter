@@ -27,19 +27,14 @@ class FeedRow extends StatelessWidget {
     final maxwidth = MediaQuery.of(context).size.width;
   
     return GestureDetector(
-      onTap: ()=>Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context)=>FeedPage(page : props.id),
-          
-        )
-      ),
+      onTap: ()=>Get.to(()=>FeedPage(page : props.id)),
       child: Container(
         width : maxwidth,
-        margin : const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: rowBorderShadow(),
+          border: Border(
+            bottom: rowBorderLine()
+          ),
         ),
         child: Column(
           children: [
@@ -92,16 +87,6 @@ class FeedRow extends StatelessWidget {
                   likeCount: props.likeCount,
                   etcOpt: true,
                   postId : props.id,
-                ),
-                Container(
-                  margin:const EdgeInsets.only(
-                    top : 8,
-                  ),
-                  width : maxwidth,
-                  height : 0.5,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
                 ),
                 commentButton(context,id : props.id,count : props.commentCount)
               ],
@@ -372,15 +357,14 @@ class FeedTop extends StatelessWidget {
     return Container(
       padding : const EdgeInsets.all(4),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width : maxwidth,
-            child : Text(
-              title,
-              style : const TextStyle(
-                fontSize : 18,
-                fontWeight: FontWeight.bold
-              ),
+          Text(
+            title,
+            style : const TextStyle(
+              fontSize : 18,
+              fontWeight: FontWeight.bold
             ),
           ),
           TagRow(

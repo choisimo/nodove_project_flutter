@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 class TempFeed{
   final List<RecruitFeed> feed = [

@@ -408,12 +408,9 @@ class RecruitListModel extends GetxController{
       isFetching(true);
       final list = await _feedrepo.getRecruitmentList(page,size);
 
-      if (list != null){
-        recruitlist(list);
-        isFetching(false);
-      }
-      else {recruitlist([]);}
-    }catch(error){
+      recruitlist(list);
+      isFetching(false);
+        }catch(error){
       print(error);
     }
   }
@@ -423,11 +420,8 @@ class RecruitListModel extends GetxController{
       isFragFetching(true);
       final list = await _feedrepo.getRecruitmentList(page,size);
       isFragFetching(false);
-      if (list != null){
-        return list;
-      }
-      else {isLastAppend(true); return [];}
-      
+      return list;
+          
     } else {return [];}
   }
   Future<void> appendLastPage(List<RecruitFeed> newData) async{

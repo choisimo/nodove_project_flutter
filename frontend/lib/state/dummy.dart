@@ -1,6 +1,3 @@
-import 'package:nodove_flutter/src/model/chatting.dart';
-import 'package:nodove_flutter/src/model/notification.dart';
-import 'package:nodove_flutter/src/model/user.dart';
 
 class Dump{
   /*static final List<Room> friendLists = [

@@ -261,30 +261,24 @@ class _commentListState extends State<commentList> {
           child: LayoutBuilder(
             builder:(context,constraint){
               return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   SizedBox(
                     height : 32,
-                    child : Center(
-                      child: Text(
-                        "댓글",
-                        style : TextStyle(
-                          color : Theme.of(context).colorScheme.onSurface,
-                          fontSize : 20,
-                        
-                        )
-                      ),
-                    )
+                    child: Text(
+                      "댓글",
+                      style : TextStyle(
+                        color : Theme.of(context).colorScheme.onSurface,
+                        fontSize : 20,
+                      
+                      )
+                    ),
                   ),
                   Expanded(
-                    child: GestureDetector(
-                      child: CommentList(
+                    child: CommentList(
                       url : url.url,
                       opt : url.opt,
                       page : page
-                      ,enableScroll: true)
-                    ),
+                      ,enableScroll: true),
                   ),
                   Container(
                     decoration: BoxDecoration(

@@ -344,7 +344,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
                         }
                       },
                       style : TextButton.styleFrom(
-                        padding: EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
                         backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed
                       ),
                       child : const Text("코드 발송")
@@ -481,7 +481,7 @@ class JoinCompleted extends StatelessWidget {
               style: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.onPrimary
               ),
-              onPressed: ()=>Get.off(()=>LoginPage()),
+              onPressed: ()=>Get.off(()=>const LoginPage()),
               child : const Text("뒤로 가기")
             )
           ],

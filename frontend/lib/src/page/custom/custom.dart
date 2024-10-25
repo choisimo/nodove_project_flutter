@@ -177,6 +177,15 @@ List<BoxShadow> rowBorderShadow(){
   ];
 }
 
+BorderSide rowBorderLine(){
+  BuildContext context = GlobalContext.navigatorState.currentContext!;
+
+  return BorderSide(
+    color: Theme.of(context).colorScheme.onSecondary,
+    width: 0.5,
+  );
+}
+
 void showToast(String msg) {
   BuildContext context = GlobalContext.navigatorState.currentContext!;
   showTopSnackBar(
@@ -334,6 +343,7 @@ Widget commonTextInput(
   BuildContext context,{
     String? placeholder,
     TextStyle? placeholderStyle,
+    TextEditingController? controller,
     String? key,
     TextStyle? style,
     List<TextInputFormatter>? filter,
@@ -359,6 +369,7 @@ Widget commonTextInput(
     keyboardType: keyboard,
     maxLength: maxLength,
     style : style,
+    controller : controller,
     autovalidateMode: AutovalidateMode.always,
     validator: validator,
     inputFormatters: filter,
@@ -404,18 +415,18 @@ Widget profileSetting(
     String? current
   }
 ){
-  final ImagePicker _picker = ImagePicker();
-  final FeedImageModel _imageModel = Get.put(FeedImageModel());
+  final ImagePicker picker = ImagePicker();
+  final FeedImageModel imageModel = Get.put(FeedImageModel());
   void profileUpload() async{
-    XFile? selectImage = await _picker.pickImage(
+    XFile? selectImage = await picker.pickImage(
       source : ImageSource.gallery,
       maxWidth: 1920,
       maxHeight: 1080,
       imageQuality: 30,
     );
     if (selectImage != null){
-      _imageModel.postProfile(selectImage);
-      onUpdated?.call(_imageModel.profile.value);
+      imageModel.postProfile(selectImage);
+      onUpdated?.call(imageModel.profile.value);
     }
   }
 
@@ -505,3 +516,4 @@ class _CustomToggleState extends State<CustomToggle> {
     );
   }
 }
+

@@ -97,7 +97,7 @@ class _FeedPageState extends State<FeedPage>{
                 'assets/icons/navbar/msg.svg',
                 width : 24,
                 height : 24,
-                colorFilter: ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
               ),
             ),
             Container(
@@ -163,7 +163,6 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     BoxDecoration commonDecor = BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
-      boxShadow: rowBorderShadow()
     );
 
     return Obx((){
@@ -178,14 +177,17 @@ class _FeedViewState extends State<FeedView> {
               child: Column(
                 children: [
                   Container(
-                    margin : const EdgeInsets.symmetric(vertical: 8),
                     decoration: commonDecor,
                     child:FeedTop(title: feed.title,hashtags: feed.hashtags)
                   ),
                   Carousel(imageLinks: feed.imageLinks, page: feed.id),
                   Container(
-                    decoration: commonDecor,
-                    margin : const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color : Theme.of(context).colorScheme.onPrimary,
+                      border: Border(
+                        bottom: rowBorderLine()
+                      )
+                    ),
                     child: Column(
                       children: [
                         pageUserInfo(

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
-import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/state/user.dart';
 
 class ApiInterceptors extends Interceptor {

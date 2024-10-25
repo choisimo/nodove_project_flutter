@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/src/page/list/other/taglist.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
-import 'package:nodove_flutter/state/color.dart';
 
 class TagRow extends StatefulWidget {
   final List<dynamic>? hashtags;

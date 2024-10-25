@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -81,24 +83,56 @@ class _FeedListPageState extends State<FeedListPage>{
     return Scaffold(
       key: key,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: NavbarTop(
-        navbarOpt,
-        centerTitle: false,
-      ),
       floatingActionButton: plusButton(),
-      body : FeedList(
-        collected: collected,
-        url : "${Url.apiUrl}${Url.feedList}",
-        opt : "pageSize=$size&categoryId=$cateid",
-        scrollEnabled: true,
+      body : 
+      CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            leading: navbarOpt.leading,
+            title: navbarOpt.title,
+            actions: navbarOpt.actions,
+            scrolledUnderElevation: 0.0,
+            pinned: true,
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
+            shadowColor: Colors.transparent,
+            elevation: 0.0,
+            flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: const FlexibleSpaceBar(
+                centerTitle: true,
+              ),
+            ),
+          ),
+          ),
+          SliverFillRemaining(
+            child: FeedList(
+              collected: collected,
+              url : "${Url.apiUrl}${Url.feedList}",
+              opt : "pageSize=$size&categoryId=$cateid",
+              scrollEnabled: true,
+            ),
+          ),
+        ],
       ),
+      
       endDrawer: drawer(),
     );
   }
   Widget drawer(){
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     final List<Widget> widgetList = [
-      menuBtn(
+      const SizedBox(
+        height : 32,
+      ),
+      Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSecondary
+        ),
+        height : 0.5,
+      ),
+      ListMenuBtn(
         iconSize: 12,
         iconSrc: "assets/icons/navbar/menu.svg",
         title : "카테고리",
@@ -106,19 +140,17 @@ class _FeedListPageState extends State<FeedListPage>{
           MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
         )
       ),
-      menuBtn(
+      ListMenuBtn(
         iconSize: 12,
         iconSrc: "assets/icons/navbar/hashtag.svg",
         title : "해시태그",
         onClick : (){}
       ),
-      menuBtn(
+      ListMenuBtn(
         iconSize: 12,
         iconSrc: "assets/icons/navbar/navi.svg",
         title : "내 위치",
-        onClick : ()=>Navigator.of(context).push(
-          MaterialPageRoute(builder: (_)=>const MapPage())
-        )
+        onClick : ()=>Get.to(()=>const MapPage())
       )
     ];
     final DataSrc src = DataSrc();
@@ -145,15 +177,11 @@ class _FeedListPageState extends State<FeedListPage>{
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              onPressed: ()=>Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_)=>const NotiPage())
-                              ),
+                              onPressed: ()=>Get.to(()=>const NotiPage()),
                               icon: const NavbarCommonBtn("assets/icons/navbar/alert.svg")
                             ),
                             IconButton(
-                              onPressed: ()=>Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_)=>const FeedSettingPage())
-                              ),
+                              onPressed: ()=>Get.to(()=>const FeedSettingPage()),
                               icon: const NavbarCommonBtn("assets/icons/common/setting.svg")
                             )
                           ],
@@ -175,8 +203,11 @@ class _FeedListPageState extends State<FeedListPage>{
                         ),
                         SizedBox(
                           width : MediaQuery.of(context).size.width * 0.7,
-                          child : Column(
-                            children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
+                          child : SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
+                            ),
                           )
                         )
                         
@@ -219,14 +250,12 @@ class FeedList extends StatefulWidget {
   final String url;
   final String opt;
   final bool scrollEnabled;
-  final ScrollController? scrollController;
   const FeedList({
     super.key ,
     required this.collected,
     required this.url,
     required this.opt,
     this.scrollEnabled = false,
-    this.scrollController,
   });
   
   @override
@@ -286,7 +315,7 @@ class _FeedListState extends State<FeedList> {
   Widget build(BuildContext context) {
     bool collected = widget.collected;
     return CustomRefreshIndicator(
-      enabled : widget.scrollEnabled,
+      enabled : true,
       onRefresh: ()=>Future.sync(()=>_initLoad()),
       child : (collected)?
       collectedRow()
@@ -298,6 +327,7 @@ class _FeedListState extends State<FeedList> {
     return Obx((){
         if(con.isFetching.isTrue){
           return  ListView.builder(
+            padding: const EdgeInsets.all(0),
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 3,
             itemBuilder:(context, index){
@@ -306,32 +336,24 @@ class _FeedListState extends State<FeedList> {
           );
         } else if (con.feedList.isEmpty){
           return ListView.builder(
+            padding: const EdgeInsets.all(0),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: 1,
-            physics: (widget.scrollEnabled)?
-            const AlwaysScrollableScrollPhysics():
-            const NeverScrollableScrollPhysics(),
             itemBuilder: (context,index) {
               return const Text("피드가 없어요");
             }
           );
         } else{
-          return CustomScrollView(
-            physics: (widget.scrollEnabled)?
-            const AlwaysScrollableScrollPhysics():
-            const NeverScrollableScrollPhysics(),
-            controller: _scrollController,
-            slivers: [
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => FeedRow(props : con.feedList[index]),
-                  childCount: con.feedList.length,
-                ),
-              )
-            ],
+          return ListView.builder(
+            padding: const EdgeInsets.all(0),
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder : (context, index) => FeedRow(props : con.feedList[index]),
+            itemCount: con.feedList.length,
           );
         }
     });
   }
+
   Widget collectedRow(){
     return Obx((){
         if(con.isFetching.isTrue){
@@ -414,8 +436,7 @@ class _CollectedVListState extends State<CollectedVList> {
             widget.title??"",
             style : TextStyle(
               fontSize : 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface
+              color: Theme.of(context).colorScheme.onPrimaryFixed
             )
           )
         ),

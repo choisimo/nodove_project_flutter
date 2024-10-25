@@ -1,6 +1,5 @@
 
 import 'package:image_picker/image_picker.dart';
-import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/chat.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'dart:math' as math;
 
-import 'package:nodove_flutter/state/color.dart';
 
 class Rrect{
   final double width;

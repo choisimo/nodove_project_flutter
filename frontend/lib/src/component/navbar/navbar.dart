@@ -45,6 +45,7 @@ class _NavbarTopState extends State<NavbarTop> {
     return 
     (widget.centerTitle)?
     AppBar(
+      scrolledUnderElevation: 0.0,
       centerTitle: widget.centerTitle,
       automaticallyImplyLeading: !widget.centerTitle,
       backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
@@ -54,6 +55,7 @@ class _NavbarTopState extends State<NavbarTop> {
       shadowColor : widget.shadowColor,
       elevation: widget.elevation,
     ):AppBar(
+      scrolledUnderElevation: 0.0,
       centerTitle: widget.centerTitle,
       automaticallyImplyLeading: !widget.centerTitle,
       backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
@@ -123,7 +125,7 @@ class BottomNavbar extends GetView<PageState>{
               ),
             ),
             BottomNavigationBarItem(
-              label: '피드',
+              label: '블록',
               icon: SvgPicture.asset(
                 'assets/icons/navbar/summarize.svg',
                 width : 16,

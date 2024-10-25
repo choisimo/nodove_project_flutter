@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:shimmer/shimmer.dart';
 
 class MinimalRow extends StatelessWidget {
   final Feed props;

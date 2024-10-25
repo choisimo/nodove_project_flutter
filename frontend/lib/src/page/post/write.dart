@@ -10,7 +10,6 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,29 +33,19 @@ class _WritePageState extends State<WritePage> {
   Widget build(BuildContext context) {
     final FeedListModel formData = Get.put(FeedListModel());
     final url = ViewPageState.page.view.value;
-    List<List<Widget>> pageTopNavBtn = [[
-        BackBtn(displayText: "추가", callback : (){setState((){page += 1;});}),
-        NextBtn(displayText: "쓰기", callback : (){
-          formData.postWrite(formData.writeForm);
-          Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
-          Get.back();
-        })
-      ],[
-        BackBtn(displayText: "본문", callback : (){setState((){page -= 1;});}),
+    NavbarContent navbarOpt = NavbarContent(
+      actions : [
         NextBtn(displayText: "쓰기", callback : (){
           formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
         })
       ]
-    ];
-    NavbarContent navbarOpt = NavbarContent(
-      actions : pageTopNavBtn[page]
     );
     List<Widget> contentPage = [
       Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: NavbarTop( navbarOpt, centerTitle : false),
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        appBar: NavbarTop(navbarOpt, centerTitle : false),
         body : WriteContent(controller: _controller,),
         bottomNavigationBar:Container(
           decoration: BoxDecoration(
@@ -134,11 +123,6 @@ class _WritePageState extends State<WritePage> {
           ),
         )
       ),
-      Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: NavbarTop(navbarOpt,centerTitle : false),
-        body : const WriteEtc(),
-      ),
     ];
     return Scaffold(
       body: contentPage[page]
@@ -193,202 +177,232 @@ class _WriteContentState extends State<WriteContent> {
     super.initState();
   }
 
+  Widget writeTitle(BuildContext context,{
+    String? title,
+  }){
+    return Container(
+      padding: const EdgeInsets.all(4),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title.toString(),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.secondary
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final TextStyle textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.primary
+    );
     var controller = TextEditingController(text : formData.writeForm['title']);
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              PopupMenuButton(
-                  color : Theme.of(context).colorScheme.onPrimary,
-                  shadowColor: Colors.transparent,
-                  shape : TooltipShape(
-                    vertical : 84,
-                    borderColor : Theme.of(context).colorScheme.shadow),
-                  offset : const Offset(0,64),
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        onTap: imageUpload,
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/post/picture.svg',
-                              width : 24,
-                              height : 24,
-                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                            ),
-                            const SizedBox(width : 8),
-                            const Text("사진"),
-                          ],
+    return SingleChildScrollView(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            writeTitle(context,title : "사진 혹은 동영상"),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                PopupMenuButton(
+                    color : Theme.of(context).colorScheme.onPrimary,
+                    shadowColor: Colors.transparent,
+                    shape : TooltipShape(
+                      vertical : 84,
+                      borderColor : Theme.of(context).colorScheme.shadow),
+                    offset : const Offset(0,64),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          onTap: imageUpload,
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/post/picture.svg',
+                                width : 24,
+                                height : 24,
+                                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                              ),
+                              const SizedBox(width : 8),
+                              Text(
+                                "사진",
+                                style:textStyle,
+                              ),
+                            ],
+                          )
+                        ),
+                        PopupMenuItem(
+                          onTap: videoUpload,
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/post/video.svg',
+                                width : 24,
+                                height : 24,
+                                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                              ),
+                              const SizedBox(width : 8),
+                              Text(
+                                "동영상",
+                                style: textStyle,
+                              ),
+                            ],
+                          )
                         )
+                      ];
+                    },
+                    child : Container(
+                      width : 48,
+                      height : 48,
+                      decoration: BoxDecoration(
+                        color : Theme.of(context).colorScheme.onPrimaryFixed,
+                        borderRadius: RowContainer.radius
                       ),
-                      PopupMenuItem(
-                        onTap: videoUpload,
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/post/video.svg',
-                              width : 24,
-                              height : 24,
-                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                            ),
-                            const SizedBox(width : 8),
-                            const Text("동영상"),
-                          ],
-                        )
-                      )
-                    ];
-                  },
-                  child : Container(
-                    width : 48,
-                    height : 48,
-                    decoration: BoxDecoration(
-                      color : Theme.of(context).colorScheme.onPrimaryFixed,
-                      borderRadius: RowContainer.radius
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/icons/navbar/noBorderAdd.svg',
-                        width : 24, height : 24,
-                        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/navbar/noBorderAdd.svg',
+                          width : 24, height : 24,
+                          colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              const SizedBox(width : 4),
-              Expanded(
-                child: Container(
-                  height : 96,
-                  margin : const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    borderRadius: RowContainer.radius,
-                    border : Border.all(
-                      color : Theme.of(context).colorScheme.onSecondary,
-                      width : 0.5,
+                const SizedBox(width : 4),
+                Expanded(
+                  child: Container(
+                    height : 96,
+                    margin : const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: RowContainer.radius,
+                      border : Border.all(
+                        color : Theme.of(context).colorScheme.secondary,
+                        width : 0.5,
+                      )
+                    ),
+                    child : Obx((){
+                      if (_imageModel.imageList.isNotEmpty){
+                        return ListView.builder(
+                          itemCount : _imageModel.imageList.length,
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context , index){
+                            return AspectRatio(
+                              aspectRatio: 1/1,
+                              child: PopupMenuButton(
+                                shape : TooltipShape(
+                                  vertical : 84,
+                                  borderColor : Theme.of(context).colorScheme.onSurface),
+                                offset : const Offset(0,96),
+                                itemBuilder: (context){
+                                  return [
+                                    PopupMenuItem(
+                                      onTap: (){},
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/post/edit.svg',
+                                            width : 24,
+                                            height : 24,
+                                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                                          ),
+                                          const SizedBox(width : 8),
+                                          Text("편집",style : textStyle),
+                                        ],
+                                      )
+                                    ),
+                                     PopupMenuItem(
+                                      onTap: (){_imageModel.deleteImages(index);},
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/post/delete.svg',
+                                            width : 24,
+                                            height : 24,
+                                            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+                                          ),
+                                          const SizedBox(width : 8),
+                                          Text(
+                                            "삭제",style : textStyle
+                                          ),
+                                        ],
+                                      )
+                                    ),
+                                  ];
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.all(4),
+                                  child : ClipRRect(
+                                    borderRadius: RowContainer.radius,
+                                    child: customImage(
+                                      _imageModel.imageList[index],
+                                      fit: BoxFit.cover
+                                    ),
+                                  )
+                                ),
+                              ),
+                            );
+                          }
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "사진이나 동영상을 추가해주세요",
+                            style : TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.secondary
+                            ),
+                          )
+                        );
+                      }
+                    },
                     )
                   ),
-                  child : Obx((){
-                    if (_imageModel.imageList.isNotEmpty){
-                      return ListView.builder(
-                        itemCount : _imageModel.imageList.length,
-                        shrinkWrap: true,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context , index){
-                          return AspectRatio(
-                            aspectRatio: 1/1,
-                            child: PopupMenuButton(
-                              shape : TooltipShape(
-                                vertical : 84,
-                                borderColor : Theme.of(context).colorScheme.onSurface),
-                              offset : const Offset(0,96),
-                              itemBuilder: (context){
-                                return [
-                                  PopupMenuItem(
-                                    onTap: (){},
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/post/edit.svg',
-                                          width : 24,
-                                          height : 24,
-                                          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                                        ),
-                                        const SizedBox(width : 8),
-                                        const Text("편집"),
-                                      ],
-                                    )
-                                  ),
-                                   PopupMenuItem(
-                                    onTap: (){_imageModel.deleteImages(index);},
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/post/delete.svg',
-                                          width : 24,
-                                          height : 24,
-                                          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                                        ),
-                                        const SizedBox(width : 8),
-                                        const Text("삭제"),
-                                      ],
-                                    )
-                                  ),
-                                ];
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.all(4),
-                                child : ClipRRect(
-                                  borderRadius: RowContainer.radius,
-                                  child: customImage(
-                                    _imageModel.imageList[index],
-                                    fit: BoxFit.cover
-                                  ),
-                                )
-                              ),
-                            ),
-                          );
-                        }
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          "사진이나 동영상을 추가해주세요",
-                          style : TextStyle(
-                            fontSize: 20,
-                            color: Theme.of(context).colorScheme.onSecondary
-                          ),
-                        )
-                      );
-                    }
-                  },
-                  )
                 ),
-              ),
-            ],
-          ),
-          Container(
-            margin : const EdgeInsets.all(4),
-            padding : const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-              borderRadius: RowContainer.radius,
-              border : Border.all(
-                width: 0.5,
-                color : Theme.of(context).colorScheme.onSecondary
-              )
+              ],
             ),
-            child: TextField(
-              autocorrect: false,
-              onChanged: (text){
-                formData.setForm('title',text);
-              },
-              controller : controller,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "피드의 제목을 적어주세요",
-                hintStyle: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.onSecondary
+            writeTitle(context,title : "제목"),
+            Container(
+              margin : const EdgeInsets.all(4),
+              padding : const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                borderRadius: RowContainer.radius,
+                border : Border.all(
+                  width: 0.5,
+                  color : Theme.of(context).colorScheme.secondary
+                )
+              ),
+              child: TextField(
+                autocorrect: false,
+                onChanged: (text){
+                  formData.setForm('title',text);
+                },
+                controller : controller,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "피드의 제목을 적어주세요",
+                  hintStyle: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.secondary
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: Container(
+            writeTitle(context,title : "내용"),
+            Container(
+              height : 320,
               margin : const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
                 borderRadius: RowContainer.radius,
                 border : Border.all(
                   width : 0.5,
-                  color : Theme.of(context).colorScheme.onSecondary
+                  color : Theme.of(context).colorScheme.secondary
                 )
               ),
               child: QuillEditor.basic(
@@ -397,8 +411,8 @@ class _WriteContentState extends State<WriteContent> {
                   customStyles: DefaultStyles(
                     placeHolder: DefaultListBlockStyle(
                       TextStyle(
-                        fontSize : 20,
-                        color: Theme.of(context).colorScheme.onSecondary
+                        fontSize : 18,
+                        color: Theme.of(context).colorScheme.secondary
                       ),
                       HorizontalSpacing.zero,
                       VerticalSpacing.zero,
@@ -414,8 +428,10 @@ class _WriteContentState extends State<WriteContent> {
                 ),
               )
             ),
-          )
-      ],
+            writeTitle(context,title : "추가사항"),
+            const WriteEtc()
+        ],
+      ),
     );
   }
 }
@@ -435,21 +451,14 @@ class _WriteEtcState extends State<WriteEtc>{
   
   @override
   Widget build(BuildContext context) {
+    final TextStyle textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.primary
+    );
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(
-                "피드에 덧붙이고 싶은 내용을 적어주세요",
-                style: TextStyle(
-                  fontSize : 18,
-                  color: Theme.of(context).colorScheme.primary
-                ),
-              ),
-            ),
             ExpansionTile(
               collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -461,7 +470,9 @@ class _WriteEtcState extends State<WriteEtc>{
                     colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
                   ),
                   const SizedBox(width : 4),
-                  const Text("시간과 장소"),
+                  Text(
+                    "시간과 장소",style : textStyle
+                  ),
                 ]
               ),
               children: [
@@ -495,7 +506,7 @@ class _WriteEtcState extends State<WriteEtc>{
                     colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
                   ),
                   const SizedBox(width : 4),
-                  const Text("해시태그"),
+                  Text("해시태그",style : textStyle),
                 ]
               ),
               children: [
@@ -524,7 +535,7 @@ class _WriteEtcState extends State<WriteEtc>{
                     colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
                   ),
                   const SizedBox(width : 4),
-                  const Text("설정"),
+                  Text("설정",style : textStyle),
                 ],
               ),
               children: [

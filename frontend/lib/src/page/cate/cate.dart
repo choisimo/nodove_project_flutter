@@ -31,7 +31,7 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
     vsync: this,
     initialIndex: 0,
   );
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   CateListModel con = Get.put(CateListModel());
   Future<void> refresh() async{
     con.getCate(
@@ -62,27 +62,6 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
                 onClick : (){},
               ),
             ]
-          ),
-          SliverToBoxAdapter(
-            child: Row(
-              children: [
-                TextButton(
-                  style : TextButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary
-                  ),
-                  onPressed: ()=>setState(()=>tabController.index = 0),
-                  child : const Text("최신")
-                ),
-                const SizedBox(width : 4,),
-                TextButton(
-                  style : TextButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary
-                  ),
-                  onPressed: ()=>setState(()=>tabController.index = 1),
-                  child : const Text("구독")
-                )
-              ]
-            ,),
           ),
           SliverFillRemaining(
             child: TabBarView(
@@ -212,14 +191,13 @@ class _CateRowState extends State<CateRow> {
       )
     ),*/
     return GestureDetector(
-      onTap : ()=>Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_)=>FeedListPage(page : props.categoryId))
-      ),
+      onTap : ()=>Get.to(()=>FeedListPage(page : props.categoryId)),
       child : Container(
       height : 64,
       decoration: BoxDecoration(
-        boxShadow: rowBorderShadow(),
+        border: Border(
+          bottom: rowBorderLine()
+        ),
         color : Theme.of(context).colorScheme.onPrimary,
       ),
       child : LayoutBuilder(
