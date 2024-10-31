@@ -62,7 +62,7 @@ class RoomPage extends StatelessWidget {
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body : const RoomList(),
     );
@@ -150,13 +150,7 @@ class RoomRow extends StatelessWidget {
         height : 96,
         decoration: BoxDecoration(
           color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: [
-            BoxShadow(
-              color : Theme.of(context).colorScheme.shadow,
-              offset: RowContainer.offset,
-              blurRadius: RowContainer.blurRadius
-            )
-          ],
+          border: Border(bottom : rowBorderLine())
         ),
         child : LayoutBuilder(
           builder: (BuildContext context,BoxConstraints constraints) {
@@ -260,13 +254,7 @@ class RoomRowSkel extends StatelessWidget {
       height : 96,
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ],
+        border: Border(bottom : rowBorderLine())
       ),
       child : Shimmer.fromColors(
         baseColor: Theme.of(context).colorScheme.surface,

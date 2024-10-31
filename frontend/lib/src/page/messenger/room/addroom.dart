@@ -28,7 +28,7 @@ class AddRoomPage extends StatelessWidget {
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: NavbarTop(navbarOpt,centerTitle : false),
       body : const AddRoomView()
     );

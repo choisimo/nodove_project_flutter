@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
@@ -22,7 +20,7 @@ import 'package:shimmer/shimmer.dart';
 class FeedPage extends StatefulWidget{
   final int? page;
   final String url = "${Url.apiUrl}${Url.feedPage}";
-  FeedPage({
+  const FeedPage({
     super.key,
     this.page,
   });

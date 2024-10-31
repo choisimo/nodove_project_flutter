@@ -281,8 +281,8 @@ class _commentListState extends State<commentList> {
                       ,enableScroll: true),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent
                     ),
                     child: SafeArea(
                       child: CustomWrite(
@@ -346,13 +346,7 @@ class _CustomWriteState extends State<CustomWrite> {
     return LayoutBuilder(
       builder : (context,constraint){
         return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(32)),
-              border: Border.all(
-                width: 0.5,
-                color : Theme.of(context).colorScheme.onSecondary
-              )
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             constraints : const BoxConstraints(
               minHeight: 42
             ),
@@ -361,9 +355,12 @@ class _CustomWriteState extends State<CustomWrite> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(
-                  width : 56,
+                  width : 48,
                   height : 48,
                   child: IconButton(
+                    style: ButtonStyle(
+                      side : WidgetStatePropertyAll(rowBorderLine())
+                    ),
                     onPressed: imageUpload,
                     icon: SvgPicture.asset(
                       'assets/icons/post/picture.svg',
@@ -372,18 +369,15 @@ class _CustomWriteState extends State<CustomWrite> {
                     ),
                   ),
                 ),
+                const SizedBox(width : 8),
                 Expanded(
                   child: Container(
                     padding : const EdgeInsets.symmetric(
                       horizontal: 8,
                     ),
                     decoration: BoxDecoration(
-                      border: Border.symmetric(
-                        vertical: BorderSide(
-                          width: 0.5,
-                          color : Theme.of(context).colorScheme.onSecondary
-                        ),
-                      ),
+                      border : rowBorderLineAll(),
+                      borderRadius: RowContainer.radius
                     ),
                     child: TextField(
                       maxLines: 10,
@@ -399,10 +393,14 @@ class _CustomWriteState extends State<CustomWrite> {
                     ),
                   ),
                 ),
+                const SizedBox(width : 8),
                 SizedBox(
-                  width : 56,
+                  width : 48,
                   height : 48,
-                  child: IconButton(
+                  child: IconButton.outlined(
+                    style: ButtonStyle(
+                      side : WidgetStatePropertyAll(rowBorderLine())
+                    ),
                     icon : SvgPicture.asset(
                       "assets/icons/navbar/msg.svg",
                       width : 24, height : 24,

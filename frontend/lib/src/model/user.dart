@@ -53,3 +53,41 @@ class User{
     );
   }
 }
+
+class LoginDto{
+  final String userId;
+  final String password;
+
+  LoginDto({
+    required this.userId,
+    required this.password,
+  });
+}
+
+class JoinDto{
+    final String userId;
+    final String userPw;
+    final String userName;
+    final String nickname;
+    final String phone;
+    final String email;
+    final String birthDate;
+    final String gender;
+    final bool isPrivate;
+    final String profile;
+    final String code;
+
+    JoinDto({
+      required this.userId,
+      required this.userPw,
+      required this.userName,
+      required this.nickname,
+      required this.phone,
+      required this.email,
+      required this.birthDate,
+      required this.gender,
+      required this.isPrivate,
+      required this.code,
+      this.profile = "https://zrr.kr/iPHf"
+    });
+}

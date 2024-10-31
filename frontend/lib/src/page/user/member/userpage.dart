@@ -13,6 +13,7 @@ import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/func/share.dart';
+import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -79,6 +80,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
       child : Obx((){
           final user = _con.userInfo.value;
           List<Widget> sliverList;
+          print("${_con.isFetching}${user.userId.isNotEmpty}");
           if (_con.isFetching.isFalse&&user.userId.isNotEmpty){
             sliverList = [
               customSliverAppbar(context,user.userId,widget.id),
@@ -139,38 +141,31 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 ),
                 pinned: true,
               ),
-            ];
-          }
-          return CustomRefreshIndicator(
-            onRefresh: (){},
-            child: NestedScrollView(
-              controller: scrollController,
-              headerSliverBuilder : (BuildContext context , bool isScrolled){
-                return sliverList;
-              },
-              body : SizedBox(
-                width : MediaQuery.of(context).size.width,
-                child: (user.userId.isNotEmpty)?TabBarView(
+              SliverFillRemaining(
+                child : (user.userId.isNotEmpty)?
+                TabBarView(
                   controller: tabController,
                   children: [
                     const Text("tab1"),
-                    CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: scrollController,
-                      slivers: [
-                        FeedList(
-                          collected: true,
-                          url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
-                          opt : "pageSize=$size",
-                          scrollEnabled: false,
-                        ),
-                      ]
+                    FeedList(
+                      collected: true,
+                      url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
+                      opt : "pageSize=$size",
+                      scrollEnabled: false,
                     ),
                     const Text("tab3"),
                     const Text("tab4"),
                   ],
-                ):const SizedBox.shrink(),
+                ):const SizedBox.shrink()
               )
+            ];
+          }
+          return CustomRefreshIndicator(
+            onRefresh: (){},
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: scrollController,
+              slivers : sliverList,
             ),
           );
         }
@@ -277,10 +272,11 @@ Widget userInfoWithProfile(BuildContext context, User info){
           ),
         ),
       ),
+      const SizedBox(height : 4),
       Profile(
         profile: info.profile,
         width: 104, height: 104,
-        borderRadius: 4.0,
+        borderRadius: 2.0,
       ),
       Text(
         info.nickname,
@@ -375,7 +371,7 @@ void showUserDialog (BuildContext context){
               await storage.delete(key: 'userToken');
               await storage.delete(key: 'cookie');
               showToast("로그아웃 되었어요");
-              await Get.off(()=>const LoginPage());
+              await Get.off(()=>const LoginMainPage());
             },
             child : const Text(
               "로그아웃",

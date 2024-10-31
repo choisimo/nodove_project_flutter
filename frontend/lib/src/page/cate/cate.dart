@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/graphic/transform.dart';
-import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/writecate.dart';

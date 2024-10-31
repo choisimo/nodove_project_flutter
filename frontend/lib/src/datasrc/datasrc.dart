@@ -44,7 +44,6 @@ class DataSrc{
   Future<bool> postFeed(Map<String,dynamic> formData) async {
     try{
       dio.interceptors.add(ApiInterceptors());
-      print(formData.toString());
       final res = await dio.post(
         '${Url.apiUrl}/restrict/user/write',
         data : jsonEncode(formData)

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
-import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
+import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -33,72 +30,9 @@ class JoinPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int nextPage = page + 1;
-    bool canPop = false;
-    NavbarContent navbarOpt = NavbarContent(
-      actions : [
-        NextBtn(
-          displayText: (page<pageWidget.length - 2)?"다음":"제출",
-          callback: (){
-            if (page<pageWidget.length - 2){
-              Get.to(
-                ()=>JoinPage(page: nextPage,),
-                preventDuplicates: false
-              );
-            } else{
-              con.postJoin().then((res){
-                if (res){
-                  Get.off(()=>JoinPage(page : nextPage));
-                } else{
-                  showToast("가입에 실패했어요..");
-                }
-              });
-            }
-          }
-        ),
-      ]
-    );
+    bool canPop = true;
+    NavbarContent navbarOpt = NavbarContent();
     return PopScope(
-      onPopInvoked: (value){
-        if (page == 0){
-          canPop = false;
-          if (!value){
-            showDialog(
-              context: context,
-              builder: (BuildContext context){
-                return customDialog(
-                  title : Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      DialogCloseBtn(
-                        onPressed: ()=>Get.back(),
-                      ),
-                    ],
-                  ),
-                  content: const Column(
-                    children: [
-                      Text("가입을 취소할까요?"),
-                      Text("적었던 내용이 모두 사라집니다"),
-                    ],
-                  ),
-                  bottomBtns: [
-                    TextButton(
-                      onPressed: (){
-                        canPop = true;
-                        Get.offAll(()=>const LoginPage());
-                      },
-                      child: const Text("뒤로가기")
-                    )
-                  ]
-                );
-              }
-            );
-          }
-        } else {
-          canPop = true;
-          Get.back();
-        }
-      },
       canPop: canPop,
       child: GestureDetector(
         onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
@@ -107,10 +41,28 @@ class JoinPage extends StatelessWidget {
           body : SingleChildScrollView(
             child:pageWidget[page],
           ),
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
     );
+  }
+}
+
+void next(int page){
+  int nextPage = page + 1;
+  if (page<pageWidget.length - 2){
+    Get.to(
+      ()=>JoinPage(page: nextPage,),
+      preventDuplicates: false
+    );
+  } else{
+    con.postJoin().then((res){
+      if (res){
+        Get.off(()=>JoinPage(page : nextPage));
+      } else{
+        showToast("가입에 실패했어요..");
+      }
+    });
   }
 }
 
@@ -123,6 +75,12 @@ class JoinForm extends StatefulWidget {
 
 class _JoinFormState extends State<JoinForm> {
   @override
+  void dispose(){
+    con.resetJoinForm();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
@@ -132,11 +90,17 @@ class _JoinFormState extends State<JoinForm> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height : 32),
-            const Text("만들고 싶은 아이디와 비밀번호를 적어주세요"),
+            const Text("생성할 아이디와 비밀번호를 적어주세요"),
             const SizedBox(height : 16),
             userIdForm(context),
             const SizedBox(height : 32),
-            passwordForm(context)
+            passwordForm(context),
+            const SizedBox(height : 32),
+            FormCommitButton(
+              onPressed: ()=>next(0),
+              title : "다음",
+              width : MediaQuery.of(context).size.width*0.9,
+            )
           ],
         ),
       ),
@@ -159,7 +123,11 @@ class _JoinFormState extends State<JoinForm> {
             return "비밀번호는 영문과 숫자, 특수문자로 설정해주세요";
           }
         } else {
-          return "8자 이상으로 적어주세요";
+          if (value.isEmpty){
+            return null;
+          } else {
+            return "8자 이상으로 적어주세요";
+          }
         }
       },
     );
@@ -314,47 +282,35 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
             Container(
               padding: const EdgeInsets.all(4),
               width : maxWidth * 0.9,
-              child : Row(
-                children: [
-                  Expanded(
-                    child: commonTextInput(
-                      context,
-                      initialValue: con.joinForm['email'],
-                      onChanged: (content) => con.setJoinForm("email",content),
-                      keyboard: TextInputType.emailAddress,
-                      placeholder: "이메일을 적어주세요"
-                    ),
-                  ),
-                  SizedBox(
-                    width : 72,
-                    child: TextButton(
-                      onPressed: () async{
-                        if (con.joinForm['email'] != null){
-                          await AuthDataSrc().postCode(con.joinForm['email']).then(
-                            (res){
-                              if (res){
-                                setState((){
-                                  sendMail = true;
-                                });
-                              } else{
-                                showToast("메일 전송에 실패했어요..");
-                              }
-                            }
-                          );
-                        }
-                      },
-                      style : TextButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed
-                      ),
-                      child : const Text("코드 발송")
-                    ),
-                  )
-                ],
+              child : commonTextInput(
+                context,
+                initialValue: con.joinForm['email'],
+                onChanged: (content) => con.setJoinForm("email",content),
+                keyboard: TextInputType.emailAddress,
+                placeholder: "이메일을 적어주세요"
               ),
             ),
+            FormCommitButton(
+              fontSize: 16,
+              onPressed: () async{
+                if (con.joinForm['email'] != null){
+                  await AuthDataSrc().postCode(con.joinForm['email']).then(
+                    (res){
+                      if (res){
+                        setState((){
+                          sendMail = true;
+                        });
+                      } else{
+                        showToast("메일 전송에 실패했어요..");
+                      }
+                    }
+                  );
+                }
+              },
+              title : "코드 발송"
+            ),
             const SizedBox(height : 16),
-            (sendMail)?commonTextInput(
+            commonTextInput(
               context,
               maxLength: 8,
               enabled: sendMail,
@@ -362,9 +318,15 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
               onChanged: (content) => con.setJoinForm("code",content),
               filter: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly
-              ], //
-              placeholder: "메일로 온 코드를 적어주세요"
-            ):const SizedBox.shrink(),
+              ],
+              placeholder: (sendMail)?"메일로 온 코드를 적어주세요":"이메일을 적고 코드 발송을 눌러주세요"
+            ),
+            const SizedBox(height : 32),
+            FormCommitButton(
+              onPressed: ()=>next(1),
+              title : "다음",
+              width : MediaQuery.of(context).size.width*0.9,
+            )
           ],
         ),
       ),
@@ -430,6 +392,12 @@ class JoinFormProfile extends StatelessWidget {
                     }
                   ),
                 ],
+              ),
+              const SizedBox(height : 32),
+              FormCommitButton(
+                onPressed: ()=>next(2),
+                title : "생성",
+                width : MediaQuery.of(context).size.width*0.9,
               )
             ],
           ),

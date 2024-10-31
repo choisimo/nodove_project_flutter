@@ -111,6 +111,7 @@ class _EditUserState extends State<EditUser> {
                     ),
                     child : commonTextInput(
                       context,
+                      bColor: Colors.transparent,
                       keyboard: TextInputType.multiline,
                       maxLines: null,
                       style : statusStyle,

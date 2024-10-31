@@ -4,36 +4,41 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/list/other/taglist.dart';
 import 'package:nodove_flutter/src/page/messenger/room/room.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/recruit/list.dart';
+import 'package:nodove_flutter/src/page/recruit/main.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
-import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
-import 'package:nodove_flutter/state/url.dart';
 
 void main() async{
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await _initializeMap();
+  await _initialize();
   
   FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
 
-Future<void> _initializeMap() async{
+Future<void> _initialize() async{
   await NaverMapSdk.instance.initialize(
     clientId: "g69k6e2jkr",
     onAuthFailed: (ex) => print("네이버 로그인 실패$ex"),
+  );
+  KakaoSdk.init(
+      nativeAppKey: '05ac89039fc5530d6aecefd15965ffab',
+      javaScriptAppKey: '6ca98145dce6e237061047f91555b459',
   );
 }
 
@@ -63,7 +68,7 @@ class MyApp extends StatelessWidget{
       supportedLocales: const [
         Locale('ko',"KO")
       ],
-      home : const LoginPage(),
+      home : const LoginMainPage(),
       theme : Themes.light,
       darkTheme: Themes.dark,
       themeMode: ThemeMode.system,
@@ -100,7 +105,7 @@ List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
   const RoomPage(key : Key('messengerPage')),
   const FeedMainPage(key : Key('listPage')),
-  const RecruitListPage(key : Key("RecruitPage")),
+  const RecruitMainPage(key : Key("RecruitMainPage")),
   const UserPage(key : Key('userPage')),
 ];
 class _MyHomeState extends State<MyHome>{
@@ -127,7 +132,7 @@ class _MyHomeState extends State<MyHome>{
       Obx((){
         return PopScope(
           canPop: canPop,
-          onPopInvoked: (b){
+          onPopInvokedWithResult: (b,result){
             if (Navigator.of(context,rootNavigator: true) == Navigator.of(context)
             ){
               final index = PageState.page.index.value;

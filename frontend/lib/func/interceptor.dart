@@ -9,6 +9,8 @@ class ApiInterceptors extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
     const storage = FlutterSecureStorage();
 
+    print(options.uri);
+
     final String? token = await storage.read(key: "userToken");
     final String? refresh = await storage.read(key: "refreshToken");
     if (token != null){options.headers['Authorization'] = token;}

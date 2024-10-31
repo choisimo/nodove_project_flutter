@@ -177,6 +177,15 @@ List<BoxShadow> rowBorderShadow(){
   ];
 }
 
+Border rowBorderLineAll(){
+  BuildContext context = GlobalContext.navigatorState.currentContext!;
+
+  return Border.all(
+    color: Theme.of(context).colorScheme.onSecondary,
+    width: 0.5,
+  );
+}
+
 BorderSide rowBorderLine(){
   BuildContext context = GlobalContext.navigatorState.currentContext!;
 
@@ -369,6 +378,7 @@ Widget commonTextInput(
     keyboardType: keyboard,
     maxLength: maxLength,
     style : style,
+    enabled : enabled,
     controller : controller,
     autovalidateMode: AutovalidateMode.always,
     validator: validator,
@@ -376,7 +386,7 @@ Widget commonTextInput(
     obscureText : obscureText,
     decoration: InputDecoration(
       enabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(32)),
+          borderRadius: RowContainer.radius,
           borderSide: BorderSide(color: borderColor, width: borderWidth)),
       counterText: "",
       focusedBorder:
@@ -517,3 +527,48 @@ class _CustomToggleState extends State<CustomToggle> {
   }
 }
 
+class FormCommitButton extends StatelessWidget {
+  final String title;
+  final Function onPressed;
+  final Color? backgroundColor;
+  final Color? fontColor;
+  final double? width;
+  final double? height;
+  final double? borderRadius;
+  final double? fontSize;
+  const FormCommitButton({
+    super.key,
+    this.title = "",
+    required this.onPressed,
+    this.backgroundColor,
+    this.width,
+    this.height = 48,
+    this.borderRadius,
+    this.fontSize = 20,
+    this.fontColor = Colors.white
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width : width,
+      height : height,
+      child: TextButton(
+        style : TextButton.styleFrom(
+          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+          shape: const RoundedRectangleBorder(
+            borderRadius: RowContainer.radius
+          ),
+        ),
+        onPressed: () => onPressed.call(),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize : fontSize,
+            color : fontColor
+          ),
+        ),
+      ),
+    );
+  }
+}

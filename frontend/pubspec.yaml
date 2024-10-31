@@ -60,6 +60,11 @@ dependencies:
   flutter_native_splash: ^2.4.1
   socket_io_client: ^2.0.3+1
   top_snackbar_flutter: ^3.1.0
+  kakao_flutter_sdk_user: ^1.9.5
+  kakao_flutter_sdk_share: ^1.9.5
+  kakao_flutter_sdk_talk: ^1.9.5
+  flutter_naver_login: ^1.6.0
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:

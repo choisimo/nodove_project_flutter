@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
-import 'package:nodove_flutter/state/color.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});

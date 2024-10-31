@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
@@ -11,6 +13,7 @@ class AuthDataSrc{
     baseUrl: Url.authServerUrl, // 요청의 기본 URL
     connectTimeout: const Duration(milliseconds: 5000), // 연결 시간 초과 (밀리초)
     receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
+    headers: {'Content-Type': "audio/wav'", "Connection": "keep-alive"}
   ));
 
   Future<bool> isUserIdDuplicate(String string) async{ // userId 중복 체크 요청
@@ -18,9 +21,7 @@ class AuthDataSrc{
       dio.interceptors.add(ApiInterceptors()); // 에러 핸들링을 위한 인터셉터 추가
       final res = await dio.post(   // Post 요청
         "/api/check/userId/IsDuplicate",
-        data : {
-          "userId" : string
-        }
+        data : jsonDecode('{"userId" : string}')
       );
       if (res.statusCode == 200){   // 결과 200시 데이터 반환 아닐시 false 반환
         return res.data;
@@ -37,9 +38,7 @@ class AuthDataSrc{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.post(
         "/api/check/username/IsDuplicate",
-        data : {
-          "username" : string
-        }
+        data : jsonDecode("{'username' : $string}")
       );
       if (res.statusCode == 200){
         return res.data;
@@ -55,17 +54,16 @@ class AuthDataSrc{
   Future<void> postLogin(Map<String,String> formData) async{  //유저 로그인 요청
     try{
       dio.interceptors.add(ApiInterceptors());  
-      print(formData);
       final res = await dio.post(
-        "/auth/login",
-        data : formData
+        "/login",
+        data : jsonEncode(formData)
       );
       if (res.statusCode == 200){
         Get.off(()=>const MyHome());
       } else {
         print("로그인 실패");
       }
-    } catch(e){
+    } catch(e) {
       showToast("로그인 할 수 없어요😢");
       print("로그인 에러 : $e");
     }
@@ -76,7 +74,7 @@ class AuthDataSrc{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.post(
         "/api/join",
-        data : formData
+        data : jsonEncode(formData)
       );
       if (res.statusCode == 200){
         return true;

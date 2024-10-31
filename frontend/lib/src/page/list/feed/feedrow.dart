@@ -98,7 +98,7 @@ class FeedRow extends StatelessWidget {
   }
 }
 Widget commentButton (BuildContext context,{int id = 1,int count = 0}){
-  return ButtonBar(
+  return OverflowBar(
     alignment: MainAxisAlignment.center,
     children : [
       OutlinedButton.icon(

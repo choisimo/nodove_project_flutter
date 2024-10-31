@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
+import 'package:nodove_flutter/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
@@ -35,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
         print("아이디 찾기 오류");
       }
     } else{
-      Get.off(()=>const MyHome());
+      //Get.off(()=>const MyHome());
     }
   }
 
@@ -47,34 +49,19 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    NavbarContent navbarOpt = NavbarContent(
+      leading: backBtn(context,callback: ()=>Get.back())
+    );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: NavbarTop(navbarOpt),
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body : Stack(
         children: [
-          /*Container(
-            decoration: const BoxDecoration(
-              image : DecorationImage(
-                image : ExactAssetImage(
-                  "assets/images/background.jpg",
-                ),
-                fit : BoxFit.fitHeight,
-                alignment: Alignment(-0.5,0)
-              )
-            ),
-            child : BackdropFilter(
-              filter : ImageFilter.blur(sigmaX: 10 , sigmaY: 10),
-              child: const SizedBox(
-                width : double.infinity,
-                height : double.infinity
-              )
-            ),
-          ),
-          */
           FutureBuilder(
             future : token,
             builder: (BuildContext context,AsyncSnapshot snapshot) {
               return const SafeArea(child: 
-              LoginForm()
+                LoginForm()
               );
             }
           ),
@@ -97,56 +84,8 @@ class LoginForm extends StatelessWidget {
           width : MediaQuery.of(context).size.width * 0.9,
           height : MediaQuery.of(context).size.height * 0.7,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width : MediaQuery.of(context).size.width * 0.25,
-                height : MediaQuery.of(context).size.width * 0.25,
-                child : Image.asset(
-                  "assets/images/logo.png"
-                )
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                 IconButton(
-                    onPressed: (){},
-                    icon : Image.asset(
-                      "assets/icons/user/Oauth.png",
-                      width : 42 , height : 42
-                    )
-                  ),
-                  IconButton(
-                    onPressed: (){},
-                    icon : Image.asset(
-                      "assets/icons/user/Kakao.png",
-                      width : 42 , height : 42
-                    )
-                  ),
-                  IconButton(
-                    onPressed: (){},
-                    icon : Image.asset(
-                      "assets/icons/user/Naver.png",
-                      width : 42 , height : 42
-                    )
-                  ),
-                  IconButton(
-                    icon : Image.asset(
-                      "assets/icons/user/Apple.png",
-                      width : 42 , height : 42,
-                    ),
-                    onPressed: () async {
-                      await SignInWithApple.getAppleIDCredential(
-                        scopes: [
-                          AppleIDAuthorizationScopes.email,
-                          AppleIDAuthorizationScopes.fullName,
-                        ],
-                      );
-                    },
-                  ),
-                  const Text("로 로그인")
-                ],
-              ),
               commonTextInput(
                 context,
                 onChanged: (str){
@@ -155,6 +94,7 @@ class LoginForm extends StatelessWidget {
                 placeholder: "아이디",
                 keyboard: TextInputType.text,
               ),
+              const SizedBox(height : 32),
               commonTextInput(
                 context,
                 onChanged: (str){
@@ -163,65 +103,20 @@ class LoginForm extends StatelessWidget {
                 placeholder: "비밀번호",
                 obscureText : true,
               ),
-              SizedBox(
+              const SizedBox(height : 32),
+              const Text("혹시 아이디나 비밀번호를 잊어버리셨나요?"),
+              const SizedBox(height : 64),
+              FormCommitButton(
                 width : double.infinity,
-                height : 48,
-                child: TextButton(
-                  style : TextButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: RowContainer.radius,
-                      
-                    ),
-                  ),
-                  onPressed: () async{
-                    if(id.isNotEmpty&&pw.isNotEmpty){
-                      await AuthDataSrc().postLogin({
-                        'userId' : id,
-                        'password' : pw,
-                      });
-                    }
-                  },
-                  child: const Text(
-                    "로그인",
-                    style: TextStyle(
-                      fontSize : 20,
-                      fontWeight: FontWeight.bold,
-                      color : Colors.white
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height : 84,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height : 48,
-                      child: TextButton(
-                        style : TextButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: RowContainer.radius,
-                          ),
-                        ),
-                        onPressed: ()=>Get.to(
-                          ()=>const JoinPage(page : 0),
-                        ),
-                        child: const Text(
-                          "새로 가입하기",
-                          style: TextStyle(
-                            fontSize : 16,
-                            fontWeight: FontWeight.bold,
-                            color : Colors.white
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Text("혹시 아이디나 비밀번호를 잊어버리셨나요?"),
-                  ],
-                ),
+                title : "로그인",
+                onPressed: () async{
+                  if(id.isNotEmpty&&pw.isNotEmpty){
+                    await AuthDataSrc().postLogin({
+                      'userId' : id,
+                      'password' : pw,
+                    });
+                  }
+                },
               )
             ],
           ),

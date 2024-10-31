@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/datasrc/chat.dart';
-import 'package:nodove_flutter/src/datasrc/datasrc.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
@@ -12,16 +11,17 @@ import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
-import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
+import 'package:nodove_flutter/state/user.dart';
 
 class InitViewModel implements Bindings{
   @override
   void dependencies(){
     Get.create<FeedListModel>(()=>FeedListModel(),permanent: false);
+    Get.put<UserState>(UserState());
     Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
     Get.create<UserInfoModel>(()=> UserInfoModel());
     Get.lazyPut<FeedImageModel>(()=>FeedImageModel());
@@ -364,7 +364,7 @@ class RoomListModel extends GetxController{
   RxBool isLastAppend = false.obs;
 
   Future<void> getRoomList() async{
-    if (isFetching.isFalse){
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       isFetching(true);
       List<Room> list = await _chatrepo.getUserRooms();
       isFetching(false);
@@ -373,7 +373,7 @@ class RoomListModel extends GetxController{
       } else{
         roomlist([]);
       }
-    }
+    });
   }
 
 }

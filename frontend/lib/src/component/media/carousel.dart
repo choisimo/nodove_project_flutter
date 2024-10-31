@@ -22,7 +22,7 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
   int _current = 0;
   var error = false;
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
   
   @override
   Widget build(BuildContext context) {

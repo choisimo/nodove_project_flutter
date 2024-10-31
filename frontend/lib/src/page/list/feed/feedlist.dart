@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
+import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
