@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
@@ -124,11 +124,11 @@ Widget commentButton (BuildContext context,{int id = 1,int count = 0}){
             },
           );
         },
-        icon : SvgPicture.asset(
-          'assets/icons/navbar/noBorderAdd.svg',
+        icon : CustomSvg(
+          'navbar/noBorderAdd.svg',
           width : 12,
           height : 12,
-          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+          iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
         ),
         label: Text(
           "댓글 $count개",
@@ -163,11 +163,11 @@ class FeedRowBottom extends StatelessWidget {
           onPressed: (){},
           child: Row(
             children: [
-              SvgPicture.asset(
-                'assets/icons/post/star-empty.svg',
+              CustomSvg(
+                'post/star-empty.svg',
                 width : 20,
                 height : 20,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+                iconColor: Theme.of(context).colorScheme.onPrimaryFixed
               ),
               const SizedBox(width:4),
               Text(
@@ -183,11 +183,11 @@ class FeedRowBottom extends StatelessWidget {
         ),
         IconButton(
           onPressed: (){},
-          icon: SvgPicture.asset(
+          icon: CustomSvg(
             'assets/icons/common/bookmark-empty.svg',
             width : 20,
             height : 20,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            iconColor: Theme.of(context).colorScheme.onSurface,
           )
         ),
         IconButton(
@@ -200,11 +200,11 @@ class FeedRowBottom extends StatelessWidget {
                 return ShareModal(id : postId);
             });
           },
-          icon: SvgPicture.asset(
+          icon: CustomSvg(
             'assets/icons/post/share.svg',
             width : 20,
             height : 20,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+            iconColor: Theme.of(context).colorScheme.onSurface
           )
         ),
         if (etcOpt)
@@ -221,7 +221,7 @@ class FeedRowBottom extends StatelessWidget {
                 useRootNavigator: true,
                 backgroundColor: Theme.of(context).colorScheme.onPrimary,
                 builder: (BuildContext context){
-                  return FeedModal(context,userId,postId);
+                  return FeedModal(userId : userId,postId : postId);
               });
             },
             child: Text(
@@ -241,48 +241,55 @@ class FeedRowBottom extends StatelessWidget {
   }
 }
 
-Widget FeedModal (
-  BuildContext context,
-  String userId,
-  int postId
-) {
-  final myid = UserState.page.id;
+class FeedModal extends StatelessWidget {
+  final String userId;
+  final int postId;
+  const FeedModal({
+    super.key,
+    required this.userId,
+    required this.postId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final myid = UserState.page.id;
   return Modal(
-    widget : [
-      const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
-      ModalMenu(
-        cb : (){},
-        iconSrc : "assets/icons/navbar/certification.svg",
-        title : "신고",
-      ),
-      ModalMenu(
-        cb : (){
-          Get.to(()=>UserPage(id : userId));
-        },
-        iconSrc : "assets/icons/navbar/user.svg",
-        title : "정보",
-      ),
-      (myid == userId.obs)?
-      Column(
-        children: [
-          const MenuTitle(title : '내 피드' , key : Key("내가 쓴 피드 제목")),
-          ModalMenu(
-            cb : (){},
-            iconSrc : "assets/icons/post/edit.svg",
-            title : "수정",
-          ),
-          ModalMenu(
-            cb : (){
-              Get.back();
-              feedDeleteConfirm(context, postId);
-            },
-            iconSrc : "assets/icons/post/delete.svg",
-            title : "삭제",
-          )
-        ],
-      ):const SizedBox.shrink(),
-    ]
-  );
+      widget : [
+        const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
+        ModalMenu(
+          cb : (){},
+          iconSrc : "assets/icons/navbar/certification.svg",
+          title : "신고",
+        ),
+        ModalMenu(
+          cb : (){
+            Get.to(()=>UserPage(id : userId));
+          },
+          iconSrc : "assets/icons/navbar/user.svg",
+          title : "정보",
+        ),
+        (myid == userId.obs)?
+        Column(
+          children: [
+            const MenuTitle(title : '내 피드' , key : Key("내가 쓴 피드 제목")),
+            ModalMenu(
+              cb : (){},
+              iconSrc : "assets/icons/post/edit.svg",
+              title : "수정",
+            ),
+            ModalMenu(
+              cb : (){
+                Get.back();
+                feedDeleteConfirm(context, postId);
+              },
+              iconSrc : "assets/icons/post/delete.svg",
+              title : "삭제",
+            )
+          ],
+        ):const SizedBox.shrink(),
+      ]
+    );
+  }
 }
 
 class Profile extends StatelessWidget {
@@ -352,8 +359,6 @@ class FeedTop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxwidth = MediaQuery.of(context).size.width;
-
     return Container(
       padding : const EdgeInsets.all(4),
       child: Column(
@@ -429,7 +434,7 @@ void feedDeleteConfirm(BuildContext context,int postId){
   showDialog(
     context : context,
     builder: (context){
-      return customDialog(
+      return CustomDialog(
         title : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

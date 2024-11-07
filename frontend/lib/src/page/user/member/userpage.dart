@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
@@ -348,7 +349,7 @@ void showUserDialog (BuildContext context){
   showDialog(
     context: context, 
     builder:(context){
-      return customDialog(
+      return CustomDialog(
         title : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

@@ -10,161 +10,6 @@ import 'package:nodove_flutter/state/color.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class customImage extends StatelessWidget {
-  final String src;
-  final BoxFit? fit;
-  final double? width;
-  final double? height;
-  final Widget? loading;
-  final Widget? alt;
-  const customImage(
-    this.src,{
-    super.key,
-    this.fit,
-    this.width,
-    this.height,
-    this.loading,
-    this.alt
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return 
-    (src.contains("http"))?
-    Image.network(
-      src,
-      fit: fit??BoxFit.contain,
-      width : width,
-      height : height,
-      loadingBuilder: 
-      (context, child, loadingProgress) {
-        if (loadingProgress == null){
-          return child;
-        }
-        return loading??LottieBuilder.asset(
-          "assets/icons/common/loading.json",
-          width : 64 , height : 64,
-        );
-      },
-      errorBuilder: 
-      (context, error, stackTrace){
-        return alt??LottieBuilder.asset(
-          "assets/icons/common/loading.json",
-          width : 64 , height : 64
-        );
-      },
-    ):Image.asset(
-      src,
-      fit: fit??BoxFit.contain,
-      width : width,
-      height : height,
-      errorBuilder: 
-      (context, error, stackTrace){
-        return alt??LottieBuilder.asset(
-          "assets/icons/common/loading.json",
-          width : 64 , height : 64
-        );
-      },
-    );
-  }
-}
-
-ImageProvider customImgProvider(
-  String src,
-  {
-    BoxFit? fit,
-    double? width,
-    double? height,
-    Widget? loading,
-    Widget? alt
-  }){
-  return (src.isNotEmpty)?
-  Image.network(
-      src,
-      fit: fit??BoxFit.contain,
-      width : width??200,
-      height : height??200,
-      loadingBuilder: 
-      (context, child, loadingProgress) {
-        if (loadingProgress == null){
-          return child;
-        }
-        return loading??LottieBuilder.asset(
-          "assets/icons/common/loading.json",
-          width : 64 , height : 64,
-        );
-      },
-      errorBuilder: 
-      (context, error, stackTrace){
-        return alt??LottieBuilder.asset(
-          "assets/icons/common/loading.json",
-          width : 64 , height : 64
-        );
-      },
-    ).image:
-    Image.asset(
-      "assets/images/logo.png",
-      fit: fit??BoxFit.contain,
-      width : width??200,
-      height : height??200,
-    ).image;
-}
-
-class customDialog extends StatelessWidget {
-  final Color? backgroundColor;
-  final Widget? title;
-  final Widget? content;
-  final List<Widget>? bottomBtns;
-  const customDialog({
-    super.key,
-    this.backgroundColor,
-    this.title,
-    this.content,
-    this.bottomBtns
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final sWidth = MediaQuery.of(context).size.width;
-    final sHeight = MediaQuery.of(context).size.height;
-    return Dialog(
-      shape : const RoundedRectangleBorder(
-        borderRadius: RowContainer.radius
-      ),
-      insetAnimationCurve: Curves.easeIn,
-      backgroundColor: backgroundColor,
-      child : LayoutBuilder(
-        builder: (context,constraint) {
-          return Container(
-            padding: const EdgeInsets.all(8.0),
-            constraints: BoxConstraints(
-              maxHeight: sHeight * 0.9,
-              maxWidth : sWidth * 0.9,
-              minHeight: sHeight * 0.1,
-              minWidth: sWidth * 0.1,
-            ),
-            child: SizedBox(
-              width : constraint.maxWidth,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  title!,
-                  content!,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: bottomBtns!
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-      )
-    );
-  }
-}
-
 List<BoxShadow> rowBorderShadow(){
   BuildContext context = GlobalContext.navigatorState.currentContext!;
 
@@ -269,6 +114,61 @@ class CustomRefreshIndicator extends StatelessWidget {
       backgroundColor : backgroundColor??Theme.of(context).colorScheme.onPrimary,
       onRefresh: ()=>Future.sync(()=>onRefresh?.call()),
       child : child!
+    );
+  }
+}
+
+class CustomDialog extends StatelessWidget {
+  final Color? backgroundColor;
+  final Widget? title;
+  final Widget? content;
+  final List<Widget>? bottomBtns;
+  const CustomDialog({
+    super.key,
+    this.backgroundColor,
+    this.title,
+    this.content,
+    this.bottomBtns
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final sWidth = MediaQuery.of(context).size.width;
+    final sHeight = MediaQuery.of(context).size.height;
+    return Dialog(
+      shape : const RoundedRectangleBorder(
+        borderRadius: RowContainer.radius
+      ),
+      insetAnimationCurve: Curves.easeIn,
+      backgroundColor: backgroundColor,
+      child : LayoutBuilder(
+        builder: (context,constraint) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            constraints: BoxConstraints(
+              maxHeight: sHeight * 0.9,
+              maxWidth : sWidth * 0.9,
+              minHeight: sHeight * 0.1,
+              minWidth: sWidth * 0.1,
+            ),
+            child: SizedBox(
+              width : constraint.maxWidth,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  title!,
+                  content!,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: bottomBtns!
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      )
     );
   }
 }
@@ -447,7 +347,7 @@ Widget profileSetting(
         profile : current??"",
         width : 104,
         height : 104,
-        borderRadius: 4.0,
+        borderRadius: 2.0,
       ),
       SizedBox(
         width : 32,
@@ -569,6 +469,94 @@ class FormCommitButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomFloatingButton extends StatelessWidget {
+  final Widget? child;
+  final Widget? icon;
+  final Function? onClick;
+  final Color? backgroundColor;
+  final String? heroTag;
+  const CustomFloatingButton({
+    this.child,this.icon,this.onClick,this.backgroundColor,this.heroTag,
+    super.key
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: 'comment',
+      onPressed: ()=>onClick?.call(),
+      backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+      child : SizedBox(
+        width : 52,
+        height : 52,
+        child: icon
+      )
+    );
+  }
+}
+
+class CustomModalFloatingButton extends StatelessWidget {
+  final Widget? child;
+  final Widget? icon;
+  final Color? backgroundColor;
+  final String? heroTag;
+  const CustomModalFloatingButton({
+    this.child,this.icon,this.backgroundColor,
+    this.heroTag,
+    super.key
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomFloatingButton(
+      heroTag: 'comment',
+      onClick: ()=>showModalBottomSheet(
+        enableDrag: true,
+        useRootNavigator: true,
+        isScrollControlled: true,
+        context: context,
+        showDragHandle: true,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        builder :(BuildContext context) {
+          return Padding(
+            padding : EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom
+            ),
+            child: child
+          );
+        },
+      ),
+      backgroundColor: backgroundColor,
+      child : SizedBox(
+        width : 52,
+        height : 52,
+        child: icon
+      )
+    );
+  }
+}
+
+class CustomDrawer extends StatelessWidget {
+  final String? label;
+  final List<Widget> children;
+  const CustomDrawer({super.key,this.label,required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      semanticLabel: label,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      child : SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children : children,
+        )
+      )
     );
   }
 }

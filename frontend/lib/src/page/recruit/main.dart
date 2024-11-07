@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -58,7 +59,7 @@ class _RecruitMainViewState extends State<RecruitMainView>{
           ],
           expandedHeight: MediaQuery.of(context).size.height * 0.3,
           flexibleSpace: const SizedBox(
-            child : customImage(
+            child : CustomImage(
               "assets/images/background2.jpg",
               width : double.infinity,
               height : double.infinity,

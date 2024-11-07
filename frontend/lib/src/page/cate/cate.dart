@@ -43,7 +43,16 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: plusButton(),
+      floatingActionButton: CustomFloatingButton(
+        onClick: ()=>Get.to(()=>const WriteCatePage(),fullscreenDialog: true),
+        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+        child : SvgPicture.asset(
+          'assets/icons/navbar/noBorderAdd.svg',
+          width : 24,
+          height : 24,
+          colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+        )
+      ),
       body : CustomScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -76,18 +85,6 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
             )
           )
         ],
-      )
-    );
-  }
-  Widget plusButton(){
-    return FloatingActionButton(
-      onPressed: ()=>Get.to(()=>const WriteCatePage(),fullscreenDialog: true),
-      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-      child : SvgPicture.asset(
-        'assets/icons/navbar/noBorderAdd.svg',
-        width : 24,
-        height : 24,
-        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
       )
     );
   }

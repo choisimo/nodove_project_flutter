@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -54,10 +56,10 @@ class _TagListPageState extends State<TagListPage>{
             onPressed: (){
               key.currentState!.openEndDrawer();
             },
-            icon: SvgPicture.asset(
+            icon: CustomSvg(
               "assets/icons/navbar/menu.svg",
               width : 16 , height : 16,
-              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+              iconColor: Theme.of(context).colorScheme.onSurface
             )
           )
         ],

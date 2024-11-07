@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nodove_flutter/graphic/border.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
@@ -340,7 +341,7 @@ class _WriteContentState extends State<WriteContent> {
                                   margin: const EdgeInsets.all(4),
                                   child : ClipRRect(
                                     borderRadius: RowContainer.radius,
-                                    child: customImage(
+                                    child: CustomImage(
                                       _imageModel.imageList[index],
                                       fit: BoxFit.cover
                                     ),

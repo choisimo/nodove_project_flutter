@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/media/zoom.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 
@@ -72,7 +73,7 @@ class _CarouselState extends State<Carousel> {
                 },
                 child : Hero(
                   tag : "$page-${imageLinks[i.key]}",
-                  child: customImage(
+                  child: CustomImage(
                     imageLinks[i.key],
                     fit : BoxFit.contain,
                   ),

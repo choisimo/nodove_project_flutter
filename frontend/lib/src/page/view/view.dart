@@ -35,6 +35,7 @@ class _FeedPageState extends State<FeedPage>{
 
   @override
   Widget build(BuildContext context){
+    PageUrl url = ViewPageState.page.comment.value;
     int page = widget.page??int.parse(Get.parameters['page']??'3');
     NavbarContent navbarOpt = NavbarContent(
       leading: BackBtn(callback: ()=>Navigator.of(context).pop()),
@@ -45,7 +46,7 @@ class _FeedPageState extends State<FeedPage>{
             context: context,
             backgroundColor: Theme.of(context).colorScheme.onPrimary,
             builder: (BuildContext context){
-              return Obx(()=>FeedModal(context,vpage.content.value.writerUserId,id));
+              return Obx(()=>FeedModal(userId : vpage.content.value.writerUserId,postId : id));
           });
         }, id : page),
       ]
@@ -53,41 +54,10 @@ class _FeedPageState extends State<FeedPage>{
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt,centerTitle : true),
-      floatingActionButton: commentButton(),
-      body : FeedView(
-        page : page,
-        url : widget.url,
-      )
-    );
-  }
-  Widget commentButton(){
-    int page = widget.page??int.parse(Get.parameters['page']??'3');
-    PageUrl url = ViewPageState.page.comment.value;
-    return FloatingActionButton(
-      heroTag: 'comment',
-      onPressed: (){
-        showModalBottomSheet(
-          enableDrag: true,
-          useRootNavigator: true,
-          isScrollControlled: true,
-          context: context,
-          showDragHandle: true,
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          builder :(BuildContext context) {
-            return Padding(
-              padding : EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom
-              ),
-              child: commentList(page : page)
-            );
-          },
-        );
-      },
-      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-      child : SizedBox(
-        width : 52,
-        height : 52,
-        child: Stack(
+      floatingActionButton: CustomModalFloatingButton(
+        heroTag: 'comment',
+        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+        icon : Stack(
           alignment: Alignment.topRight,
           children: [
             Center(
@@ -119,6 +89,11 @@ class _FeedPageState extends State<FeedPage>{
             ),
           ],
         ),
+        child : commentList(page : page),
+      ),
+      body : FeedView(
+        page : page,
+        url : widget.url,
       )
     );
   }

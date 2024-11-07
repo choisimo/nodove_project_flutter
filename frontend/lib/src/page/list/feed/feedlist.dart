@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
@@ -57,7 +58,40 @@ class _FeedListPageState extends State<FeedListPage>{
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
+    final DataSrc src = DataSrc();
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    final List<Widget> widgetList = [
+      const SizedBox(
+        height : 32,
+      ),
+      Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSecondary
+        ),
+        height : 0.5,
+      ),
+      ListMenuBtn(
+        iconSize: 12,
+        iconSrc: "assets/icons/navbar/menu.svg",
+        title : "카테고리",
+        onClick : ()=>Navigator.of(context).push(
+          MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
+        )
+      ),
+      ListMenuBtn(
+        iconSize: 12,
+        iconSrc: "assets/icons/navbar/hashtag.svg",
+        title : "해시태그",
+        onClick : (){}
+      ),
+      ListMenuBtn(
+        iconSize: 12,
+        iconSrc: "assets/icons/navbar/navi.svg",
+        title : "내 위치",
+        onClick : ()=>Get.to(()=>const MapPage())
+      )
+    ];
+    
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
       leading : BackBtn(callback: ()=>Navigator.of(context).pop()),
@@ -84,7 +118,23 @@ class _FeedListPageState extends State<FeedListPage>{
     return Scaffold(
       key: key,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: plusButton(),
+      floatingActionButton: CustomFloatingButton(
+        heroTag: 'feedList',
+        onClick: () => Get.to(
+          ()=>const WritePage(),
+          fullscreenDialog: true,
+          arguments: {
+            'postCategory' : cateid
+          }
+        ),
+        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+        child : const CustomSvg(
+          'navbar/noBorderAdd.svg',
+          width : 24,
+          height : 24,
+          iconColor: Colors.white,
+        )
+      ),
       body : 
       CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -118,130 +168,67 @@ class _FeedListPageState extends State<FeedListPage>{
         ],
       ),
       
-      endDrawer: drawer(),
-    );
-  }
-  Widget drawer(){
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    final List<Widget> widgetList = [
-      const SizedBox(
-        height : 32,
-      ),
-      Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSecondary
-        ),
-        height : 0.5,
-      ),
-      ListMenuBtn(
-        iconSize: 12,
-        iconSrc: "assets/icons/navbar/menu.svg",
-        title : "카테고리",
-        onClick : ()=>Navigator.of(context).push(
-          MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
-        )
-      ),
-      ListMenuBtn(
-        iconSize: 12,
-        iconSrc: "assets/icons/navbar/hashtag.svg",
-        title : "해시태그",
-        onClick : (){}
-      ),
-      ListMenuBtn(
-        iconSize: 12,
-        iconSrc: "assets/icons/navbar/navi.svg",
-        title : "내 위치",
-        onClick : ()=>Get.to(()=>const MapPage())
-      )
-    ];
-    final DataSrc src = DataSrc();
-    return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      child : SafeArea(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              FutureBuilder(
-                future: src.getCateList(
-                  "/api/categories/getAllCategoriesByParentId/", 
-                  cateid.toString(),
-                  false
-                ),
-                builder:(BuildContext context,AsyncSnapshot snapshot) {
-                  if (snapshot.data !=null && snapshot.data.length > 0){
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
+      endDrawer: CustomDrawer(
+        children: [
+          FutureBuilder(
+            future: src.getCateList(
+              "/api/categories/getAllCategoriesByParentId/", 
+              cateid.toString(),
+              false
+            ),
+            builder:(BuildContext context,AsyncSnapshot snapshot) {
+              if (snapshot.data !=null && snapshot.data.length > 0){
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: ()=>Get.to(()=>const NotiPage()),
-                              icon: const NavbarCommonBtn("assets/icons/navbar/alert.svg")
-                            ),
-                            IconButton(
-                              onPressed: ()=>Get.to(()=>const FeedSettingPage()),
-                              icon: const NavbarCommonBtn("assets/icons/common/setting.svg")
-                            )
-                          ],
+                        IconButton(
+                          onPressed: ()=>Get.to(()=>const NotiPage()),
+                          icon: const NavbarCommonBtn("assets/icons/navbar/alert.svg")
                         ),
-                        const Profile(profile: "",
-                          width: 96,
-                          height: 96,
-                          borderRadius: 2,
-                        ),
-                        Text(
-                          snapshot.data![0].categoryName,
-                          style : const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        Text(
-                          '"${snapshot.data![0].categoryDescription}"',
-                        ),
-                        SizedBox(
-                          width : MediaQuery.of(context).size.width * 0.7,
-                          child : SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                              children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
-                            ),
-                          )
+                        IconButton(
+                          onPressed: ()=>Get.to(()=>const FeedSettingPage()),
+                          icon: const NavbarCommonBtn("assets/icons/common/setting.svg")
                         )
-                        
                       ],
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
-                  }
-                },
-              ),
-            ],
+                    ),
+                    const Profile(profile: "",
+                      width: 96,
+                      height: 96,
+                      borderRadius: 2,
+                    ),
+                    Text(
+                      snapshot.data![0].categoryName,
+                      style : const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                    Text(
+                      '"${snapshot.data![0].categoryDescription}"',
+                    ),
+                    SizedBox(
+                      width : MediaQuery.of(context).size.width * 0.7,
+                      child : SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
+                        ),
+                      )
+                    )
+                    
+                  ],
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
+              }
+            },
           ),
+        ],
       ),
-    );
-  }
-  Widget plusButton(){
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    return FloatingActionButton(
-      heroTag: 'feedList',
-      onPressed: () => Get.to(
-        ()=>const WritePage(),
-        fullscreenDialog: true,
-        arguments: {
-          'postCategory' : cateid
-        }
-      ),
-      backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-      child : SvgPicture.asset(
-        'assets/icons/navbar/noBorderAdd.svg',
-        width : 24,
-        height : 24,
-        colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
-      )
     );
   }
 }
