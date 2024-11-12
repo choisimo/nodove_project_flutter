@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
@@ -12,7 +11,6 @@ import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
-import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -92,22 +90,23 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 child : userButtons(context,user)
               ),
               SliverPersistentHeader(
-                delegate: SliverAppBarDelegate(
+                delegate: SliverTabBarDelegate(
                   TabBar(
                     labelStyle: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                     indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     unselectedLabelStyle: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.normal,
                     ),
+                    dividerColor: Theme.of(context).colorScheme.onSecondary,
                     indicatorSize: TabBarIndicatorSize.tab,
                     controller: tabController,
                     labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     indicatorWeight: 0.5,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSecondary,
                     tabs: tabList,
                   ),
                 ),
@@ -121,7 +120,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 child : userInfoWithProfileSkel(context),
               ),
               SliverPersistentHeader(
-                delegate: SliverAppBarDelegate(
+                delegate: SliverTabBarDelegate(
                   TabBar(
                     labelStyle: const TextStyle(
                       fontSize: 16,
@@ -136,7 +135,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                     controller: tabController,
                     labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     indicatorWeight: 0.5,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSecondary,
                     tabs: tabList,
                   ),
                 ),
@@ -196,7 +195,7 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
             onClick : () => copyLink(
               "${Url.serverUrl}${Url.clientUser}?user=$userId",
             )
-          ), 
+          ),
           popupMenu(
             context,
             title: const NavbarTitle("로그아웃", fontSize : 16),
@@ -228,8 +227,8 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
   );
 }
 
-class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-    SliverAppBarDelegate(this._tabBar);
+class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+    SliverTabBarDelegate(this._tabBar);
 
     final TabBar _tabBar;
 
@@ -248,62 +247,97 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     }
 
     @override
-    bool shouldRebuild(SliverAppBarDelegate oldDelegate) {
+    bool shouldRebuild(SliverTabBarDelegate oldDelegate) {
       return false;
     }
   }
 
+  class SliverCustomBarDelegate extends SliverPersistentHeaderDelegate {
+    final Widget widget;
+    final double maxHeight;
+    final double minHeight;
+
+    SliverCustomBarDelegate({
+      required this.widget,
+      this.maxHeight = 54,
+      this.minHeight = 54
+    });
+
+    @override
+    double get minExtent => minHeight;
+    @override
+    double get maxExtent => maxHeight;
+
+    @override
+    Widget build(
+        BuildContext context, double shrinkOffset, bool overlapsContent) {
+      return widget;
+    }
+
+    @override
+    bool shouldRebuild(SliverCustomBarDelegate oldDelegate) {
+      return false;
+    }
+  }
+/*
+ClipPath(
+  clipper: const CustomClip(
+    vertical: 72
+  ),
+  child: Container(
+    padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.onPrimaryFixed
+    ),
+    child : Text(
+      "나에 대한 한마디를 추가해보세요",
+      style : TextStyle(
+        color: Theme.of(context).colorScheme.onPrimary,
+      )
+    ),
+  ),
+),
+*/
 Widget userInfoWithProfile(BuildContext context, User info){
-  return Column(
+  return Row(
     children: [
-      ClipPath(
-        clipper: const CustomClip(
-          vertical: 72
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Profile(
+          profile: info.profile,
+          width: 84, height: 84,
+          borderRadius: 1.0,
         ),
-        child: Container(
-          padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimaryFixed
-          ),
-          child : Text(
-            "나에 대한 한마디를 추가해보세요",
-            style : TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            info.nickname,
+            style: const TextStyle(
+              fontSize : 20,
+              fontWeight: FontWeight.bold,
             )
           ),
-        ),
-      ),
-      const SizedBox(height : 4),
-      Profile(
-        profile: info.profile,
-        width: 104, height: 104,
-        borderRadius: 2.0,
-      ),
-      Text(
-        info.nickname,
-        style: const TextStyle(
-          height : 1.16,
-          fontSize : 18,
-          fontWeight: FontWeight.bold,
-        )
-      ),
-      Text(
-        ((info.groups.isNotEmpty)
-        ?info.groups.toString()
-        :"소속 없음"),
-        style: TextStyle(
-          height : 1.125,
-          fontSize: 16,
-          color : Theme.of(context).colorScheme.secondary,
-        ),
-      ),
-      Text(
-        "2024년 7월 21일 가입",
-        style: TextStyle(
-          height : 1.33,
-          fontSize: 12,
-          color : Theme.of(context).colorScheme.secondary,
-        ),
+          Text(
+            ((info.groups.isNotEmpty)
+            ?info.groups.toString()
+            :"소속 없음"),
+            style: TextStyle(
+              fontSize: 16,
+              color : Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          const SizedBox(height : 4),
+          Text(
+            "2024년 7월 가입",
+            style: TextStyle(
+              fontSize: 12,
+              color : Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ],
       ),
     ],
   );
@@ -312,34 +346,62 @@ Widget userInfoWithProfile(BuildContext context, User info){
 Widget userButtons(BuildContext context,User info){
   final myid = UserState.page.id;
   return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    mainAxisSize: MainAxisSize.max,
     children: [
+      const SizedBox(
+        width : 16
+      ),
       Obx((){
         return (info.userId.obs == myid)?
-        OutlinedButton(
+        Expanded(
+          child: TextButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.onSecondary,
+              shape: const RoundedRectangleBorder(
+                borderRadius: RowContainer.radius
+              ),
+            ),
+            onPressed: ()=>Get.to(
+              ()=>const EditUserPage(),
+              fullscreenDialog: true
+            ),
+            child: Text(
+              "정보 수정",
+              style : TextStyle(
+                fontSize: 16,
+                color : Theme.of(context).colorScheme.onPrimaryFixed
+              )
+            )
+          ),
+        ):const SizedBox.shrink();
+      }),
+      const SizedBox(
+        width : 16
+      ),
+      Expanded(
+        child: TextButton(
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+            shape: const RoundedRectangleBorder(
+              borderRadius: RowContainer.radius
+            ),
+          ),
           onPressed: ()=>Get.to(
             ()=>const EditUserPage(),
             fullscreenDialog: true
           ),
           child: Text(
-            "정보 수정",
+            "활동 관리",
             style : TextStyle(
-              color : Theme.of(context).colorScheme.onSurface
+              fontSize: 16,
+              color : Theme.of(context).colorScheme.onPrimaryFixed
             )
           )
-        ):const SizedBox.shrink();
-      }),
-      const SizedBox(
-        width : 8
+        ),
       ),
-      OutlinedButton(
-        onPressed: (){},
-        child: Text(
-          "#해쉬태그",
-          style : TextStyle(
-            color : Theme.of(context).colorScheme.onSurface
-          )
-        )
+      const SizedBox(
+        width : 16
       ),
     ],
   );
@@ -365,8 +427,7 @@ void showUserDialog (BuildContext context){
           ],
         ),
         bottomBtns: [
-          dialogBottomBtn(
-            context,
+          DialogBottomBtn(
             onPressed: () async{
               const storage = FlutterSecureStorage();
               await storage.delete(key: 'userToken');

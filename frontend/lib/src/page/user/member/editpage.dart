@@ -109,13 +109,12 @@ class _EditUserState extends State<EditUser> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimaryFixed
                     ),
-                    child : commonTextInput(
-                      context,
+                    child : CommonTextInput(
                       bColor: Colors.transparent,
                       keyboard: TextInputType.multiline,
                       maxLines: null,
                       style : statusStyle,
-                      key : "상태메세지",
+                      customkey : "상태메세지",
                       initialValue: "상태메세지",
                       placeholder: "나에 대한 한마디를 추가해보세요",
                       placeholderStyle: statusStyle
@@ -137,9 +136,8 @@ class _EditUserState extends State<EditUser> {
                 const SizedBox(height : 8),
                 SizedBox(
                   width : maxWidth * 0.9,
-                  child: commonTextInput(
-                    context,
-                    key : user.nickname,
+                  child: CommonTextInput(
+                    customkey : user.nickname,
                     initialValue: user.nickname,
                     placeholder: "닉네임을 적어주세요",
                   ),
@@ -235,8 +233,7 @@ class _EditUserState extends State<EditUser> {
                 const SizedBox(height : 8),
                 SizedBox(
                   width : maxWidth * 0.9,
-                  child : commonTextInput(
-                    context,
+                  child : CommonTextInput(
                     keyboard: TextInputType.phone,
                     maxLength: 17,
                     filter: <TextInputFormatter>[
@@ -248,8 +245,7 @@ class _EditUserState extends State<EditUser> {
                 const SizedBox(height : 8),
                 SizedBox(
                   width : maxWidth * 0.9,
-                  child : commonTextInput(
-                    context,
+                  child : const CommonTextInput(
                     keyboard: TextInputType.emailAddress,
                     maxLength: 17,
                     placeholder: "이메일을 적어주세요"

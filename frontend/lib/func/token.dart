@@ -5,15 +5,18 @@ Future<Map<String,dynamic>> decoding(String? jwt,String? cookie) async{
   if (jwt!.isEmpty||cookie!.isEmpty) return {};
 
   final Map<String, dynamic> parsed = jwtParsing(jwt);
-  int date =  DateTime.now().millisecond;
+  int date =  DateTime.now().millisecondsSinceEpoch;
   final current = (date / 1000).floor();
   
   if (parsed['exp'] > current){
     await cacheRefresh(jwt,cookie);
-    return {
+    Map<String,dynamic> response = {
       "cachedInfo" : jwt,
       "parsed" : parsed
     };
+    print(current);
+    print(response);
+    return response;
   }
 
   return {};

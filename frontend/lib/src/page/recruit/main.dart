@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
-import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
+import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/recruit/list.dart';
-import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/state/color.dart';
 
 class RecruitMainPage extends StatelessWidget {
   const RecruitMainPage({super.key});
@@ -53,18 +54,27 @@ class _RecruitMainViewState extends State<RecruitMainView>{
           title : const NavbarTitle("채용",),
           actions : [
             NavbarCommonBtn(
-              "assets/icons/navbar/search.svg",
+              "navbar/search.svg",
               onClick : (){},
             ),
           ],
-          expandedHeight: MediaQuery.of(context).size.height * 0.3,
-          flexibleSpace: const SizedBox(
-            child : CustomImage(
-              "assets/images/background2.jpg",
-              width : double.infinity,
-              height : double.infinity,
-              fit : BoxFit.cover
-            )
+          expandedHeight: 56
+        ),
+        const SliverToBoxAdapter(
+        child: SizedBox(
+          height : 240,
+          child: BannerCarousel(
+              imageLinks: [
+                "assets/images/background.jpg",
+                "assets/images/background2.jpg"
+              ],
+            ),
+        )
+        ),
+        const SliverPadding(
+          padding: EdgeInsets.all(4),
+            sliver: SliverToBoxAdapter(
+            child : RecruitShortcutMenu()
           ),
         ),
         const SliverToBoxAdapter(
@@ -72,12 +82,21 @@ class _RecruitMainViewState extends State<RecruitMainView>{
             children: [
               TitleRow(
                 title : "추천 채용",
-                iconSrc: "assets/icons/navbar/menu.svg",
-                iconWidth: 14,
-                iconHeight: 14,
               ),
               RecruitVPage()
             ]
+          )
+        ),
+        SliverToBoxAdapter(
+          child : 
+          PartContainer(
+            children: [
+              TitleRow(
+                title : "내 위치",
+                onTap : ()=>Get.to(()=>const MapPage()),
+              ),
+              mapPreview(context)
+            ],
           )
         ),
         SliverToBoxAdapter(
@@ -85,10 +104,7 @@ class _RecruitMainViewState extends State<RecruitMainView>{
             children: [
               TitleRow(
                 title : "채용 진행중",
-                iconSrc: "assets/icons/navbar/menu.svg",
                 onTap : ()=>Get.to(()=>const RecruitListPage()),
-                iconWidth: 14,
-                iconHeight: 14,
               ),
               SizedBox(
                 height : 360,
@@ -116,6 +132,72 @@ class _RecruitMainViewState extends State<RecruitMainView>{
           )
         ),
       ]
+    );
+  }
+}
+
+class RecruitShortcutMenu extends StatelessWidget {
+  const RecruitShortcutMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        buttons(
+          context,
+          onClick: ()=>Get.to(()=>const RecruitListPage()),
+          iconSrc: "/navbar/summarize.svg",
+          title : "채용" , iconWidth: 16 , iconHeight: 16
+        ),
+        buttons(
+          context,
+          iconSrc: "/user/company.svg",
+          title : "기업" , iconWidth: 16 , iconHeight: 16
+        ),
+        buttons(
+          context,
+          iconSrc: "/navbar/navi.svg",
+          title : "지도" , iconWidth: 16 , iconHeight: 16
+        ),
+        buttons(
+          context,
+          iconSrc: "/common/setting.svg",
+          title : "설정" , iconWidth: 16 , iconHeight: 16
+        )
+      ],
+    );
+  }
+
+  Widget buttons(BuildContext context,{
+    Widget? child, Function()? onClick,
+    double? width = 72,double? height = 64,
+    String? title,String? iconSrc,double iconWidth = 16,double iconHeight = 16,
+  }){
+    return SizedBox(
+      width : width,
+      height : height,
+      child: OutlinedButton(
+        onPressed: ()=>onClick?.call(),
+        style : OutlinedButton.styleFrom(
+          padding: const EdgeInsets.all(0),
+          side : rowBorderLine(),
+          shape : const RoundedRectangleBorder(
+            borderRadius: RowContainer.radius,
+          )
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomSvg(
+              iconSrc.toString(),
+              width : iconWidth , height : iconHeight
+            ),
+            Text(title.toString())
+          ],
+        )
+      )
     );
   }
 }

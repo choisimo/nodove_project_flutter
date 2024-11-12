@@ -64,7 +64,7 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
             :const NavbarTitle("카테고리"),
             actions : [
               NavbarCommonBtn(
-                "assets/icons/navbar/search.svg",
+                "navbar/search.svg",
                 onClick : (){},
               ),
             ]
@@ -156,7 +156,7 @@ class _CateListState extends State<CateList> {
           physics: (widget.selection != null||!widget.scroll)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
           itemCount: math.min(widget.selection??list.length,list.length),
           itemBuilder :(context, index) {
-            return CateRow(props: list[index],key : Key("${list[index].categoryId}"));
+            return CateRow(cate: list[index],key : Key("${list[index].categoryId}"));
           },
         );
       }
@@ -165,8 +165,8 @@ class _CateListState extends State<CateList> {
   }
 }
 class CateRow extends StatefulWidget {
-  final Categories props;
-  const CateRow({super.key,required this.props});
+  final Categories cate;
+  const CateRow({super.key,required this.cate});
 
   @override
   State<CateRow> createState() => _CateRowState();
@@ -176,16 +176,16 @@ class _CateRowState extends State<CateRow> {
   CateListModel con = Get.put(CateListModel());
   @override
   Widget build(BuildContext context) {
-    Categories props = widget.props;
+    Categories cate = widget.cate;
       /* ()=>Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context)=>FeedListPage(cate : props.categoryId),
+        builder: (context)=>FeedListPage(cate : cate.categoryId),
         
       )
     ),*/
     return GestureDetector(
-      onTap : ()=>Get.to(()=>FeedListPage(page : props.categoryId)),
+      onTap : ()=>Get.to(()=>FeedListPage(page : cate.categoryId)),
       child : Container(
       height : 64,
       decoration: BoxDecoration(
@@ -213,7 +213,7 @@ class _CateRowState extends State<CateRow> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        props.categoryName,
+                        cate.categoryName,
                         maxLines: 1,
                         textAlign: TextAlign.start,
                         style : TextStyle(
@@ -222,7 +222,7 @@ class _CateRowState extends State<CateRow> {
                         )
                       ),
                       Text(
-                        '"${props.categoryDescription}"',
+                        '"${cate.categoryDescription}"',
                         maxLines: 2,
                         textAlign: TextAlign.start,
                         style : TextStyle(
@@ -237,7 +237,7 @@ class _CateRowState extends State<CateRow> {
               SizedBox(
                 width : constraint.minWidth * 0.15,
                 height : 32,
-                child : (true)?
+                child : (false)?
                 TextButton(
                   onPressed: (){
                     
@@ -261,18 +261,16 @@ class _CateRowState extends State<CateRow> {
                   onPressed: (){},
                   style : OutlinedButton.styleFrom(
                     padding: const EdgeInsets.all(0),
-                    shape : RoundedRectangleBorder(
+                    side : BorderSide(
+                        color: Theme.of(context).colorScheme.onPrimaryFixed
+                      ),
+                    shape : const RoundedRectangleBorder(
                       borderRadius: RowContainer.radius,
-                      side : BorderSide(
-                        color: Theme.of(context).colorScheme.onSurface
-                      )
+                      
                     )
                   ),
-                  child: Text(
+                  child: const Text(
                     "구독",
-                    style : TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface
-                    )
                   ),
                 ),
               ),
@@ -294,10 +292,10 @@ class _CateRowState extends State<CateRow> {
                   onPressed: ()=>Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:(context) => CatePage(page : props.categoryId),
+                      builder:(context) => CatePage(page : cate.categoryId),
                       settings: RouteSettings(
                         arguments: {
-                          "backName" : props.categoryName
+                          "backName" : cate.categoryName
                         },
                       )
                     )

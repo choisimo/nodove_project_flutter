@@ -47,7 +47,7 @@ class WriteCate extends StatelessWidget {
           const SizedBox(height : 8),
           SizedBox(
             width : MediaQuery.of(context).size.width * 0.9,
-            child: commonTextInput(context,
+            child: const CommonTextInput(
               placeholder: "카테고리 제목을 입력해주세요",
             ),
           )

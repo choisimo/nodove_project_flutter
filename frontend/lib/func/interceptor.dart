@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
+import 'package:nodove_flutter/src/page/user/new/main.dart';
+import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
 
 class ApiInterceptors extends Interceptor {
@@ -11,10 +13,10 @@ class ApiInterceptors extends Interceptor {
 
     print(options.uri);
 
-    final String? token = await storage.read(key: "userToken");
-    final String? refresh = await storage.read(key: "refreshToken");
-    if (token != null){options.headers['Authorization'] = token;}
-    if (refresh != null){options.headers['cookie'] = refresh;}
+    final String token = "Bearer ${await storage.read(key: "userToken")}";
+    final String refresh = "${await storage.read(key: "refreshToken")}";
+    options.headers['Authorization'] = token;
+    options.headers['cookie'] = refresh;
 
     super.onRequest(options, handler);
   }
@@ -23,6 +25,11 @@ class ApiInterceptors extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async{
     const FlutterSecureStorage storage = FlutterSecureStorage();
     final tokenError = (err.response?.statusCode == 401); 
+    Dio dio = Dio(BaseOptions(
+      baseUrl: Url.authServerUrl, // 요청의 기본 URL
+      connectTimeout: const Duration(milliseconds: 5000), // 연결 시간 초과 (밀리초)
+      receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
+    ));
     
     final String? refresh = await storage.read(key: "refreshToken");
     
@@ -34,14 +41,12 @@ class ApiInterceptors extends Interceptor {
       print("토큰에러! 재시도중...");
       Future.delayed(const Duration(milliseconds: 1000));
       try{
-        Dio dio = Dio();
-        final fetchOpt = err.requestOptions;
-        final res = await dio.fetch(fetchOpt);
+        final res = await dio.post("/");
         handler.resolve(res);
       }catch(e){
         await storage.delete(key: 'userToken');
         await storage.delete(key: 'refreshToken');
-        Get.off(()=>const LoginPage());
+        Get.off(()=>const LoginMainPage());
       }
     }
     return super.onError(err, handler);
@@ -66,3 +71,4 @@ class ApiInterceptors extends Interceptor {
     super.onResponse(response, handler);
   }
 }
+

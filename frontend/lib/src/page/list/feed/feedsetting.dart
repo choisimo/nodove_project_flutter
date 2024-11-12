@@ -108,7 +108,7 @@ class _FeedSettingListState extends State<FeedSettingList> {
               "피드 갯수",
               style: content,
             ),
-            actions : const Text("여벌")
+            actions : const Text("선택")
           ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),

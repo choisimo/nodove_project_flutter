@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/interceptor.dart';
+import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/url.dart';
+import 'package:nodove_flutter/state/user.dart';
 
 class AuthDataSrc{
   Dio dio = Dio(BaseOptions(
@@ -52,14 +54,25 @@ class AuthDataSrc{
   }
   
   Future<void> postLogin(Map<String,String> formData) async{  //유저 로그인 요청
+    final user = Get.put(UserState());
     try{
-      dio.interceptors.add(ApiInterceptors());  
       final res = await dio.post(
         "/login",
         data : jsonEncode(formData)
       );
       if (res.statusCode == 200){
-        Get.off(()=>const MyHome());
+        final String? cookie = res.headers['set-cookie']?[0];
+        final String? jwt = res.data['access_token'];
+
+        if (jwt != null && cookie != null){
+          final res = await decoding(jwt,cookie);
+          if (res['parsed'] != null){
+            user.setIndex(res['parsed']['userId']);
+            Get.off(()=>const MyHome());
+          } else{
+            print("아이디 찾기 실패");
+          }
+        }
       } else {
         print("로그인 실패");
       }

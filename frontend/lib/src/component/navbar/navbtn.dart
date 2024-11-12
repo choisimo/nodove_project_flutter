@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/graphic/transform.dart';
 
 class NavbarTitle extends StatelessWidget {
@@ -165,7 +166,7 @@ class EtcCommonBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width : 42,
-      height : 24,
+      height : 42,
       child: TextButton(
         onPressed: ()=>onClick?.call(),
         child : Text(
@@ -208,14 +209,11 @@ class NavbarCommonBtn extends StatelessWidget {
   }
 
   Widget icon(BuildContext context){
-    return SvgPicture.asset(
+    return CustomSvg(
       src,
       width : width,
       height : height,
-      colorFilter: ColorFilter.mode(
-        iconColor??Theme.of(context).colorScheme.primary,
-        BlendMode.srcIn
-      ),
+      iconColor : iconColor??Theme.of(context).colorScheme.primary,
     );
   }
 }

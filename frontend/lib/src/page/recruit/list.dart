@@ -3,10 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -65,7 +67,7 @@ class _RecruitListPageState extends State<RecruitListPage> {
       title : const NavbarTitle("채용중",),
       actions : [
         NavbarCommonBtn(
-          "assets/icons/navbar/search.svg",
+          "navbar/search.svg",
           onClick : (){},
         ),
       ]
@@ -194,7 +196,6 @@ class FeedRow extends StatelessWidget {
       color: Theme.of(context).colorScheme.secondary
     );
     return Container(
-      width : double.infinity,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
@@ -203,14 +204,17 @@ class FeedRow extends StatelessWidget {
       child : Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
-             Text(
+              Text(
                 feed.title,
                 style : RowTextStyle.title
               ),
+              const SizedBox(width : 4),
               Text(
                 "${feed.region.first.split(" ")[0]}${(feed.region.length>1)?
                 " 외 ${feed.region.length - 1}곳"

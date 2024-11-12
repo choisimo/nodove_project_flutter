@@ -10,7 +10,6 @@ import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:image_picker/image_picker.dart';

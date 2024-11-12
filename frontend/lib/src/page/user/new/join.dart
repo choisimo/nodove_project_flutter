@@ -4,12 +4,10 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
-import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
-import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -109,8 +107,7 @@ class _JoinFormState extends State<JoinForm> {
 
   Widget passwordForm(BuildContext context){
     RegExp reg = RegExp(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$");
-    return commonTextInput(
-      context,
+    return CommonTextInput(
       initialValue: con.joinForm['userPw'],
       onChanged: (content) => con.setJoinForm("userPw",content),
       placeholder: "비밀번호",
@@ -135,8 +132,7 @@ class _JoinFormState extends State<JoinForm> {
 
   Widget userIdForm(BuildContext context){
     bool? loginValidate;
-    return commonTextInput(
-      context,
+    return CommonTextInput(
       initialValue: con.joinForm['userId'],
       onChanged: (content) async{
         bool result = await con.isUserIdDuplicate(content);
@@ -197,8 +193,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
             const SizedBox(height : 32),
             const Text("나에 대한 정보를 작성해주세요"),
             const SizedBox(height : 16),
-            commonTextInput(
-              context,
+            CommonTextInput(
               initialValue: con.joinForm['userName'],
               onChanged: (content) => con.setJoinForm("userName",content),
               placeholder: "성명"
@@ -267,8 +262,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
               )
             ),
             const SizedBox(height : 16),
-            commonTextInput(
-              context,
+            CommonTextInput(
               keyboard: TextInputType.phone,
               maxLength: 17,
               initialValue: con.joinForm['phone'],
@@ -282,8 +276,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
             Container(
               padding: const EdgeInsets.all(4),
               width : maxWidth * 0.9,
-              child : commonTextInput(
-                context,
+              child : CommonTextInput(
                 initialValue: con.joinForm['email'],
                 onChanged: (content) => con.setJoinForm("email",content),
                 keyboard: TextInputType.emailAddress,
@@ -310,8 +303,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
               title : "코드 발송"
             ),
             const SizedBox(height : 16),
-            commonTextInput(
-              context,
+            CommonTextInput(
               maxLength: 8,
               enabled: sendMail,
               initialValue: con.joinForm['code'],
@@ -368,8 +360,7 @@ class JoinFormProfile extends StatelessWidget {
 
               ),
               const SizedBox(height : 42),
-              commonTextInput(
-                context,
+              CommonTextInput(
                 initialValue: con.joinForm['userNick'],
                 onChanged: (content) => con.setJoinForm("userNick",content),
                 placeholder: "닉네임"

@@ -109,10 +109,11 @@ class DataSrc{
   Future<Categories> getCateOne(String url,String opt) async{
     try{
       final res = await dio.get("$url$opt");
-      return res.data;
+      return Categories.fromJson(res.data[0]);
     }catch(e){
       await RefreshToken();
       showToast("오류가 발생했어요😢");
+      print(e);
       return Categories.initialState();
     }
   }

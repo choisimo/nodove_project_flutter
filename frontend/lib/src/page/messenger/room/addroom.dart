@@ -75,8 +75,7 @@ class _AddRoomViewState extends State<AddRoomView> {
                 ),
                 SizedBox(
                   width : constraint.maxWidth * 0.9,
-                  child: commonTextInput(
-                    context,
+                  child: CommonTextInput(
                     placeholder: "대화 주제를 적어주세요",
                     onChanged: (content)=>con.setAddRoom("roomName", content)
                   ),

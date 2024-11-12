@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -29,7 +30,7 @@ class menuBtn extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: TextButton(
         style : ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surface),
+          backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.onSecondary),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             const RoundedRectangleBorder(
               borderRadius: RowContainer.radius
@@ -132,14 +133,11 @@ class ListMenuBtn extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 (iconSrc!= null)?
-                SvgPicture.asset(
+                CustomSvg(
                   iconSrc!,
                   width : iconSize,
                   height : iconSize,
-                  colorFilter: ColorFilter.mode(
-                    iconColor??Theme.of(context).colorScheme.onSurface,
-                    BlendMode.srcIn
-                  ),
+                  iconColor: iconColor??Theme.of(context).colorScheme.onSurface,
                 ): const SizedBox.shrink(),
                 const SizedBox(width : 8),
                 Container(

@@ -7,19 +7,19 @@ class GlobalContext{
 
 class LightStyle{
   static const Color white = Color.fromRGBO(255, 255, 255 , 1);
-  static const Color grey = Color.fromRGBO(233 , 233, 233, 1);
+  static const Color grey = Color.fromRGBO(229 , 229 , 229, 1);
   static const Color darkGrey = Color.fromRGBO(144, 144, 144, 1);
   static const Color black = Color.fromRGBO(56, 56, 56 , 1);
   static const Color blackAlpha = Color.fromRGBO(56, 56, 56 , 0.75);
-  static const Color back = Color.fromRGBO(237, 241, 248, 1);
-  static const Color backStr = Color.fromRGBO(116, 135, 168, 1);
+  static const Color back = Color.fromRGBO(255, 255, 255, 1);
+  static const Color backStr = Color.fromRGBO(56, 56 ,56, 1);
   static const Color backAlpha = Color.fromRGBO(237 , 241, 248, 0.5);
 
 }
 
 class DarkStyle{
   static const Color white = Color.fromRGBO(56, 56, 56 , 1);
-  static const Color grey = Color.fromRGBO(155 , 155, 155, 1);
+  static const Color grey = Color.fromRGBO(75, 75, 75, 1);
   static const Color black = Color.fromRGBO(255, 255, 255 , 1);
   static const Color blackAlpha = Color.fromRGBO(255, 255, 255 , 0.75);
   static const Color shadow = Color.fromRGBO(0, 0, 0, 0.5);
@@ -32,7 +32,7 @@ class DarkStyle{
 class CommonStyle{
   static const Color first = Color.fromRGBO(21 , 52 , 177 , 1);
   static const Color firstAlpha = Color.fromRGBO(57, 105, 239, 0.5);
-  static const Color second = Color.fromRGBO(116 , 135, 168, 1);
+  static const Color second = Color.fromRGBO(4, 135, 255, 1);
   static const Color secondAlpha = Color.fromRGBO(116 , 135, 168, 0.5);
   static const Color firstdark = Color.fromRGBO(57,105,239, 1);
   static const Color third = Color.fromRGBO(5,135,255, 1);
@@ -48,8 +48,9 @@ class RowContainer{
   );
   static const Offset offset = Offset(0,2);
   static const double blurRadius = 6.0;
-  static const BorderRadius radius = BorderRadius.all(Radius.circular(12));
   static const double radiusV = 12;
+  static const double bottomBarRadius = 16;
+  static const BorderRadius radius = BorderRadius.all(Radius.circular(radiusV));
   static const Color background = LightStyle.white;
 }
 
@@ -142,7 +143,7 @@ class Themes{
       onError:DarkStyle.black,
       surface: DarkStyle.back,
       onSurface: DarkStyle.backStr,
-      onPrimaryFixed: CommonStyle.firstdark,
+      onPrimaryFixed: CommonStyle.second,
       )
   );
 }

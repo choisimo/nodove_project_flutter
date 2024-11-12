@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nodove_flutter/state/color.dart';
 
 class CustomImage extends StatelessWidget {
   final String src;
@@ -71,7 +70,7 @@ ImageProvider customImgProvider(
     Widget? loading,
     Widget? alt
   }){
-  return (src.isNotEmpty)?
+  return (src.contains("http"))?
   Image.network(
       src,
       fit: fit??BoxFit.contain,
@@ -98,8 +97,15 @@ ImageProvider customImgProvider(
     Image.asset(
       "assets/images/logo.png",
       fit: fit??BoxFit.contain,
-      width : width??200,
-      height : height??200,
+      width : width,
+      height : height,
+      errorBuilder: 
+      (context, error, stackTrace){
+        return alt??LottieBuilder.asset(
+          "assets/icons/common/loading.json",
+          width : 64 , height : 64
+        );
+      },
     ).image;
 }
 

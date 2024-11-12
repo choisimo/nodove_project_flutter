@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/image.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
@@ -16,18 +18,38 @@ import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
 import "dart:math" as math;
+/*
+TextButton(
+style : TextButton.styleFrom(
+  foregroundColor: Theme.of(context).colorScheme.onSurface
+),
+onPressed: (){
+  
+},
+child: Text(
+  '•••',
+  softWrap: false,
+  overflow: TextOverflow.visible,
+  style : TextStyle(
+    fontSize : 14,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.onSurface
+  )
+),
+)
 
+ */
 class FeedRow extends StatelessWidget {
-  final Feed props;
+  final Feed feed;
 
-  const FeedRow({super.key, required this.props});
+  const FeedRow({super.key, required this.feed});
 
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
   
     return GestureDetector(
-      onTap: ()=>Get.to(()=>FeedPage(page : props.id)),
+      onTap: ()=>Get.to(()=>FeedPage(page : feed.id)),
       child: Container(
         width : maxwidth,
         decoration: BoxDecoration(
@@ -37,121 +59,100 @@ class FeedRow extends StatelessWidget {
           ),
         ),
         child: Column(
-          children: [
-            Column(
-              children:[
-                FeedTop(title : props.title, hashtags : props.hashtags),
-                Carousel(imageLinks : props.imageLinks,page : props.id),
-                Container(
-                  margin : const EdgeInsets.only(top : 8.0),
-                  width : maxwidth,
-                  child : LayoutBuilder(
-                    builder: (ctx,constraints) {
-                      return Row(
-                        children : <Widget>[
-                          Profile(
-                          profile: props.writerProfile,
-                          width: 40,
-                          height: 40
-                          ),
-                          Column(
-                            children : [
-                              SizedBox(
-                                width : constraints.minWidth * 0.5,
-                                child : Text(
-                                  props.writerNick,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ),
-                              SizedBox(
-                                width : constraints.minWidth * 0.5,
-                                child : Text(
-                                  getDateDiff(props.createdAt),
-                                  style: TextStyle(
-                                    fontSize : 12,
-                                    color : Theme.of(context).colorScheme.secondary,
-                                  ),
-                                )
-                              ),
-                            ]
-                          )
-                        ]
-                      );
-                    }
-                  )
+          children:[
+            Row(
+              children: [
+                Expanded(child: FeedTop(title : feed.title, hashtags : feed.hashtags)),
+                EtcCommonBtn(
+                  onClick: ()=>showModalBottomSheet(
+                    context: context,
+                    useRootNavigator: true,
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    builder: (BuildContext context){
+                      return FeedModal(userId : feed.writerUserId,postId : feed.id);
+                  }),
                 ),
-                FeedRowBottom(
-                  userId: props.writerUserId,
-                  likeCount: props.likeCount,
-                  etcOpt: true,
-                  postId : props.id,
-                ),
-                commentButton(context,id : props.id,count : props.commentCount)
               ],
             ),
+            Carousel(imageLinks : feed.imageLinks,page : feed.id),
+            Container(
+              margin : const EdgeInsets.only(top : 8.0),
+              width : maxwidth,
+              child : LayoutBuilder(
+                builder: (ctx,constraints) {
+                  return Row(
+                    children : <Widget>[
+                      Profile(
+                        profile: feed.writerProfile,
+                        width: 40,
+                        height: 40
+                      ),
+                      Column(
+                        children : [
+                          SizedBox(
+                            width : constraints.minWidth * 0.5,
+                            child : Text(
+                              feed.writerNick,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ),
+                          SizedBox(
+                            width : constraints.minWidth * 0.5,
+                            child : Text(
+                              getDateDiff(feed.createdAt),
+                              style: TextStyle(
+                                fontSize : 12,
+                                color : Theme.of(context).colorScheme.secondary,
+                              ),
+                            )
+                          ),
+                        ]
+                      )
+                    ]
+                  );
+                }
+              )
+            ),
+            Html(data: feed.content),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FeedRowBottom(feed : feed),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "좋아요 ${feed.likeCount} | 댓글 ${feed.commentCount}",
+                    style : TextStyle(
+                      color: Theme.of(context).colorScheme.secondary
+                    )
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
     );
   }
 }
-Widget commentButton (BuildContext context,{int id = 1,int count = 0}){
-  return OverflowBar(
-    alignment: MainAxisAlignment.center,
-    children : [
-      OutlinedButton.icon(
-        style : OutlinedButton.styleFrom(
-          fixedSize: const Size(320, 24),
-          side: BorderSide(width: 1.0, color: Theme.of(context).colorScheme.onPrimaryFixed),
-        ),
-        onPressed: (){
-          showModalBottomSheet(
-            enableDrag: true,
-            useRootNavigator: true,
-            isScrollControlled: true,
-            context: context,
-            showDragHandle: true,
-            backgroundColor: Theme.of(context).colorScheme.onPrimary,
-            builder :(BuildContext context) {
-              return Padding(
-                padding : EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom
-                ),
-                child: commentList(page : id)
-              );
-            },
-          );
-        },
-        icon : CustomSvg(
-          'navbar/noBorderAdd.svg',
-          width : 12,
-          height : 12,
-          iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
-        ),
-        label: Text(
-          "댓글 $count개",
+
+/*Text(
+          "댓글 $count",
           style : TextStyle(
             fontSize : 18,
             color : Theme.of(context).colorScheme.onPrimaryFixed
           )
-        )
-      )
-    ]
-  );
-}
+        ) */
+
 class FeedRowBottom extends StatelessWidget {
-  final String userId;
-  final int likeCount;
-  final bool etcOpt;
-  final int postId;
+  final Feed feed;
+  final double iconSize;
   const FeedRowBottom({
     super.key,
-    required this.userId ,
-    this.likeCount = 0 ,
-    this.etcOpt = false,
-    required this.postId,
+    required this.feed,
+    this.iconSize = 16,
   });
 
   @override
@@ -165,16 +166,15 @@ class FeedRowBottom extends StatelessWidget {
             children: [
               CustomSvg(
                 'post/star-empty.svg',
-                width : 20,
-                height : 20,
+                width : iconSize,
+                height : iconSize,
                 iconColor: Theme.of(context).colorScheme.onPrimaryFixed
               ),
               const SizedBox(width:4),
               Text(
-                "$likeCount",
+                "${feed.likeCount}",
                 style : TextStyle(
-                  fontSize : 18,
-                  fontWeight: FontWeight.bold,
+                  fontSize : 16,
                   color: Theme.of(context).colorScheme.onSurface
                 )
               ),
@@ -184,9 +184,9 @@ class FeedRowBottom extends StatelessWidget {
         IconButton(
           onPressed: (){},
           icon: CustomSvg(
-            'assets/icons/common/bookmark-empty.svg',
-            width : 20,
-            height : 20,
+            'common/bookmark-empty.svg',
+            width : iconSize,
+            height : iconSize,
             iconColor: Theme.of(context).colorScheme.onSurface,
           )
         ),
@@ -197,44 +197,15 @@ class FeedRowBottom extends StatelessWidget {
               context: context,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               builder: (BuildContext context){
-                return ShareModal(id : postId);
+                return ShareModal(id : feed.id);
             });
           },
           icon: CustomSvg(
-            'assets/icons/post/share.svg',
-            width : 20,
-            height : 20,
+            'post/share.svg',
+            width : iconSize,
+            height : iconSize,
             iconColor: Theme.of(context).colorScheme.onSurface
           )
-        ),
-        if (etcOpt)
-        SizedBox(
-          width : 42,
-          height : 42,
-          child: TextButton(
-            style : TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onSurface
-            ),
-            onPressed: (){
-              showModalBottomSheet(
-                context: context,
-                useRootNavigator: true,
-                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                builder: (BuildContext context){
-                  return FeedModal(userId : userId,postId : postId);
-              });
-            },
-            child: Text(
-              '•••',
-              softWrap: false,
-              overflow: TextOverflow.visible,
-              style : TextStyle(
-                fontSize : 14,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface
-              )
-            ),
-          ),
         ),
       ]
     );
@@ -321,7 +292,7 @@ class Profile extends StatelessWidget {
         ),
         borderRadius: BorderRadius.all(Radius.circular(math.min(width / 3,RowContainer.radiusV))),
         border : Border.all(
-          color : Theme.of(context).colorScheme.onPrimaryFixed,
+          color : Theme.of(context).colorScheme.onSecondary,
           width : borderRadius??1.0
         )
       ),
@@ -450,8 +421,7 @@ void feedDeleteConfirm(BuildContext context,int postId){
           ],
         ),
         bottomBtns: [
-          dialogBottomBtn(
-            context,
+          DialogBottomBtn(
             backgroundColor: Theme.of(context).colorScheme.error,
             onPressed: (){
               con.deleteFeed(postId);
@@ -493,7 +463,7 @@ class SkelFeedRow extends StatelessWidget {
         ],
       ),
       child: Shimmer.fromColors(
-        baseColor: Theme.of(context).colorScheme.surface,
+        baseColor: Theme.of(context).colorScheme.onSecondary,
         highlightColor: Theme.of(context).colorScheme.onPrimary,
         child: Column(
           children: [

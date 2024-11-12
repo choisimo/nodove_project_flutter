@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget{
       getPages: [
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
-        GetPage(name : "/view/:page" , page : ()=>FeedPage()),
+        GetPage(name : "/view/:page" , page : ()=>const FeedPage()),
         GetPage(name : "/tag/:tag" , page : ()=>const TagListPage())
       ],
       initialBinding: InitViewModel(),
@@ -128,6 +128,7 @@ class _MyHomeState extends State<MyHome>{
     return Scaffold(
       key: navigatorKeyList[PageState.page.index.value],
       bottomNavigationBar: const BottomNavbar(),
+      extendBody: true,
       body : 
       Obx((){
         return PopScope(
@@ -185,14 +186,14 @@ class _MainPageState extends State<MainPage> {
       title : const NavbarTitle("메인"),
       actions : [
         NavbarCommonBtn(
-          "assets/icons/navbar/alert.svg",
+          "navbar/alert.svg",
           onClick : ()=>Navigator.of(context).push(
             MaterialPageRoute(builder: (_)=>const NotiPage(key : Key("notiPage")))
           ),
           width : 18, height : 18
         ),
         NavbarCommonBtn(
-          "assets/icons/navbar/search.svg",
+          "navbar/search.svg",
           onClick : (){},
         ),
       ]

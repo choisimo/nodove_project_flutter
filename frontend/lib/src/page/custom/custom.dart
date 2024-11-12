@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -230,90 +229,94 @@ class DialogCloseBtn extends StatelessWidget {
     );
   }
 }
+class DialogBottomBtn extends StatelessWidget {
+  final Widget? child;
+  final Function? onPressed;
+  final Color? backgroundColor;
+  const DialogBottomBtn({super.key,
+  this.child,
+  this.onPressed,
+  this.backgroundColor,});
 
-Widget dialogBottomBtn(
-  BuildContext context,
-  {
-    Widget? child,
-    Function? onPressed,
-    Color? backgroundColor,
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      style : FilledButton.styleFrom(
+        backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+      ),
+      onPressed: ()=>onPressed?.call(),
+      child : child
+    );
   }
-){
-  return FilledButton(
-    style : FilledButton.styleFrom(
-      backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
-    ),
-    onPressed: ()=>onPressed?.call(),
-    child : child
-  );
 }
 
-Widget commonTextInput(
-  BuildContext context,{
-    String? placeholder,
-    TextStyle? placeholderStyle,
-    TextEditingController? controller,
-    String? key,
-    TextStyle? style,
-    List<TextInputFormatter>? filter,
-    Function? onChanged,
-    int? maxLength,
-    int? maxLines,
-    TextInputType? keyboard,
-    String? initialValue,
-    bool? enabled,
-    bool obscureText = false,
-    double borderWidth = 0.5,
-    Color? bColor,
-    int minLength = 0,
-    String? Function(String?)? validator
-  }
-){
-  final borderColor = bColor??Theme.of(context).colorScheme.onSurface;
-  final TextStyle textStyle = TextStyle(
-    color: Theme.of(context).colorScheme.onSurface,
-  );
-  return TextFormField(
-    initialValue: initialValue,
-    keyboardType: keyboard,
-    maxLength: maxLength,
-    style : style,
-    enabled : enabled,
-    controller : controller,
-    autovalidateMode: AutovalidateMode.always,
-    validator: validator,
-    inputFormatters: filter,
-    obscureText : obscureText,
-    decoration: InputDecoration(
-      enabledBorder: OutlineInputBorder(
+class CommonTextInput extends StatelessWidget {
+  final String? placeholder;
+  final TextStyle? placeholderStyle;
+  final TextEditingController? controller;
+  final String? customkey;
+  final TextStyle? style;
+  final List<TextInputFormatter>? filter;
+  final Function? onChanged;
+  final int? maxLength;
+  final int? maxLines;
+  final TextInputType? keyboard;
+  final String? initialValue;
+  final bool? enabled;
+  final bool obscureText;
+  final double borderWidth;
+  final Color? bColor;
+  final int minLength = 0;
+  final String? Function(String?)? validator;
+  const CommonTextInput({super.key, this.placeholder, this.placeholderStyle, this.controller, this.customkey, this.style, this.filter, this.onChanged, this.maxLength, this.maxLines, this.keyboard, this.initialValue, this.enabled, this.bColor, this.validator, this.obscureText = false, this.borderWidth = 0.5});
+
+  @override
+  Widget build(BuildContext context) {
+    final borderColor = bColor??Theme.of(context).colorScheme.onSurface;
+    final TextStyle textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onSurface,
+    );
+    return TextFormField(
+      initialValue: initialValue,
+      keyboardType: keyboard,
+      maxLength: maxLength,
+      style : style,
+      enabled : enabled,
+      controller : controller,
+      autovalidateMode: AutovalidateMode.always,
+      validator: validator,
+      inputFormatters: filter,
+      obscureText : obscureText,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+            borderRadius: RowContainer.radius,
+            borderSide: BorderSide(color: borderColor, width: borderWidth)),
+        counterText: "",
+        focusedBorder:
+        OutlineInputBorder(
           borderRadius: RowContainer.radius,
-          borderSide: BorderSide(color: borderColor, width: borderWidth)),
-      counterText: "",
-      focusedBorder:
-      OutlineInputBorder(
-        borderRadius: RowContainer.radius,
-        borderSide: BorderSide(
-          color : borderColor,
-          width : borderWidth
-        )
+          borderSide: BorderSide(
+            color : borderColor,
+            width : borderWidth
+          )
+        ),
+        hintText: placeholder,
+        contentPadding: const EdgeInsets.symmetric(vertical: 0,horizontal: 16),
+        hintStyle: placeholderStyle??textStyle,
+        border: 
+        OutlineInputBorder(
+          borderRadius: RowContainer.radius,
+          borderSide: BorderSide(
+            color : borderColor,
+            width : borderWidth
+          )
+        ),
+        focusColor: Colors.transparent,
       ),
-      hintText: placeholder,
-      contentPadding: const EdgeInsets.symmetric(vertical: 0,horizontal: 16),
-      hintStyle: placeholderStyle??textStyle,
-      border: 
-      OutlineInputBorder(
-        borderRadius: RowContainer.radius,
-        borderSide: BorderSide(
-          color : borderColor,
-          width : borderWidth
-        )
-      ),
-      focusColor: Colors.transparent,
-    ),
-    onChanged:(value) => onChanged?.call(value),
-  );
+      onChanged:(value) => onChanged?.call(value),
+    );
+  }
 }
-
 
 Widget profileSetting(
   BuildContext context,{
@@ -476,11 +479,14 @@ class FormCommitButton extends StatelessWidget {
 class CustomFloatingButton extends StatelessWidget {
   final Widget? child;
   final Widget? icon;
+  final double? iconWidth;
+  final double? iconHeight;
   final Function? onClick;
   final Color? backgroundColor;
   final String? heroTag;
   const CustomFloatingButton({
     this.child,this.icon,this.onClick,this.backgroundColor,this.heroTag,
+    this.iconHeight = 24,this.iconWidth = 24,
     super.key
   });
 
@@ -489,10 +495,10 @@ class CustomFloatingButton extends StatelessWidget {
     return FloatingActionButton(
       heroTag: 'comment',
       onPressed: ()=>onClick?.call(),
-      backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+      backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimary,
       child : SizedBox(
-        width : 52,
-        height : 52,
+        width : iconWidth,
+        height : iconHeight,
         child: icon
       )
     );
@@ -504,9 +510,11 @@ class CustomModalFloatingButton extends StatelessWidget {
   final Widget? icon;
   final Color? backgroundColor;
   final String? heroTag;
+  final double? iconWidth;
+  final double? iconHeight;
   const CustomModalFloatingButton({
     this.child,this.icon,this.backgroundColor,
-    this.heroTag,
+    this.heroTag,this.iconHeight = 24,this.iconWidth = 24,
     super.key
   });
 
@@ -531,11 +539,10 @@ class CustomModalFloatingButton extends StatelessWidget {
         },
       ),
       backgroundColor: backgroundColor,
-      child : SizedBox(
-        width : 52,
-        height : 52,
-        child: icon
-      )
+      iconHeight: iconHeight,
+      iconWidth: iconWidth,
+      icon : icon,
+      child: child
     );
   }
 }

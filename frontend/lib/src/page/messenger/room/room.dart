@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
@@ -23,7 +24,7 @@ class RoomPage extends StatelessWidget {
       title : const NavbarTitle("메신저"),
       actions: [
         NavbarCommonBtn(
-        "assets/icons/user/normalusr.svg",
+        "user/normalusr.svg",
         onClick : (){}
         ),
         PopupMenuButton(
@@ -53,10 +54,10 @@ class RoomPage extends StatelessWidget {
               ), 
             ];
           },
-          icon: SvgPicture.asset(
-            "assets/icons/navbar/noBorderAdd.svg",
+          icon: CustomSvg(
+            "navbar/noBorderAdd.svg",
             width : 18, height : 18,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+            iconColor: Theme.of(context).colorScheme.primary,
           ),
         ),
       ]

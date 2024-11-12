@@ -2,13 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/datasrc.dart';
-import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
@@ -18,7 +17,9 @@ import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
@@ -39,9 +40,20 @@ class _FeedListPageState extends State<FeedListPage>{
   late bool collected = false;
   int size = 10;
   bool search = false;
+  final ccon = Get.put(CateListModel());
 
   @override
   void initState() {
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    ccon.getCate(
+      page : cateid,
+      url : "/api/categories/getAllCategoriesByParentId/",
+      opt : cateid.toString(),
+    );
+    ccon.getCateOne(
+      url : "/api/categories/getAllCategoriesByParentId/",
+      opt : cateid.toString(),
+    );
     _checksettings();
     super.initState();
   }
@@ -58,7 +70,6 @@ class _FeedListPageState extends State<FeedListPage>{
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    final DataSrc src = DataSrc();
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     final List<Widget> widgetList = [
       const SizedBox(
@@ -72,7 +83,7 @@ class _FeedListPageState extends State<FeedListPage>{
       ),
       ListMenuBtn(
         iconSize: 12,
-        iconSrc: "assets/icons/navbar/menu.svg",
+        iconSrc: "navbar/menu.svg",
         title : "카테고리",
         onClick : ()=>Navigator.of(context).push(
           MaterialPageRoute(builder: (_)=>CatePage(page: cateid))
@@ -80,13 +91,13 @@ class _FeedListPageState extends State<FeedListPage>{
       ),
       ListMenuBtn(
         iconSize: 12,
-        iconSrc: "assets/icons/navbar/hashtag.svg",
+        iconSrc: "navbar/hashtag.svg",
         title : "해시태그",
         onClick : (){}
       ),
       ListMenuBtn(
         iconSize: 12,
-        iconSrc: "assets/icons/navbar/navi.svg",
+        iconSrc: "navbar/navi.svg",
         title : "내 위치",
         onClick : ()=>Get.to(()=>const MapPage())
       )
@@ -97,7 +108,7 @@ class _FeedListPageState extends State<FeedListPage>{
       leading : BackBtn(callback: ()=>Navigator.of(context).pop()),
       actions: [
         NavbarCommonBtn(
-          "assets/icons/navbar/search.svg",
+          "navbar/search.svg",
           onClick : (){
             setState((){
               search = true;
@@ -105,12 +116,16 @@ class _FeedListPageState extends State<FeedListPage>{
           },
         ),
         NavbarCommonBtn(
-          "assets/icons/navbar/menu.svg",
-          onClick : (){
-            key.currentState?.openEndDrawer();
-          },
-          width : 14,
-          height : 14
+          "post/edit.svg",
+          width : 16,
+          height : 16,
+          onClick: ()=>Get.to(
+            ()=>const WritePage(),
+            fullscreenDialog: true,
+            arguments: {
+              'postCategory' : cateid
+            }
+          ),
         ),
       ]
     );
@@ -118,23 +133,7 @@ class _FeedListPageState extends State<FeedListPage>{
     return Scaffold(
       key: key,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: CustomFloatingButton(
-        heroTag: 'feedList',
-        onClick: () => Get.to(
-          ()=>const WritePage(),
-          fullscreenDialog: true,
-          arguments: {
-            'postCategory' : cateid
-          }
-        ),
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-        child : const CustomSvg(
-          'navbar/noBorderAdd.svg',
-          width : 24,
-          height : 24,
-          iconColor: Colors.white,
-        )
-      ),
+      bottomNavigationBar: FeedBottomNavbar(cate : ccon.currentCate.value),
       body : 
       CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -157,6 +156,31 @@ class _FeedListPageState extends State<FeedListPage>{
             ),
           ),
           ),
+          SliverPersistentHeader(
+            delegate: SliverCustomBarDelegate(
+              widget: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                width: MediaQuery.of(context).size.width,
+                height : 64,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Obx((){
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: ccon.catelist.length,
+                      itemBuilder:(context, index){
+                        final Categories cate = ccon.catelist[index];
+                        return minimalCateRow(cate);
+                      }
+                    );
+                  }
+                  ),
+                )
+              )
+            ),
+          ),
           SliverFillRemaining(
             child: FeedList(
               collected: collected,
@@ -167,72 +191,33 @@ class _FeedListPageState extends State<FeedListPage>{
           ),
         ],
       ),
-      
-      endDrawer: CustomDrawer(
-        children: [
-          FutureBuilder(
-            future: src.getCateList(
-              "/api/categories/getAllCategoriesByParentId/", 
-              cateid.toString(),
-              false
-            ),
-            builder:(BuildContext context,AsyncSnapshot snapshot) {
-              if (snapshot.data !=null && snapshot.data.length > 0){
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: ()=>Get.to(()=>const NotiPage()),
-                          icon: const NavbarCommonBtn("assets/icons/navbar/alert.svg")
-                        ),
-                        IconButton(
-                          onPressed: ()=>Get.to(()=>const FeedSettingPage()),
-                          icon: const NavbarCommonBtn("assets/icons/common/setting.svg")
-                        )
-                      ],
-                    ),
-                    const Profile(profile: "",
-                      width: 96,
-                      height: 96,
-                      borderRadius: 2,
-                    ),
-                    Text(
-                      snapshot.data![0].categoryName,
-                      style : const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                    Text(
-                      '"${snapshot.data![0].categoryDescription}"',
-                    ),
-                    SizedBox(
-                      width : MediaQuery.of(context).size.width * 0.7,
-                      child : SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          children: [...List.generate(widgetList.length, (index)=>widgetList[index])],
-                        ),
-                      )
-                    )
-                    
-                  ],
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator(strokeWidth: 2,));
-              }
-            },
+    );
+  }
+
+  Widget minimalCateRow(Categories cate){
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 4.0
+      ),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            vertical: 4.0,
+            horizontal: 8.0
           ),
-        ],
+          side: rowBorderLine(),
+          shape: const RoundedRectangleBorder(
+            borderRadius: RowContainer.radius
+          ),
+        ),
+        onPressed: ()=>Get.to(()=>FeedListPage(page : cate.categoryId),),
+        child: Text(cate.categoryName),
       ),
     );
   }
 }
-
+//
 class FeedList extends StatefulWidget {
   final bool collected;
   final String url;
@@ -335,7 +320,7 @@ class _FeedListState extends State<FeedList> {
           return ListView.builder(
             padding: const EdgeInsets.all(0),
             physics: const NeverScrollableScrollPhysics(),
-            itemBuilder : (context, index) => FeedRow(props : con.feedList[index]),
+            itemBuilder : (context, index) => FeedRow(feed : con.feedList[index]),
             itemCount: con.feedList.length,
           );
         }

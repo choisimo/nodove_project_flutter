@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
@@ -56,33 +57,35 @@ class _FeedPageState extends State<FeedPage>{
       appBar: NavbarTop(navbarOpt,centerTitle : true),
       floatingActionButton: CustomModalFloatingButton(
         heroTag: 'comment',
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        iconHeight: 54,
+        iconWidth: 54,
         icon : Stack(
           alignment: Alignment.topRight,
           children: [
-            Center(
-              child: SvgPicture.asset(
-                'assets/icons/navbar/msg.svg',
+            const Center(
+              child: CustomSvg(
+                'navbar/msg.svg',
                 width : 24,
                 height : 24,
-                colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
+                iconColor : CommonStyle.first
               ),
             ),
             Container(
               constraints: const BoxConstraints(
-                maxWidth: 28,
+                maxWidth: 20,
                 minWidth: 20
               ),
               height : 20,
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: CommonStyle.first,
                 borderRadius: RowContainer.radius
               ),
               child: Center(
                 child: Text(
                   vpage.content.value.commentCount.toString(),
-                  style: const TextStyle(
-                    color: CommonStyle.first
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary
                   ),
                 ),
               ),
@@ -164,18 +167,12 @@ class _FeedViewState extends State<FeedView> {
                     child: Column(
                       children: [
                         pageUserInfo(
-                          feed.writerUserId,
-                          userProfile: feed.writerProfile,
-                          userName: feed.writerNick,
-                          createdAt: feed.createdAt,
-                          updatedAt : feed.updatedAt
+                          context,feed
                         ),
                         Html(data: feed.content),
                         FeedRowBottom(
-                          userId: feed.writerUserId,
-                          likeCount: feed.likeCount,
-                          etcOpt: false,
-                          postId: feed.id,
+                          iconSize: 20,
+                          feed : feed
                         ),
                       ],
                     )
@@ -190,27 +187,19 @@ class _FeedViewState extends State<FeedView> {
       }
     );
   }
-  Widget pageUserInfo(
-    String userId,
-    {
-      String userProfile = "", 
-      String userName = "", String createdAt = "",
-      String updatedAt = "", List<String>? group
-    }
-    
-  ){
+  Widget pageUserInfo(BuildContext context,Feed feed){
     return GestureDetector(
       onTap: ()=>Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_)=>UserPage(id : userId)
+          builder: (_)=>UserPage(id : feed.writerUserId)
         )
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Profile(
-            profile: userProfile,
+            profile: feed.writerProfile,
             width: 56,
             height: 56
           ),
@@ -219,7 +208,7 @@ class _FeedViewState extends State<FeedView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children : [
               Text(
-                userName,
+                feed.writerNick,
                 style: const TextStyle(
                   height : 1.16,
                   fontSize : 18,
@@ -227,7 +216,7 @@ class _FeedViewState extends State<FeedView> {
                 )
               ),
               Text(
-                group?.toString()??"소속 없음",
+                "소속 없음",
                 style: TextStyle(
                   height : 1.125,
                   fontSize: 16,
@@ -235,22 +224,15 @@ class _FeedViewState extends State<FeedView> {
                 ),
               ),
               Text(
-                "${getDateFull(createdAt)} 작성됨",
+                "${getDateFull(feed.createdAt)} ${(feed.createdAt != feed.updatedAt)?
+                "작성됨"
+                :"수정됨"}",
                 style: TextStyle(
                   height : 1.33,
                   fontSize: 12,
                   color : Theme.of(context).colorScheme.secondary,
                 ),
               ),
-              (createdAt != updatedAt)?
-              Text(
-                "${getDateFull(updatedAt)} 수정됨",
-                style: TextStyle(
-                  height : 1.33,
-                  fontSize : 12,
-                  color : Theme.of(context).colorScheme.secondary,
-                ),
-              ):const SizedBox.shrink(),
             ]
           )
         ],

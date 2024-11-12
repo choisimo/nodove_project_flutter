@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
+import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/page/cate/cate.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 
@@ -72,107 +76,185 @@ class BottomNavbar extends GetView<PageState>{
 
   @override
   Widget build(context){
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ],
-      ),
-      width : double.infinity,
-      child: Obx(()=>
-        BottomNavigationBar(
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+    return Obx(()=>
+      ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(RowContainer.bottomBarRadius),
+          topRight: Radius.circular(RowContainer.bottomBarRadius)
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
           type: BottomNavigationBarType.fixed,
-          unselectedItemColor:Theme.of(context).colorScheme.onSurface,
+          unselectedItemColor:Theme.of(context).colorScheme.secondary,
           selectedItemColor: Theme.of(context).colorScheme.onPrimaryFixed,
           currentIndex: controller.index.value,
           onTap : controller.setIndex,
-          unselectedLabelStyle: const TextStyle(fontSize: 14),
-          selectedLabelStyle: const TextStyle(fontSize: 14),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.primary
+          ),
+          selectedLabelStyle: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.primary
+          ),
           items: [
             BottomNavigationBarItem(
               label: "홈",
-              icon: SvgPicture.asset(
-                'assets/icons/navbar/home.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+              icon: CustomSvg(
+                'navbar/home.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/navbar/home.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+              activeIcon: CustomSvg(
+                'navbar/home.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
               label: '메신저',
-              icon: SvgPicture.asset(
-                'assets/icons/navbar/msg.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+              icon: CustomSvg(
+                'navbar/msg.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/navbar/msg.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+              activeIcon: CustomSvg(
+                'navbar/msg.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
               label: '블록',
-              icon: SvgPicture.asset(
-                'assets/icons/navbar/summarize.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+              icon: CustomSvg(
+                'navbar/summarize.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/navbar/summarize.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+              activeIcon: CustomSvg(
+                'navbar/summarize.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
               label: '채용',
-              icon: SvgPicture.asset(
-                'assets/icons/user/company.svg',
-                width : 16,
-                height :16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+              icon: CustomSvg(
+                'user/company.svg',
+                width : 18,
+                height :18,
+                iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/user/company.svg',
-                width : 16,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+              activeIcon: CustomSvg(
+                'user/company.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
               label: '유저',
-              icon: SvgPicture.asset(
-                'assets/icons/navbar/user.svg',
+              icon: CustomSvg(
+                'navbar/user.svg',
                 width : 24,
-                height : 16,
-                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn)
+                height : 18,
+                iconColor: Theme.of(context).colorScheme.secondary,
               ),
-              activeIcon: SvgPicture.asset(
-                  'assets/icons/navbar/user.svg',
-                  width : 24,
-                  height : 16,
-                  colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+              activeIcon: CustomSvg(
+                'navbar/user.svg',
+                width : 24,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }
 
+class FeedBottomNavbar extends StatelessWidget {
+  final Categories cate;
+  const FeedBottomNavbar({super.key,required this.cate});
+
+  void onTap(BuildContext context, int index){
+    print(index);
+    switch(index){
+      case 0 : break;
+      case 1 : Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:(context) => CatePage(page : cate.categoryId),
+          settings: RouteSettings(
+            arguments: {
+              "backName" : cate.categoryName
+            },
+          )
+        )
+      ); break;
+      case 2: break;
+      case 3 : Get.to(()=> const FeedSettingPage()); break;
+      default : break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(RowContainer.bottomBarRadius),
+        topRight: Radius.circular(RowContainer.bottomBarRadius)
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        type: BottomNavigationBarType.fixed,
+        onTap : (int index)=>onTap(context,index),
+        items: [
+          BottomNavigationBarItem(
+            label: '구독',
+            icon: CustomSvg(
+              'navbar/noBorderAdd.svg',
+              width : 18,
+              height :18,
+              iconColor : Theme.of(context).colorScheme.secondary
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: '카테고리',
+            icon: CustomSvg(
+              'navbar/summarize.svg',
+              width : 18,
+              height : 18,
+              iconColor : Theme.of(context).colorScheme.secondary
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: '해시태그',
+            icon: CustomSvg(
+              'navbar/hashtag.svg',
+              width : 18,
+              height : 18,
+              iconColor : Theme.of(context).colorScheme.secondary
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: '설정',
+            icon: CustomSvg(
+              'common/setting.svg',
+              width : 18,
+              height : 18,
+              iconColor : Theme.of(context).colorScheme.secondary
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

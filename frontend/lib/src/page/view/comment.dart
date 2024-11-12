@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
@@ -82,11 +83,12 @@ class _CommentListState extends State<CommentList> {
       builder: (context,constraint) {
         return CustomRefreshIndicator(
           onRefresh: ()=>Future.sync(()=>con.getCommentFirst(url.url,url.opt)),
-          child: GetX<CommentPageModel>(
-            builder:(context){
+          child: Obx((){
               if (con.isFetching.value){
-                return const CircularProgressIndicator(
-                  strokeWidth: 2,
+                return const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
                 );
               } else if(con.commentList.isEmpty){
                 return const Text("댓글이 없어요..");
@@ -127,34 +129,51 @@ class _CommentRowState extends State<CommentRow> {
     final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.all(8.0),
       child : Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Profile(profile: "https://file.career-block.com/attach/images/logo.jpg", width: 42, height: 42),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   margin : const EdgeInsets.only(bottom: 0),
-                  height : 24,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  height : 42,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Profile(profile: "https://pbs.twimg.com/profile_images/1376539213215068162/EnA-bQS5_400x400.jpg", width: 24, height: 24),
-                      const SizedBox(width: 2),
                       Text(
                         props.writer,
                         style : const TextStyle(
                           height : 1,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold
                         )
                       ),
-                      const SizedBox(width : 2),
-                      const EtcCommonBtn()
+                      const SizedBox(height : 2),
+                      Row(
+                        children: [
+                          Text(
+                            "${"소속 없음"} |",
+                            style: TextStyle(
+                              fontSize : 12,
+                              color : Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          Text(
+                            getDateDiff(props.createdAt),
+                            style: TextStyle(
+                              fontSize : 12,
+                              color : Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -164,14 +183,23 @@ class _CommentRowState extends State<CommentRow> {
                     maxHeight: 720,
                   ),
                   clipBehavior: Clip.hardEdge,
-                  decoration: const BoxDecoration(borderRadius: RowContainer.radius),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: const BoxDecoration(
+                    borderRadius: RowContainer.radius
+                  ),
                   child : Html(
                     data: props.comment,
+                    style: {
+                      "body": Style(margin: Margins.only(
+                        top:8.0,
+                      ))
+                    },
                   )
                 ),
                 SizedBox(
                   child: TextButton(
+                    style : TextButton.styleFrom(
+                      padding: const EdgeInsets.all(0.0)
+                    ),
                     onPressed: (){
                       if (commentTopKey.currentContext != null){
                         Scrollable.ensureVisible(
@@ -180,58 +208,43 @@ class _CommentRowState extends State<CommentRow> {
                         );
                       }
                     },
-                    child : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("자세히 보기"),
-                        const SizedBox(width : 6),
-                        SvgPicture.asset(
-                          "assets/icons/common/right.svg",
-                          width : 16 , height : 10,
-                          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                        )
-                      ],
-                    )
+                    child : Text(
+                      "답글 달기",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary
+                      ),
+                    ),
                   ),
                 )
               ],
             ),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             children: [
-              TextButton(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      "assets/icons/post/star-empty.svg",
-                      width : 20 , height : 20,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
-                    ),
-                    Text(
-                      "0",
-                      style : TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface
-                      )
-                    )
-                  ],
-                ),
-                onPressed: (){},
-              ),
-              SizedBox(
-                child : Text(
-                  getDateDiff(props.createdAt),
-                  style: TextStyle(
-                    fontSize : 12,
-                    color : Theme.of(context).colorScheme.secondary,
+              const EtcCommonBtn(),
+              const SizedBox(height : 16.0),
+              Row(
+                children: [
+                  CustomSvg(
+                    "post/star-empty.svg",
+                    width : 18 , height : 18,
+                    iconColor : Theme.of(context).colorScheme.onPrimaryFixed,
                   ),
-                )
+                  const SizedBox(width : 4.0),
+                    Text(
+                    "0",
+                    style : TextStyle(
+                      color: Theme.of(context).colorScheme.secondary
+                    )
+                  )
+                ],
               ),
             ],
-          )
+          ),
         ],
       )
     );
@@ -257,22 +270,12 @@ class _commentListState extends State<commentList> {
       onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
       child: SafeArea(
         child: SizedBox(
+          width : double.infinity,
           height : height * 0.6,
           child: LayoutBuilder(
             builder:(context,constraint){
               return Column(
                 children: [
-                  SizedBox(
-                    height : 32,
-                    child: Text(
-                      "댓글",
-                      style : TextStyle(
-                        color : Theme.of(context).colorScheme.onSurface,
-                        fontSize : 20,
-                      
-                      )
-                    ),
-                  ),
                   Expanded(
                     child: CommentList(
                       url : url.url,
@@ -280,26 +283,19 @@ class _commentListState extends State<commentList> {
                       page : page
                       ,enableScroll: true),
                   ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent
-                    ),
-                    child: SafeArea(
-                      child: CustomWrite(
-                        focus : false,
-                        callback: (content) async{
-                          if (content.isNotEmpty){
-                            await con.postComment({
-                              'post_id': page,
-                              'comment': content
-                            }).then((res){
-                              Get.find<CommentPageModel>().getCommentFirst(url.url, url.opt);
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  )
+                  CustomWrite(
+                    focus : false,
+                    callback: (content) async{
+                      if (content.isNotEmpty){
+                        await con.postComment({
+                          'post_id': page,
+                          'comment': content
+                        }).then((res){
+                          Get.find<CommentPageModel>().getCommentFirst(url.url, url.opt);
+                        });
+                      }
+                    },
+                  ),
                 ],
               );
             }
@@ -342,10 +338,26 @@ class _CustomWriteState extends State<CustomWrite> {
   @override
   Widget build(BuildContext context) {
     final bool focus = widget.focus;
-    
+    final double maxWidth = MediaQuery.of(context).size.width;
     return LayoutBuilder(
       builder : (context,constraint){
         return Container(
+            width : double.infinity,
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 16,
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                top: rowBorderLine()
+              )
+            ),
+            child: Container(
+            width:maxWidth * 0.9,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSecondary,
+              borderRadius: RowContainer.radius
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 8),
             constraints : const BoxConstraints(
               minHeight: 42
@@ -358,14 +370,11 @@ class _CustomWriteState extends State<CustomWrite> {
                   width : 48,
                   height : 48,
                   child: IconButton(
-                    style: ButtonStyle(
-                      side : WidgetStatePropertyAll(rowBorderLine())
-                    ),
                     onPressed: imageUpload,
-                    icon: SvgPicture.asset(
-                      'assets/icons/post/picture.svg',
+                    icon: CustomSvg(
+                      'post/picture.svg',
                       width : 24, height : 24,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
+                      iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     ),
                   ),
                 ),
@@ -375,10 +384,6 @@ class _CustomWriteState extends State<CustomWrite> {
                     padding : const EdgeInsets.symmetric(
                       horizontal: 8,
                     ),
-                    decoration: BoxDecoration(
-                      border : rowBorderLineAll(),
-                      borderRadius: RowContainer.radius
-                    ),
                     child: TextField(
                       maxLines: 10,
                       minLines: 1,
@@ -387,8 +392,12 @@ class _CustomWriteState extends State<CustomWrite> {
                         content = text;
                       },
                       keyboardType: TextInputType.multiline,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "답글 남기기",
+                        hintStyle : TextStyle(
+                          color : Theme.of(context).colorScheme.secondary
+                        )
                       ),
                     ),
                   ),
@@ -397,21 +406,20 @@ class _CustomWriteState extends State<CustomWrite> {
                 SizedBox(
                   width : 48,
                   height : 48,
-                  child: IconButton.outlined(
-                    style: ButtonStyle(
-                      side : WidgetStatePropertyAll(rowBorderLine())
-                    ),
-                    icon : SvgPicture.asset(
-                      "assets/icons/navbar/msg.svg",
-                      width : 24, height : 24,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed, BlendMode.srcIn),
+                  child: IconButton(
+                    icon : Text(
+                      "게시",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryFixed
+                      ),
                     ),
                     onPressed: () => widget.callback?.call(content),
                   ),
                 ),
               ],
             )
-          );
+          )
+        );
       }
     );
   }

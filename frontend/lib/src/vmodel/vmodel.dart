@@ -20,7 +20,7 @@ import 'package:nodove_flutter/state/user.dart';
 class InitViewModel implements Bindings{
   @override
   void dependencies(){
-    Get.create<FeedListModel>(()=>FeedListModel(),permanent: false);
+    Get.create<FeedListModel>(()=>FeedListModel());
     Get.put<UserState>(UserState());
     Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
     Get.create<UserInfoModel>(()=> UserInfoModel());
@@ -298,6 +298,7 @@ class UserInfoModel extends GetxController{
 class CateListModel extends GetxController{
   final FeedRepo _feedrepo = FeedRepo();
   RxList<Categories> catelist = <Categories>[].obs;
+  Rx<Categories> currentCate = Categories.initialState().obs;
   RxBool isFetching = false.obs;
   RxBool isFragFetching = false.obs;
   RxBool isLastAppend = false.obs;
@@ -321,6 +322,16 @@ class CateListModel extends GetxController{
     } else {
       catelist([]);
     }
+  }
+
+  Future<void> getCateOne({String? url , String? opt}) async{
+    isFetching(true);
+    String urlStr = url??"${Url.apiUrl}/categories/getAllCategoriesByParentId/";
+    String urlOpt = opt??"0";
+    final cate = await _feedrepo.getCateOne(urlStr,urlOpt);
+    currentCate(cate);
+    
+    isFetching(false);
   }
 
   Future<void> setSubscribe (int id) async{

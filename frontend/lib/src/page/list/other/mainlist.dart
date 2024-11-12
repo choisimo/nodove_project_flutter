@@ -51,7 +51,7 @@ class _FeedMainPageState extends State<FeedMainPage> {
       title : const NavbarTitle("피드"),
       actions : [
         NavbarCommonBtn(
-          "assets/icons/navbar/search.svg",
+          "navbar/search.svg",
           onClick : (){
             if (exposed == true){
               setState((){
@@ -102,27 +102,11 @@ class FeedMainList extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(
-          child : 
-          PartContainer(
-            children: [
-              TitleRow(
-                title : "내 위치",
-                iconSrc: "assets/icons/navbar/navi.svg",
-                onTap : ()=>Get.to(()=>const MapPage()),
-              ),
-              mapPreview(context)
-            ],
-          )
-        ),
-        SliverToBoxAdapter(
           child : PartContainer(
             children: [
               TitleRow(
                 title : "카테고리",
-                iconSrc: "assets/icons/navbar/menu.svg",
                 onTap : ()=>Get.to(()=>const CatePage(page: 0)),
-                iconWidth: 14,
-                iconHeight: 14,
               ),
               CateList(
                 page : 0,
@@ -193,17 +177,11 @@ class PartContainer extends StatelessWidget {
 class TitleRow extends StatelessWidget {
   final String? title;
   final double? fontSize;
-  final String? iconSrc;
-  final double? iconWidth;
-  final double? iconHeight;
   final Function()? onTap;
   const TitleRow({
     super.key,
     this.title,
     this.fontSize = 16,
-    this.iconSrc,
-    this.iconWidth = 16,
-    this.iconHeight = 16,
     this.onTap
   });
 
@@ -266,8 +244,7 @@ class SearchPart extends StatelessWidget {
                 children: [
                   SizedBox(
                     width : layout.maxWidth - 54,
-                    child: commonTextInput(
-                      context,
+                    child: CommonTextInput(
                       bColor: Colors.transparent,
                       placeholder: "피드를 검색해주세요",
                       placeholderStyle: TextStyle(
@@ -276,7 +253,7 @@ class SearchPart extends StatelessWidget {
                     )
                   ),
                   NavbarCommonBtn(
-                    "assets/icons/navbar/search.svg",
+                    "navbar/search.svg",
                     onClick : (){},
                   ),
                 ],

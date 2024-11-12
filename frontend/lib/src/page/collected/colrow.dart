@@ -4,7 +4,6 @@ import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/collected/minimalrow.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class CollectedRow extends StatelessWidget {

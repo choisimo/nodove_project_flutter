@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginMainPage> {
         user.setIndex(res['parsed']['userId']);
         Get.off(()=>const MyHome());
       } else {
+        setState((){loaded = true;});
         print("아이디 찾기 오류");
       }
     } else{
@@ -123,7 +124,7 @@ class LoginMainForm extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     IconButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                         
                       ),
                       onPressed: (){},

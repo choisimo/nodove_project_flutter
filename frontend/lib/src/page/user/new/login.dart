@@ -4,14 +4,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
-import 'package:nodove_flutter/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/user/new/join.dart';
-import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/user.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,32 +22,10 @@ class _LoginPageState extends State<LoginPage> {
   Future<String?> token = storage.read(key: "userToken");
   Future<String?> cookie = storage.read(key : 'refreshToken');
 
-  void _checkToken() async{
-    if(await token != null&&await cookie != null){
-        final user = Get.put(UserState());
-
-      final res = await decoding(await token,await cookie);
-      if (res['parsed'] != null){
-        user.setIndex(res['parsed']['userId']);
-        Get.off(()=>const MyHome());
-      } else {
-        print("아이디 찾기 오류");
-      }
-    } else{
-      //Get.off(()=>const MyHome());
-    }
-  }
-
-  @override
-  void initState() {
-    _checkToken();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      leading: backBtn(context,callback: ()=>Get.back())
+      leading: BackBtn(callback: ()=>Get.back())
     );
     return Scaffold(
       appBar: NavbarTop(navbarOpt),
@@ -86,8 +61,7 @@ class LoginForm extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              commonTextInput(
-                context,
+              CommonTextInput(
                 onChanged: (str){
                   id = str;
                 },
@@ -95,8 +69,7 @@ class LoginForm extends StatelessWidget {
                 keyboard: TextInputType.text,
               ),
               const SizedBox(height : 32),
-              commonTextInput(
-                context,
+              CommonTextInput(
                 onChanged: (str){
                   pw = str;
                 },

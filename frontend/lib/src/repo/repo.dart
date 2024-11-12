@@ -32,6 +32,9 @@ class FeedRepo{
   Future<List<Categories>> getCateList(url,opt , child){
     return _source.getCateList(url, opt , child);
   }
+  Future<Categories> getCateOne(String url,String opt){
+    return _source.getCateOne(url,opt);
+  }
   Future<List<Comment>> getCommentPage(pageKey,url,opt){
     return _source.getCommentList(pageKey,url,opt);
   }

@@ -30,6 +30,7 @@ class _CarouselState extends State<Carousel> {
     return SizedBox(
       width : MediaQuery.of(context).size.width,
       child : Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           carouselWidget(),
           carouselIndicator()
@@ -41,6 +42,7 @@ class _CarouselState extends State<Carousel> {
   Widget carouselWidget(){
     List<dynamic> imageLinks = widget.imageLinks;
     int page = widget.page;
+    double width = MediaQuery.of(context).size.width;
     
     return 
     (imageLinks.isNotEmpty)?
@@ -75,7 +77,7 @@ class _CarouselState extends State<Carousel> {
                   tag : "$page-${imageLinks[i.key]}",
                   child: CustomImage(
                     imageLinks[i.key],
-                    fit : BoxFit.contain,
+                    fit : BoxFit.cover,
                   ),
                 )
               )
@@ -84,7 +86,7 @@ class _CarouselState extends State<Carousel> {
         );
       }).toList(),
       options: CarouselOptions(
-        height : 420,
+        height : width,
         viewportFraction: 1.0,
         scrollPhysics : const AlwaysScrollableScrollPhysics(),
         clipBehavior : Clip.antiAlias,
@@ -101,52 +103,106 @@ class _CarouselState extends State<Carousel> {
   Widget carouselIndicator(){
     List<dynamic> imageLinks = widget.imageLinks;
     const double size = 32;
-
+    double width = MediaQuery.of(context).size.width;
     return
     (imageLinks.isNotEmpty)?
       SizedBox(
-        height : 420,
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child : Container(
-            clipBehavior: Clip.hardEdge,
-            height : size,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-              borderRadius: const BorderRadius.all(Radius.circular(size)),
-              boxShadow: rowBorderShadow()
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: imageLinks.length,
-              itemBuilder: (context, index) {
-                return IconButton(
+        height : size,
+        child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: imageLinks.length,
+          itemBuilder: (context, index) {
+            return Opacity(
+              opacity: 0.5,
+              child: SizedBox(
+                width : size,
+                height : size,
+                child: IconButton(
                   onPressed: () => _controller.animateToPage(
                     index,
                     curve : Curves.ease
                   ),
                   icon : (imageLinks[index].contains("/serve/attach"))?
-                  SvgPicture.asset(
-                    "assets/icons/post/video.svg",
+                  CustomSvg(
+                    "post/video.svg",
                     width : size , height : size,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
                   )
                   :
-                  SvgPicture.asset(
-                    "assets/icons/post/picture.svg",
+                  CustomSvg(
+                    "post/picture.svg",
                     width : size , height : size,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
                   )
-                );
-              },
-            ),
-          )
-        )
+                )
+              ),
+            );
+          },
+        ),
     ):const SizedBox.shrink();
   }
 }
+
+class BannerCarousel extends StatefulWidget {
+  final List<dynamic> imageLinks;
+  final Function(int index)? onPressed;
+  const BannerCarousel({super.key,required this.imageLinks,this.onPressed});
+
+  @override
+  State<BannerCarousel> createState() => _BannerCarouselState();
+}
+
+class _BannerCarouselState extends State<BannerCarousel> {
+  final CarouselSliderController controller = CarouselSliderController();
+  int current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxHeight = MediaQuery.of(context).size.height;
+    return (widget.imageLinks.isNotEmpty)?
+    CarouselSlider(
+      carouselController: controller,
+      items: widget.imageLinks.asMap().entries.map((i){
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary
+              ),
+              width : MediaQuery.of(context).size.width,
+              child : GestureDetector(
+                onScaleStart: (_)=>widget.onPressed?.call(i.key),
+                onTap: ()=>widget.onPressed?.call(i.key),
+                child : Hero(
+                  tag : "Main-Banner-${widget.imageLinks[i.key]}",
+                  child: CustomImage(
+                    widget.imageLinks[i.key],
+                    fit : BoxFit.cover,
+                  ),
+                )
+              )
+            );
+          },
+        );
+      }).toList(),
+      options: CarouselOptions(
+        height : maxHeight,
+        viewportFraction: 1.0,
+        scrollPhysics : const AlwaysScrollableScrollPhysics(),
+        clipBehavior : Clip.antiAlias,
+        enableInfiniteScroll : false,
+        autoPlay: false,
+        onPageChanged: (index ,reason){
+          setState(() {
+            current = index;
+          });
+        }
+      )
+    ):const SizedBox.shrink();
+  }
+}
+
 
 /*
                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {

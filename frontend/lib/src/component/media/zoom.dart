@@ -74,7 +74,7 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                   height : 32,
                   decoration: BoxDecoration(
                     color : Theme.of(context).colorScheme.onPrimary,
-                    boxShadow: rowBorderShadow(),
+                    border : rowBorderLineAll(),
                     borderRadius: RowContainer.radius,
                   ),
                   margin : EdgeInsets.symmetric(
@@ -116,7 +116,7 @@ Widget imgZoomBottom(BuildContext context,{
     ),
     decoration: BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
-      boxShadow: rowBorderShadow(),
+      border : rowBorderLineAll(),
       borderRadius: RowContainer.radius
     ),
     child: Row(
