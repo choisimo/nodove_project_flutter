@@ -10,6 +10,7 @@ import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -29,7 +30,7 @@ class CommentList extends StatefulWidget {
 class _CommentListState extends State<CommentList> {
   Dio dio = Dio();
   final maxPage = 5;
-  final CommentPageModel con = Get.put(CommentPageModel());
+  final TempFeed con = Get.put(TempFeed());
   late ScrollController _scrollController = ScrollController();
   int pageKey = 0;
 
@@ -37,22 +38,22 @@ class _CommentListState extends State<CommentList> {
     String commentUrl = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/${widget.page}";
     String commentOpt = "maxSize=$maxPage";
     ViewPageState.page.setComment(commentUrl,commentOpt);
-    con.getCommentFirst(commentUrl,commentOpt);
+    //con.getCommentFirst(commentUrl,commentOpt);
   }
 
   @override
   void initState() {
     _initLoad();
-    _scrollController = ScrollController()..addListener(fetchPage);
+    //_scrollController = ScrollController()..addListener(fetchPage);
     super.initState();
   }
   @override
   void dispose() {
-    _scrollController.removeListener(fetchPage);
+    //_scrollController.removeListener(fetchPage);
     super.dispose();
   }
   
-  void fetchPage() async {
+  /*void fetchPage() async {
     PageUrl url = ViewPageState.page.comment.value;
     if (!con.isFetching.value && 
     !con.isFragFetching.value &&
@@ -72,7 +73,7 @@ class _CommentListState extends State<CommentList> {
         print(error);
       }
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class _CommentListState extends State<CommentList> {
     return LayoutBuilder(
       builder: (context,constraint) {
         return CustomRefreshIndicator(
-          onRefresh: ()=>Future.sync(()=>con.getCommentFirst(url.url,url.opt)),
+          onRefresh: ()=>Future.sync(()=>{/*con.getCommentFirst(url.url,url.opt)*/}),
           child: Obx((){
               if (con.isFetching.value){
                 return const Center(

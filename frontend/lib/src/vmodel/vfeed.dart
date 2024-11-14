@@ -1,6 +1,14 @@
+import 'package:get/get.dart';
+import 'package:nodove_flutter/src/model/cate.dart';
+import 'package:nodove_flutter/src/model/chatting.dart';
+import 'package:nodove_flutter/src/model/comment.dart';
+import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
-class TempFeed{
-  final List<RecruitFeed> feed = [
+import 'package:nodove_flutter/src/model/user.dart';
+
+class TempFeed extends GetxController{
+  final RxBool isFetching = false.obs;
+  RxList<RecruitFeed> feed = [
     RecruitFeed(
       id : "fjdsika3j20j",
       title : "게시글 테스트",
@@ -49,5 +57,156 @@ class TempFeed{
         founded: "",
       )
     ),
+  ].obs;
+
+  RxList<Feed> feedList = [
+    Feed(
+      id: 0,
+      title : "테스트1",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: [],
+      imageLinks: [],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: [],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+  ].obs;
+
+  RxList<Categories> catelist = [
+    Categories(
+      categoryId : 2,
+      categoryName : "테스트1",
+      categoryDescription : "테스트1",
+      depth : 1,
+      parentCategoryName: "",
+      children : [
+        Categories(
+        categoryId : 4,
+        categoryName : "테스트2",
+        categoryDescription : "테스트2",
+        parentCategoryName: "테스트1",
+        depth : 2,
+        children: [
+          Categories(
+            categoryId : 8,
+            categoryName : "테스트3",
+            categoryDescription : "테스트3",
+            depth : 3,
+            parentCategoryName: "테스트2",
+          )
+        ]
+      )
+      ]
+    ),
+     Categories(
+      categoryId : 16,
+      categoryName : "테스트4",
+      categoryDescription : "테스트4",
+      depth : 1,
+      parentCategoryName: "",
+    )
+  ].obs;
+
+  Rx<Categories> currentCate = Categories(
+    categoryId : 2,
+    categoryName : "테스트1",
+    categoryDescription : "테스트1",
+    depth : 1,
+    parentCategoryName: "",
+    children : [
+      Categories(
+      categoryId : 4,
+      categoryName : "테스트2",
+      categoryDescription : "테스트2",
+      parentCategoryName: "테스트1",
+      depth : 2,
+      children: [
+        Categories(
+          categoryId : 8,
+          categoryName : "테스트3",
+          categoryDescription : "테스트3",
+          depth : 3,
+          parentCategoryName: "테스트2",
+        )
+      ]
+    )
+    ]
+  ).obs;
+
+  List<Room> roomlist = [
+    Room(
+      roomId : "룸 ID",
+      user: ChatUser(
+        userId: 'admin',
+        username: '관리자',
+        profile : "",
+        lastOnline: null,
+        id : "admin"
+      ),
+      lastMsg: ChatContent(
+        chatId: 0,
+        content : "마지막 메세지",
+        createdAt: "2024-11-14 12:12:12"
+      ),
+      roomName: "관리자",
+      profile : ""
+    )
   ];
+
+  Rx<User> userInfo = User(
+    userId: 'careerblock',
+    profile: 'https://file.career-block.com/attach/images/logo.jpg',
+    role : "소속 없음",
+    nickname : "커리어블록",
+    certifications: [],
+    groups: [],
+    hashtags: [],
+    userActivities: null,
+    birthDate: DateTime.now().microsecond,
+    private : false
+  ).obs;
+
+  Rx<Feed> content = Feed(
+    id: 0,
+    title : "테스트1",
+    writerNick: "커리어블록",
+    writerId : 6,
+    writerUserId: "careerblock",
+    writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+    createdAt : "2024-11-14 12:12:12",
+    updatedAt: "2024-11-14 12:12:12",
+    content : "<p>테스트</p>",
+    hashtags: [],
+    imageLinks: [],
+    private : false,
+  ).obs;
+
+  RxList<Comment> commentList = [
+      Comment(
+        commentId: 0,
+        comment: "댓글 테스트1",
+        writer: "커리어블록",
+        createdAt: "2024-11-14 11:16:00"
+      )
+    ].obs;
 }

@@ -110,17 +110,6 @@ class FeedWrite{
   }
 }
 
-class Pos{
-  final String name;
-  final int lat;
-  final int lng;
-  Pos({
-    required this.name,
-    required this.lat,
-    required this.lng
-  });
-}
-
 class PageUrl{
   final String url;
   final String opt;

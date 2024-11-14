@@ -454,7 +454,7 @@ class FormCommitButton extends StatelessWidget {
       height : height,
       child: TextButton(
         style : TextButton.styleFrom(
-          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onSecondary,
+          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
           shape: const RoundedRectangleBorder(
             borderRadius: RowContainer.radius
           ),

@@ -40,8 +40,8 @@ class _LoginPageState extends State<LoginMainPage> {
         print("아이디 찾기 오류");
       }
     } else{
-      setState((){loaded = true;});
-      //Get.off(()=>const MyHome());
+      //setState((){loaded = true;});
+      Get.off(()=>const MyHome());
     }
   }
 

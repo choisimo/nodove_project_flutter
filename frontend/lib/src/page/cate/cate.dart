@@ -7,6 +7,7 @@ import 'package:nodove_flutter/src/page/cate/writecate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -111,7 +112,7 @@ class CateList extends StatefulWidget {
 
 class _CateListState extends State<CateList> {
   late List<Categories> list;
-  CateListModel con = Get.put(CateListModel());
+  TempFeed con = Get.put(TempFeed());
 
   @override
   void initState(){
@@ -119,11 +120,11 @@ class _CateListState extends State<CateList> {
     super.initState();
   }
   Future<void> refresh() async{
-    con.getCate(
+    /*con.getCate(
       page : widget.page,
       url : widget.url,
       opt : widget.opt
-    );
+    );*/
   }
 
   @override
@@ -173,7 +174,7 @@ class CateRow extends StatefulWidget {
 }
 
 class _CateRowState extends State<CateRow> {
-  CateListModel con = Get.put(CateListModel());
+  TempFeed con = Get.put(TempFeed());
   @override
   Widget build(BuildContext context) {
     Categories cate = widget.cate;

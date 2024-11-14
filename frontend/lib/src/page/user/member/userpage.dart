@@ -13,6 +13,7 @@ import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -41,7 +42,7 @@ class UserInfo extends StatefulWidget {
 }
 
 class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin {
-  final UserInfoModel _con = Get.put(UserInfoModel());
+  final TempFeed _con = Get.put(TempFeed());
   late Future<User> userInfo;
   ScrollController scrollController = ScrollController();
   late TabController tabController = TabController(
@@ -60,7 +61,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
     final userState = Get.put(UserState());
     String? widgetId = widget.id;
     String myid = userState.id.value;
-    _con.getUserInfo(widgetId??myid);
+    //_con.getUserInfo(widgetId??myid);
   }
 
   @override

@@ -14,6 +14,7 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -36,12 +37,12 @@ class _FeedListPageState extends State<FeedListPage>{
   late bool collected = false;
   int size = 10;
   bool search = false;
-  final ccon = Get.put(CateListModel());
+  TempFeed ccon = Get.put(TempFeed());
 
   @override
   void initState() {
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    ccon.getCate(
+    /*ccon.getCate(
       page : cateid,
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
@@ -49,7 +50,7 @@ class _FeedListPageState extends State<FeedListPage>{
     ccon.getCateOne(
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
-    );
+    );*/
     _checksettings();
     super.initState();
   }
@@ -232,11 +233,11 @@ class FeedList extends StatefulWidget {
 }
 
 class _FeedListState extends State<FeedList> {
-  final FeedListModel con = Get.put(FeedListModel(),permanent: false);
+  TempFeed con = Get.put(TempFeed());
   ScrollController _scrollController = ScrollController();
   int pageKey = 0;
 
-  void fetchPage() async {
+  /*void fetchPage() async {
     String url = widget.url;
     String opt = widget.opt;
     if (!con.isFetching.value && 
@@ -257,7 +258,7 @@ class _FeedListState extends State<FeedList> {
         print(error);
       }
     }
-  }
+  }*/
 
 
   void _initLoad() async{
@@ -265,18 +266,18 @@ class _FeedListState extends State<FeedList> {
     String opt = widget.opt;
     pageKey = 0;
     ViewPageState.page.setView(url, opt);
-    con.getFeedFirst(url,opt);
+    //con.getFeedFirst(url,opt);
   }
   
   @override
   void initState() {
     _initLoad();
-    _scrollController = ScrollController()..addListener(fetchPage);
+    //_scrollController = ScrollController()..addListener(fetchPage);
     super.initState();
   }
   @override
   void dispose() {
-    ScrollController().removeListener(fetchPage);
+    //ScrollController().removeListener(fetchPage);
     super.dispose();
   }
 

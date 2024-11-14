@@ -10,6 +10,7 @@ import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/messenger/room/addroom.dart';
 import 'package:nodove_flutter/src/page/messenger/message/message.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
@@ -77,11 +78,11 @@ class RoomList extends StatefulWidget {
 }
 
 class _RoomListState extends State<RoomList> {
-  RoomListModel con = Get.put(RoomListModel());
+  TempFeed con = Get.put(TempFeed());
 
   @override
   void initState() {
-    con.getRoomList();
+    //con.getRoomList();
     super.initState();
   }
   @override
@@ -89,7 +90,7 @@ class _RoomListState extends State<RoomList> {
     
     return Obx(()=>
     CustomRefreshIndicator(
-      onRefresh: ()=>Future.sync(()=>con.getRoomList()),
+      onRefresh: ()=>Future.sync(()=>{/*con.getRoomList()*/}),
       child : roomList(context)
     ));
   }

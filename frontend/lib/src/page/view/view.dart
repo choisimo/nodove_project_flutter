@@ -6,6 +6,7 @@ import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
@@ -35,7 +36,6 @@ class _FeedPageState extends State<FeedPage>{
 
   @override
   Widget build(BuildContext context){
-    PageUrl url = ViewPageState.page.comment.value;
     int page = widget.page??int.parse(Get.parameters['page']??'3');
     NavbarContent navbarOpt = NavbarContent(
       leading: BackBtn(callback: ()=>Navigator.of(context).pop()),
@@ -117,20 +117,20 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
-  final FeedListModel vcon = Get.put(FeedListModel());
-  final CommentPageModel con = Get.put(CommentPageModel());
+  final TempFeed vcon = Get.put(TempFeed());
+  final TempFeed con = Get.put(TempFeed());
   int maxPage = 5;
   int pageKey = 0;
 
   Future<void> refresh() async{
     PageUrl url = ViewPageState.page.comment.value;
-    con.getCommentFirst(url.url,url.opt);
+    //con.getCommentFirst(url.url,url.opt);
   }
 
   @override
   void initState() {
     ViewPageState.page.setView(widget.url,"/${widget.page}");
-    vcon.getFeedPage(widget.page);
+    //vcon.getFeedPage(widget.page);
     super.initState();
   }
 

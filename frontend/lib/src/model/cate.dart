@@ -2,7 +2,7 @@ class Categories {
   int categoryId;
   String categoryName;
   String categoryDescription;
-  List<dynamic> children;
+  List<dynamic>? children;
   int depth;
   String parentCategoryName;
   bool subscribed;
@@ -11,7 +11,7 @@ class Categories {
     required this.categoryId,
     required this.categoryName,
     required this.categoryDescription,
-    required this.children,
+    this.children,
     required this.depth,
     required this.parentCategoryName,
     this.subscribed = false
