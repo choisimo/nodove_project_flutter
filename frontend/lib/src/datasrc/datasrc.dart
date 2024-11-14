@@ -21,8 +21,10 @@ class DataSrc{
     receiveTimeout: const Duration(milliseconds: 3000), // 응답 시간 초과 (밀리초)
   ));
   
+  
   Future<List<Feed>?> getFeedList(int page,String url,String opt) async{
     try{
+      dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url/$page?$opt");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
@@ -33,6 +35,7 @@ class DataSrc{
   }
   Future<Feed?> getFeedPage(String url,String opt) async{
     try{
+      dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url/$opt");
       return Feed.fromJson(res.data);
     }catch(e){
@@ -98,6 +101,7 @@ class DataSrc{
 
   Future<List<Categories>> getCateList(String url,String opt,bool child) async{
     try{
+      dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url$opt");
       final data = (child)?res.data[0]['children']:res.data;
       return data.map<Categories>((json)=>Categories.fromJson(json)).toList();
@@ -108,6 +112,7 @@ class DataSrc{
   }
   Future<Categories> getCateOne(String url,String opt) async{
     try{
+      dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url$opt");
       return Categories.fromJson(res.data[0]);
     }catch(e){
@@ -120,6 +125,7 @@ class DataSrc{
 
   Future<List<Comment>> getCommentList(int page,String url,String opt) async{
     try{
+      dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url/$page?$opt");
       final data = res.data['comments'];
       return data.map<Comment>((json)=>Comment.fromJson(json)).toList();
@@ -160,7 +166,8 @@ class DataSrc{
   
   Future<void> RefreshToken() async{
     dio.interceptors.add(ApiInterceptors());
-    const storage = FlutterSecureStorage();
+    //const storage = FlutterSecureStorage();
+    
     try{
       await dio.get(
         "/token",

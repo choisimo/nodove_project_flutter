@@ -412,6 +412,7 @@ void showUserDialog (BuildContext context){
     context: context, 
     builder:(context){
       return CustomDialog(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         title : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -428,22 +429,23 @@ void showUserDialog (BuildContext context){
         ),
         bottomBtns: [
           DialogBottomBtn(
+            backgroundColor: Theme.of(context).colorScheme.onSecondary,
             onPressed: () async{
               const storage = FlutterSecureStorage();
               await storage.delete(key: 'userToken');
               await storage.delete(key: 'cookie');
               showToast("로그아웃 되었어요");
-              await Get.off(()=>const LoginMainPage());
+              await Get.offAll(()=>const LoginMainPage());
             },
-            child : const Text(
+            child : Text(
               "로그아웃",
               style: TextStyle(
                 fontSize : 18,
+                color: Theme.of(context).colorScheme.error
               ),
             )
           ),
         ],
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
       );
     }
   );

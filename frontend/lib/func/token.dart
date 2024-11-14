@@ -14,8 +14,6 @@ Future<Map<String,dynamic>> decoding(String? jwt,String? cookie) async{
       "cachedInfo" : jwt,
       "parsed" : parsed
     };
-    print(current);
-    print(response);
     return response;
   }
 
@@ -23,14 +21,12 @@ Future<Map<String,dynamic>> decoding(String? jwt,String? cookie) async{
 }
 
 Future<dynamic> cacheRefresh(String jwt,String cookie) async{
-  if (jwt.isEmpty||cookie.isEmpty) return {};
   const storage = FlutterSecureStorage();
 
   try{
-    await storage.delete(key : 'userToken');
-    await storage.write(key : "userToken", value : jwt);
-    await storage.delete(key : 'refreshToken');
-    await storage.write(key : "refreshToken", value : cookie);
+    print("$jwt $cookie");
+    storage.write(key : "userToken", value : jwt);
+    storage.write(key : "refreshToken", value : cookie);
     return jwt;
   }catch(e){
     print("캐시 삭제 오류 : $e");

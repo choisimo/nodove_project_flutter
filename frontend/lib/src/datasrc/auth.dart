@@ -61,7 +61,7 @@ class AuthDataSrc{
         data : jsonEncode(formData)
       );
       if (res.statusCode == 200){
-        final String? cookie = res.headers['set-cookie']?[0];
+        final String? cookie = res.headers['set-cookie']?[0].split(";")[0];
         final String? jwt = res.data['access_token'];
 
         if (jwt != null && cookie != null){

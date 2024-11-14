@@ -76,9 +76,8 @@ class TooltipShape extends ShapeBorder {
     {TextDirection? textDirection}) {
     final shadowPaint = Paint()
       ..color = borderColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..maskFilter = const MaskFilter.blur(BlurStyle.inner, 6);
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
     
     canvas.drawPath(
       getOuterPath(rect),

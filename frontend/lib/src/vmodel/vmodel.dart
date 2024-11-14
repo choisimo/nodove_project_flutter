@@ -77,15 +77,17 @@ class FeedListModel extends GetxController {
 
   Future<void> getFeedFirst(String url,String opt) async{
     try{
-      isLastAppend(false);
-      isFetching(true);
-      final list = await _feedrepo.getFeedList(0,url,opt);
+      WidgetsBinding.instance.addPostFrameCallback((_) async{
+        isLastAppend(false);
+        isFetching(true);
+        final list = await _feedrepo.getFeedList(0,url,opt);
 
-      if (list != null){
-        feedList(list);
-        isFetching(false);
-      }
-      else {feedList([]);}
+        if (list != null){
+          feedList(list);
+          isFetching(false);
+        }
+        else {feedList([]);}
+      });
     }catch(error){
       print(error);
     }
@@ -167,16 +169,17 @@ class CommentPageModel extends GetxController {
   int maxPage = 5;
   
   Future<void> getCommentFirst(String url , String opt) async{
-    isFetching(true);
-    final list = await _feedrepo.getCommentPage(0,url,opt);
-    isFetching(false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      isFetching(true);
+      final list = await _feedrepo.getCommentPage(0,url,opt);
+      isFetching(false);
 
-    if (list.isNotEmpty){
-      commentList(list);
-    }
-    else {
-      commentList([]);
-    }
+      if (list.isNotEmpty){
+        commentList(list);
+      }else {
+        commentList([]);
+      }
+    });
   }
   Future<List<Comment>> fetchCommentFrag(String url , String opt ,int pageKey) async{
     isFragFetching(true);
@@ -415,12 +418,14 @@ class RecruitListModel extends GetxController{
 
   Future<void> getRecruitmentFirst(int page,int size) async{
     try{
-      isLastAppend(false);
-      isFetching(true);
-      final list = await _feedrepo.getRecruitmentList(page,size);
+      WidgetsBinding.instance.addPostFrameCallback((_) async{
+        isLastAppend(false);
+        isFetching(true);
+        final list = await _feedrepo.getRecruitmentList(page,size);
 
-      recruitlist(list);
-      isFetching(false);
+        recruitlist(list);
+        isFetching(false);
+      });
         }catch(error){
       print(error);
     }

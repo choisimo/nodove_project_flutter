@@ -119,15 +119,15 @@ class CustomRefreshIndicator extends StatelessWidget {
 
 class CustomDialog extends StatelessWidget {
   final Color? backgroundColor;
-  final Widget? title;
-  final Widget? content;
-  final List<Widget>? bottomBtns;
+  final Widget title;
+  final Widget content;
+  final List<Widget> bottomBtns;
   const CustomDialog({
     super.key,
     this.backgroundColor,
-    this.title,
-    this.content,
-    this.bottomBtns
+    this.title = const SizedBox.shrink(),
+    this.content = const SizedBox.shrink(),
+    this.bottomBtns = const [SizedBox.shrink()]
   });
 
   @override
@@ -140,34 +140,30 @@ class CustomDialog extends StatelessWidget {
       ),
       insetAnimationCurve: Curves.easeIn,
       backgroundColor: backgroundColor,
-      child : LayoutBuilder(
-        builder: (context,constraint) {
-          return Container(
-            padding: const EdgeInsets.all(8.0),
-            constraints: BoxConstraints(
-              maxHeight: sHeight * 0.9,
-              maxWidth : sWidth * 0.9,
-              minHeight: sHeight * 0.1,
-              minWidth: sWidth * 0.1,
-            ),
-            child: SizedBox(
-              width : constraint.maxWidth,
-              child: Column(
+      child :Container(
+        padding: const EdgeInsets.all(8.0),
+        constraints: BoxConstraints(
+          maxHeight: sHeight * 0.9,
+          maxWidth : sWidth * 0.9,
+          minHeight: sHeight * 0.1,
+          minWidth: sWidth * 0.1,
+        ),
+        child: SizedBox(
+          width : sWidth,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              title,
+              content,
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  title!,
-                  content!,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: bottomBtns!
-                  ),
-                ],
+                children: bottomBtns
               ),
-            ),
-          );
-        }
-      )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -458,7 +454,7 @@ class FormCommitButton extends StatelessWidget {
       height : height,
       child: TextButton(
         style : TextButton.styleFrom(
-          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onSecondary,
           shape: const RoundedRectangleBorder(
             borderRadius: RowContainer.radius
           ),
