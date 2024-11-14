@@ -2,16 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
-import 'package:nodove_flutter/src/page/user/new/main.dart';
-import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
 
 class ApiInterceptors extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async{
     const storage = FlutterSecureStorage();
-
-    print(options.uri);
 
     final String token = "Bearer ${await storage.read(key: "userToken")}";
     final String refresh = "${await storage.read(key: "refreshToken")}";

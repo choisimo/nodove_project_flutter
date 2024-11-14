@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/component/oauth/kakao.dart';
-import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
@@ -58,7 +57,7 @@ class _LoginPageState extends State<LoginMainPage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body : Stack(
         children: [
-          Container(
+          /*Container(
             decoration: const BoxDecoration(
               image : DecorationImage(
                 image : ExactAssetImage(
@@ -75,7 +74,7 @@ class _LoginPageState extends State<LoginMainPage> {
                 height : double.infinity
               )
             ),
-          ),
+          ),*/
           FutureBuilder(
             future : token,
             builder: (BuildContext context,AsyncSnapshot snapshot) {
@@ -99,11 +98,7 @@ class LoginMainForm extends StatelessWidget {
     return Center(
       child: SingleChildScrollView(
         child: 
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            borderRadius: RowContainer.radius,
-          ),
+        SizedBox(
           width : maxwidth * 0.9,
           height : maxheight * 0.5,
           child: Column(
@@ -167,6 +162,7 @@ class LoginMainForm extends StatelessWidget {
                 FormCommitButton(
                   width : maxwidth * 0.8,
                   height : 48,
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: ()=>Get.to(
                     ()=>const JoinPage(page : 0),
                   ),
@@ -178,6 +174,7 @@ class LoginMainForm extends StatelessWidget {
               children: [
                 FormCommitButton(
                   height : 48,
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: ()=>Get.to(
                     ()=>const LoginPage(),
                   ),

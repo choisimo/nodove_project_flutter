@@ -5,7 +5,6 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
-import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/state/url.dart';
 
 class FeedMainPage extends StatefulWidget {

@@ -2,13 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/func/token.dart';
-import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/state/user.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
