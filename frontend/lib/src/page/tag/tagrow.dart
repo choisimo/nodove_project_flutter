@@ -5,10 +5,12 @@ import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 class TagRow extends StatefulWidget {
   final List<dynamic>? hashtags;
   final Function? callback;
+  final double? fontSize;
   const TagRow({
     super.key,
     required this.hashtags,
     this.callback,
+    this.fontSize = 14
   });
 
   @override
@@ -47,8 +49,8 @@ class _TagRowState extends State<TagRow> {
             child: Text(
               "#${hashtags[index]}",
               style: TextStyle(
-                fontSize : 16,
-                color : Theme.of(context).colorScheme.onPrimaryFixed,
+                fontSize : widget.fontSize,
+                color : Theme.of(context).colorScheme.secondary,
               ),
             ),
           );

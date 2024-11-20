@@ -6,10 +6,10 @@ import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/state/url.dart';
 
 class ShareModal extends StatelessWidget {
-  final int id;
+  final String url;
   const ShareModal({
     super.key,
-    required this.id
+    required this.url
   });
 
   @override
@@ -18,7 +18,7 @@ class ShareModal extends StatelessWidget {
       widget : [
         ModalMenu(
           cb : () => copyLink(
-            "${Url.serverUrl}${Url.clientList}?page=$id",
+            "${Url.serverUrl}$url",
             callback : ()=>Get.back()
           ),
           title : "링크 복사하기",

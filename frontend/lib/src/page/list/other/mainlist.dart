@@ -180,7 +180,7 @@ class TitleRow extends StatelessWidget {
   const TitleRow({
     super.key,
     this.title,
-    this.fontSize = 16,
+    this.fontSize = 18,
     this.onTap
   });
 
@@ -207,6 +207,7 @@ class TitleRow extends StatelessWidget {
                   title.toString(),
                   style: TextStyle(
                     fontSize : fontSize,
+                    fontWeight: FontWeight.w900,
                     color : Theme.of(context).colorScheme.primary
                   ),
                 ):const SizedBox.shrink(),

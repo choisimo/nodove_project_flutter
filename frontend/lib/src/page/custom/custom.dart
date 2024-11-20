@@ -21,20 +21,20 @@ List<BoxShadow> rowBorderShadow(){
   ];
 }
 
-Border rowBorderLineAll(){
+Border rowBorderLineAll({Color? color}){
   BuildContext context = GlobalContext.navigatorState.currentContext!;
 
   return Border.all(
-    color: Theme.of(context).colorScheme.onSecondary,
+    color: color??Theme.of(context).colorScheme.onSecondary,
     width: 0.5,
   );
 }
 
-BorderSide rowBorderLine(){
+BorderSide rowBorderLine({Color? color}){
   BuildContext context = GlobalContext.navigatorState.currentContext!;
 
   return BorderSide(
-    color: Theme.of(context).colorScheme.onSecondary,
+    color: color??Theme.of(context).colorScheme.onSecondary,
     width: 0.5,
   );
 }
@@ -62,13 +62,7 @@ class ToastWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: RowContainer.radius,
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ]
+        border: rowBorderLineAll()
       ),
       width: double.infinity,
       child: SafeArea(
@@ -219,7 +213,7 @@ class DialogCloseBtn extends StatelessWidget {
         "assets/icons/common/close.svg",
         width : 16,height : 16,
         colorFilter: ColorFilter.mode(
-          iconColor??Theme.of(context).colorScheme.onSurface,
+          iconColor??Theme.of(context).colorScheme.secondary,
           BlendMode.srcIn),
       ),
     );
@@ -501,6 +495,25 @@ class CustomFloatingButton extends StatelessWidget {
   }
 }
 
+void showCustomModal(BuildContext context,Widget child){
+  showModalBottomSheet(
+    enableDrag: true,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    context: context,
+    showDragHandle: true,
+    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+    builder :(BuildContext context) {
+      return Padding(
+        padding : EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom
+        ),
+        child: child
+      );
+    },
+  );
+}
+
 class CustomModalFloatingButton extends StatelessWidget {
   final Widget? child;
   final Widget? icon;
@@ -560,6 +573,181 @@ class CustomDrawer extends StatelessWidget {
           children : children,
         )
       )
+    );
+  }
+}
+
+class SettingRow extends StatelessWidget {
+  final Widget? title;
+  final Widget? leading;
+  final Widget? actions;
+  final Function? onClick;
+  const SettingRow({
+    super.key,
+    this.title,
+    this.leading,
+    this.actions,
+    this.onClick
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height : 42,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: rowBorderLine()
+        ),
+        color : Theme.of(context).colorScheme.onPrimary,
+      ),
+      child : LayoutBuilder(
+        builder : (context,constraint){
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width : constraint.maxWidth * 0.33,
+                child: Center(child: leading),
+              ),
+              SizedBox(
+                width : constraint.maxWidth * 0.33,
+                child: Center(child: title),
+              ),
+              SizedBox(
+                width : constraint.maxWidth * 0.33,
+                child : Center(child: actions)
+              )
+            ],
+          );
+        }
+      )
+    );
+  }
+}
+
+class SettingTitle extends StatelessWidget {
+  final String title;
+  const SettingTitle({super.key,required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle titleStyle = TextStyle(
+      fontSize : 14,
+      color: Theme.of(context).colorScheme.onSurface
+    );
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        title,
+        style: titleStyle,
+      ),
+    );
+  }
+}
+class SettingContent extends StatelessWidget {
+  final List<Widget> children;
+  const SettingContent({super.key,required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top : rowBorderLine()
+        )
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+}
+
+class SettingSwitch extends StatelessWidget {
+  final Function(bool)? onChanged;
+  final bool value;
+  const SettingSwitch({
+    super.key,
+    this.onChanged,
+    this.value = false
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value : value,
+      onChanged: onChanged,
+      trackOutlineWidth: const WidgetStatePropertyAll(1),
+      trackOutlineColor: WidgetStateProperty.resolveWith((state){
+        return state.contains(WidgetState.selected)?
+        Colors.transparent
+        :Theme.of(context).colorScheme.onSecondary;
+      }),
+      thumbColor: WidgetStateProperty.resolveWith((state){
+        return state.contains(WidgetState.selected)?
+          Colors.white
+          :Theme.of(context).colorScheme.onPrimaryFixed;
+      }),
+    );
+  }
+}
+
+class MinimalVList extends StatelessWidget {
+  final List<dynamic> list;
+  final Function(int index)? onClick;
+  const MinimalVList({super.key,required this.list,this.onClick});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      width: MediaQuery.of(context).size.width,
+      height : 64,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          itemBuilder:(context, index){
+            return MinimalVRow(
+              title : list[index],
+              onClick: ()=>onClick?.call(index),
+            );
+          }
+        )
+      ),
+    );
+  }
+}
+
+class MinimalVRow extends StatelessWidget {
+  final Function? onClick;
+  final String title;
+  const MinimalVRow({super.key,this.onClick,required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 4.0
+      ),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            vertical: 4.0,
+            horizontal: 8.0
+          ),
+          side: rowBorderLine(color : Theme.of(context).colorScheme.secondary),
+          shape: const RoundedRectangleBorder(
+            borderRadius: RowContainer.radius
+          ),
+        ),
+        onPressed: ()=>onClick?.call(),
+        child: Text(title),
+      ),
     );
   }
 }

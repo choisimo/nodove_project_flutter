@@ -19,7 +19,8 @@ class NavbarTitle extends StatelessWidget {
       child: Text(
         title,
         style : TextStyle(
-          color : textColor??Theme.of(context).colorScheme.primary,
+          color : textColor??Theme.of(context).colorScheme.onPrimaryFixed,
+          fontWeight: FontWeight.w900,
           fontSize : fontSize??18,
         )
       ),
@@ -52,7 +53,7 @@ class BackBtn extends StatelessWidget {
         'assets/icons/common/left.svg',
         width : 18,
         height : 18,
-        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
       )
     );
   }
@@ -155,29 +156,37 @@ class EtcCommonBtn extends StatelessWidget {
   final Function? onClick;
   final double fontSize;
   final Color? iconColor;
+  final double iconSize;
   const EtcCommonBtn ({
     super.key,
     this.onClick,
     this.fontSize = 12,
     this.iconColor,
+    this.iconSize = 24
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width : 42,
-      height : 42,
+      width : iconSize,
+      height : iconSize,
       child: TextButton(
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.all(0.0)
+        ),
         onPressed: ()=>onClick?.call(),
-        child : Text(
-          '•••',
-          softWrap: false,
-          overflow: TextOverflow.visible,
-          style : TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          )
+        child : Rotate(
+          angle: 90,
+          child: Text(
+            '•••',
+            softWrap: false,
+            overflow: TextOverflow.visible,
+            style : TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ),
         ),
       ),
     );

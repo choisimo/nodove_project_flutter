@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
@@ -10,11 +9,10 @@ import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
-import 'package:nodove_flutter/func/share.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -100,7 +98,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                     indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     unselectedLabelStyle: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.bold,
                     ),
                     dividerColor: Theme.of(context).colorScheme.onSecondary,
                     indicatorSize: TabBarIndicatorSize.tab,
@@ -130,7 +128,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                     indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
                     unselectedLabelStyle: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.bold,
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     controller: tabController,
@@ -142,31 +140,32 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                 ),
                 pinned: true,
               ),
-              SliverFillRemaining(
-                child : (user.userId.isNotEmpty)?
-                TabBarView(
-                  controller: tabController,
-                  children: [
-                    const Text("tab1"),
-                    FeedList(
-                      collected: true,
-                      url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
-                      opt : "pageSize=$size",
-                      scrollEnabled: false,
-                    ),
-                    const Text("tab3"),
-                    const Text("tab4"),
-                  ],
-                ):const SizedBox.shrink()
-              )
             ];
           }
           return CustomRefreshIndicator(
             onRefresh: (){},
-            child: CustomScrollView(
+            child: NestedScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               controller: scrollController,
-              slivers : sliverList,
+              headerSliverBuilder :(context, innerBoxIsScrolled) => sliverList,
+              body : (user.userId.isNotEmpty)?
+              TabBarView(
+                controller: tabController,
+                children: [
+                  const Text("tab1"),
+                  CustomScrollView(
+                    slivers: [
+                      FeedList(
+                        collected: true,
+                        url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
+                        opt : "pageSize=$size",
+                      ),
+                    ]
+                  ),
+                  const Text("tab3"),
+                  const Text("tab4"),
+                ],
+              ):const SizedBox.shrink()
             ),
           );
         }
@@ -177,34 +176,25 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
 
 Widget customSliverAppbar(BuildContext context ,String userId,String? id){
   NavbarContent navbarOpt = NavbarContent(
-    leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
     title : NavbarTitle("@$userId"),
     actions : [
-      PopupMenuButton(
-      color : Theme.of(context).colorScheme.onPrimary,
-      shadowColor: Colors.transparent,
-      shape : TooltipShape(
-        vertical : 12,
-        borderColor : Theme.of(context).colorScheme.shadow
-      ),
-      offset : const Offset(0,46),
-      itemBuilder: (BuildContext context) {
-        return [
-          popupMenu(
-            context,
-            title: const NavbarTitle("복사", fontSize : 16),
-            onClick : () => copyLink(
-              "${Url.serverUrl}${Url.clientUser}?user=$userId",
-            )
-          ),
-          popupMenu(
-            context,
-            title: const NavbarTitle("로그아웃", fontSize : 16),
-            onClick : ()=> showUserDialog(context)
-          ), 
-        ];
-      },
-    ),
+      (id == null)?
+      NavbarCommonBtn(
+        "common/setting.svg",
+        onClick: (){
+
+        },
+      ):const SizedBox.shrink(),
+      NavbarCommonBtn(
+        "post/share.svg",
+        onClick: ()=>showModalBottomSheet(
+          useRootNavigator: true,
+          context: context,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          builder: (BuildContext context){
+            return ShareModal(url : "${Url.clientUser}?user=$userId");
+        }),
+      )
     ]
   );
   return SliverAppBar(
@@ -219,10 +209,9 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
         ),
       ),
     ),
-    centerTitle: true,
-    automaticallyImplyLeading: false,
+    centerTitle: false,
+    automaticallyImplyLeading: true,
     backgroundColor: Theme.of(context).colorScheme.onPrimary,
-    leading: navbarOpt.leading??const SizedBox.shrink(),
     title : navbarOpt.title??const SizedBox.shrink(),
     actions : navbarOpt.actions??[const SizedBox.shrink()],
   );
@@ -346,15 +335,15 @@ Widget userInfoWithProfile(BuildContext context, User info){
 
 Widget userButtons(BuildContext context,User info){
   final myid = UserState.page.id;
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    mainAxisSize: MainAxisSize.max,
-    children: [
-      const SizedBox(
-        width : 16
-      ),
-      Obx((){
-        return (info.userId.obs == myid)?
+  return Obx((){
+  if (info.userId.obs == myid){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        const SizedBox(
+          width : 16
+        ),
         Expanded(
           child: TextButton(
             style: OutlinedButton.styleFrom(
@@ -368,44 +357,54 @@ Widget userButtons(BuildContext context,User info){
               fullscreenDialog: true
             ),
             child: Text(
-              "정보 수정",
+              "활동 관리",
               style : TextStyle(
                 fontSize: 16,
                 color : Theme.of(context).colorScheme.onPrimaryFixed
               )
             )
           ),
-        ):const SizedBox.shrink();
-      }),
-      const SizedBox(
-        width : 16
-      ),
-      Expanded(
-        child: TextButton(
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.onSecondary,
-            shape: const RoundedRectangleBorder(
-              borderRadius: RowContainer.radius
-            ),
-          ),
-          onPressed: ()=>Get.to(
-            ()=>const EditUserPage(),
-            fullscreenDialog: true
-          ),
-          child: Text(
-            "활동 관리",
-            style : TextStyle(
-              fontSize: 16,
-              color : Theme.of(context).colorScheme.onPrimaryFixed
-            )
-          )
         ),
-      ),
-      const SizedBox(
-        width : 16
-      ),
-    ],
-  );
+        const SizedBox(
+          width : 16
+        ),
+      ],
+    );
+  } else {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        const SizedBox(
+          width : 16
+        ),
+        Expanded(
+          child: TextButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+              shape: const RoundedRectangleBorder(
+                borderRadius: RowContainer.radius
+              ),
+            ),
+            onPressed: (){
+
+            },
+            child: Text(
+              "팔로우",
+              style : TextStyle(
+                fontSize: 16,
+                color : Theme.of(context).colorScheme.onPrimary
+              )
+            )
+          ),
+        ),
+        const SizedBox(
+          width : 16
+        ),
+      ],
+    );
+  }
+  });
 }
 
 void showUserDialog (BuildContext context){

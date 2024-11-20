@@ -11,7 +11,6 @@ import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/messenger/room/addroom.dart';
 import 'package:nodove_flutter/src/page/messenger/message/message.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -165,11 +164,11 @@ class RoomRow extends StatelessWidget {
                     Profile(
                       profile : room.profile,
                       width : 64,height : 64,
-                      borderRadius: 2,
+                      borderRadius: 1,
                     ),
                     Profile(
                       profile : room.user.profile,
-                      width : 32,height : 32,
+                      width : 24,height : 24,
                       borderRadius: 1,
                     )
                   ],

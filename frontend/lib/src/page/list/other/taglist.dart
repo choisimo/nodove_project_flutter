@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
+import 'package:nodove_flutter/state/url.dart';
 
 class TagListPage extends StatefulWidget{
   const TagListPage({super.key});
@@ -129,14 +131,12 @@ class _TagListPageState extends State<TagListPage>{
               )
             ),
           ),
-          /*SliverFillRemaining(
-            child: FeedList(
-              collected: collected,
-              url : "${Url.apiUrl}${Url.tagFeed}/$tag",
-              opt : "pageSize=15",
-              scrollEnabled: true,
-            ),
-          )*/
+          FeedList(
+            key : const Key("tag-page-key"),
+            collected: collected,
+            url : "${Url.apiUrl}${Url.tagFeed}/$tag",
+            opt : "pageSize=15",
+          ),
         ],
       ),
     );

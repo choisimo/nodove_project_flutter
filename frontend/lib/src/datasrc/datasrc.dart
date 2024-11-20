@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' hide MultipartFile hide FormData;
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/func/interceptor.dart';

@@ -1,45 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
-import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/collected/minimalrow.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class CollectedRow extends StatelessWidget {
-  final Feed props;
+  final Feed feed;
 
-  const CollectedRow({super.key, required this.props});
+  const CollectedRow({super.key, required this.feed});
 
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
-    final List<dynamic> imageLinks = props.imageLinks;
+    final List<dynamic> imageLinks = feed.imageLinks;
   
     return GestureDetector(
-      onTap:() => Get.toNamed("/view/${props.id}"),
+      onTap:() => Get.toNamed("/view/${feed.id}"),
       child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.transparent
+        decoration: BoxDecoration(
+          border: rowBorderLineAll()
         ),
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          fit : StackFit.loose,
+        child: Column(
           children: [
-            SizedBox(
-              width : maxwidth,
-              height : maxwidth,
-              child: 
-              (imageLinks.isNotEmpty)?
-              Image.network(
-                props.imageLinks[0]??"",
-                fit : BoxFit.cover,
-                errorBuilder :(context, error, stackTrace){
-                  return Image.asset("assets/images/logo.png",fit : BoxFit.cover);
-                },
-              ):const SizedBox.shrink(),
+            AspectRatio(
+              aspectRatio: 16/9,
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface
+                ),
+                width : maxwidth,
+                child: 
+                (imageLinks.isNotEmpty)?
+                CustomImage(
+                  feed.imageLinks[0]??"",
+                  fit : BoxFit.cover,
+                ):const SizedBox.shrink(),
+              ),
             ),
-            MinimalRow(props : props)
+            MinimalRow(feed : feed)
           ],
         ),
       ),
@@ -48,50 +50,42 @@ class CollectedRow extends StatelessWidget {
 }
 
 class CollectedVRow extends StatelessWidget {
-  final Feed props;
+  final Feed feed;
 
-  const CollectedVRow({super.key, required this.props});
+  const CollectedVRow({super.key, required this.feed});
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> imageLinks = props.imageLinks;
-    double size = 280;
+    final List<dynamic> imageLinks = feed.imageLinks;
+    double size = 180;
   
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap:() => Get.toNamed("/view/${props.id}"),
+      onTap: ()=>
+        showCustomModal(context,commentList(page : feed.id)),
       child: Container(
-        decoration: BoxDecoration(
-          color : Theme.of(context).colorScheme.onPrimary
-        ),
         width : size,
         height : size,
         margin: const EdgeInsets.all(4),
         padding : const EdgeInsets.all(8),
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          fit : StackFit.loose,
+        child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: RowContainer.radius,
-                image: DecorationImage(
-                  fit : BoxFit.cover,
-                  image: 
-                  customImgProvider(
-                    (props.imageLinks.isNotEmpty)?props.imageLinks[0]:"",
+            AspectRatio(
+              aspectRatio: 16/9,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  image: DecorationImage(
+                    fit : BoxFit.cover,
+                    image: 
+                    customImgProvider(
+                      (feed.imageLinks.isNotEmpty)?feed.imageLinks[0]:"",
+                    )
                   )
-                )
+                ),
               ),
             ),
-            MinimalRow(props : props),
-            SizedBox(
-              width : size,
-              height : size,
-              child: EtcCommonBtn(
-                iconColor: Theme.of(context).colorScheme.primary
-              ),
-            )
+            MinimalRow(feed : feed),
           ],
         ),
       )

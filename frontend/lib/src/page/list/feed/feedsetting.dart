@@ -14,7 +14,7 @@ class FeedSettingPage extends StatelessWidget {
       title: const NavbarTitle("피드 설정")
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt, centerTitle: false,),
       body: const FeedSettingList()
     );
@@ -54,11 +54,7 @@ class _FeedSettingListState extends State<FeedSettingList> {
         width: 0.5
       )
     );
-    TextStyle title = TextStyle(
-      fontSize : 14,
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.onSurface
-    );
+    
     TextStyle content = const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.normal,
@@ -73,108 +69,50 @@ class _FeedSettingListState extends State<FeedSettingList> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              "피드 형식",
-              style: title,
-            ),
+          const SettingTitle(
+            title : "형식"
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: rowBorderLine()
-              )
-            ),
-            child: notiRow(
-              context,
-              leading : Text(
-                "간략하게",
-                style: content,
+          SettingContent(
+            children: [
+              SettingRow(
+                leading : Text(
+                  "간략하게",
+                  style: content,
+                ),
+                actions : SettingSwitch(
+                  value: collected,
+                  onChanged: (b)=>
+                  setState((){
+                    collected = !collected;
+                    storage.write(key : 'collectedView',value : collected.toString());
+                  })
+                )
               ),
-              actions : Switch(
-                value: collected,
-                onChanged: (b)=>
-                setState((){
-                  collected = !collected;
-                  storage.write(key : 'collectedView',value : collected.toString());
-                })
-              )
-            ),
+              SettingRow(
+                leading : Text(
+                  "피드 갯수",
+                  style: content,
+                ),
+                actions : const Text("선택")
+              ),
+            ],
           ),
-          notiRow(
-            context,
-            leading : Text(
-              "피드 갯수",
-              style: content,
-            ),
-            actions : const Text("선택")
+          const SettingTitle(
+            title : "초기화"
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              "초기화",
-              style: title,
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: rowBorderLine()
-              )
-            ),
-            child : GestureDetector(
-            onTap : (){},
-            child: notiRow(
-                context,
+          SettingContent(
+            children: [
+              SettingRow(
+                onClick: (){},
                 title: Text(
                   "설정 초기화",
                   style: important,
                 ),
-              ),
-            ),
+              )
+            ],
           )
         ],
       )
     );
-  }
-  Widget notiRow(
-    BuildContext context,{
-      Widget? title,
-      Widget? leading,
-      Widget? actions,
-    }){
-
-    return Container(
-      height : 42,
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: rowBorderLine()
-        ),
-        color : Theme.of(context).colorScheme.onPrimary,
-      ),
-      child : LayoutBuilder(
-        builder : (context,constraint){
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child: Center(child: leading),
-              ),
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child: Center(child: title),
-              ),
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child : Center(child: actions)
-              )
-            ],
-          );
-        }
-      )
-    );
-  }
+  } 
 }

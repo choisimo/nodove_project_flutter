@@ -70,8 +70,10 @@ class TempFeed extends GetxController{
       createdAt : "2024-11-14 12:12:12",
       updatedAt: "2024-11-14 12:12:12",
       content : "<p>테스트</p>",
-      hashtags: [],
-      imageLinks: [],
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/logo.jpg"
+      ],
       private : false,
     ),
     Feed(
@@ -84,7 +86,183 @@ class TempFeed extends GetxController{
       createdAt : "2024-11-14 12:12:12",
       updatedAt: "2024-11-14 12:12:12",
       content : "<p>테스트</p>",
-      hashtags: [],
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 3,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 4,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 5,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 6,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
+      imageLinks: [
+        "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
+      ],
+      private : false,
+    ),
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: ["개발","프론트엔드"],
       imageLinks: [
         "https://file.career-block.com/attach/images/2a5d5602-fe59-47e9-b1d3-4f3d066fc11e.jpg"
       ],
@@ -180,7 +358,7 @@ class TempFeed extends GetxController{
     nickname : "커리어블록",
     certifications: [],
     groups: [],
-    hashtags: [],
+    hashtags: ["개발","프론트엔드"],
     userActivities: null,
     birthDate: DateTime.now().microsecond,
     private : false

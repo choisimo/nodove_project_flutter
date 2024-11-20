@@ -5,6 +5,7 @@ import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/state/color.dart';
+import 'package:nodove_flutter/state/url.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:lottie/lottie.dart';
 
@@ -146,7 +147,7 @@ Widget imgZoomBottom(BuildContext context,{
               context: context,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               builder: (BuildContext context){
-                return ShareModal(id : pageId);
+                return ShareModal(url : "${Url.clientList}?page=$pageId");
             }),
             icon : SvgPicture.asset(
               "assets/icons/post/share.svg",

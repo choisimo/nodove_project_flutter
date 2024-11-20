@@ -22,11 +22,11 @@ class NotiPage extends StatelessWidget {
       title : const NavbarTitle("알림"),
       actions: [
         NavbarCommonBtn(
-          "assets/icons/post/delete.svg",
+          "post/delete.svg",
           onClick : (){},
         ),
         NavbarCommonBtn(
-          "assets/icons/common/setting.svg",
+          "common/setting.svg",
           onClick : ()=>Navigator.push(
             context,
             MaterialPageRoute(builder: (_)=>const NotiSettingPage())
@@ -35,7 +35,7 @@ class NotiPage extends StatelessWidget {
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body: const NotiList()
     );
@@ -95,13 +95,7 @@ class _NotiListState extends State<NotiList> {
               }
             );
           } else if (con.notilist.isEmpty){
-            return ListView.builder(
-              itemCount: 1,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context,index) {
-              return const Text("알림이 없어요");
-              }
-            );
+            return const Center(child: Text("알림이 없어요"));
           } else {
             return ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -168,7 +162,7 @@ class NotiRow extends StatelessWidget {
               widget : [
                 const MenuTitle(title: "이 피드"),
                 ModalMenu(
-                  iconSrc: "assets/icons/navbar/certification.svg",
+                  iconSrc: "navbar/certification.svg",
                   title: "보기",
                   cb: (){
                     Get.back();
@@ -176,7 +170,7 @@ class NotiRow extends StatelessWidget {
                   },
                 ),
                 ModalMenu(
-                  iconSrc: "assets/icons/navbar/user.svg",
+                  iconSrc: "navbar/user.svg",
                   title: "유저 보기",
                   cb: (){
                     Get.back();
@@ -185,7 +179,7 @@ class NotiRow extends StatelessWidget {
                 ),
                 const MenuTitle(title: "이 알림"),
                 ModalMenu(
-                  iconSrc: "assets/icons/post/delete.svg",
+                  iconSrc: "post/delete.svg",
                   title: "삭제",
                   cb: (){
                     con.deleteNotification(index);

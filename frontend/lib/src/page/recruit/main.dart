@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
@@ -51,31 +53,33 @@ class _RecruitMainViewState extends State<RecruitMainView>{
       slivers : [
         SliverAppBar(
           centerTitle: false,
-          title : const NavbarTitle("채용",),
+          title : const NavbarTitle(
+            "채용",
+            textColor: Colors.white,
+          ),
           actions : [
             NavbarCommonBtn(
               "navbar/search.svg",
               onClick : (){},
+              iconColor: Colors.white,
             ),
           ],
-          expandedHeight: 56
-        ),
-        const SliverToBoxAdapter(
-        child: SizedBox(
-          height : 240,
-          child: BannerCarousel(
-              imageLinks: [
-                "assets/images/background.jpg",
-                "assets/images/background2.jpg"
-              ],
+          flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: const BannerCarousel(
+                imageLinks: [
+                  "assets/images/background.jpg",
+                  "assets/images/background2.jpg"
+                ],
+              ),
             ),
-        )
-        ),
-        const SliverPadding(
-          padding: EdgeInsets.all(4),
-            sliver: SliverToBoxAdapter(
-            child : RecruitShortcutMenu()
           ),
+          shadowColor: Colors.transparent,
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          pinned: true,
+          expandedHeight: 240
         ),
         const SliverToBoxAdapter(
           child: Column(
@@ -93,7 +97,7 @@ class _RecruitMainViewState extends State<RecruitMainView>{
             children: [
               TitleRow(
                 title : "내 위치",
-                onTap : ()=>Get.to(()=>const MapPage()),
+                onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const MapPage()))
               ),
               mapPreview(context)
             ],
@@ -104,33 +108,15 @@ class _RecruitMainViewState extends State<RecruitMainView>{
             children: [
               TitleRow(
                 title : "채용 진행중",
-                onTap : ()=>Get.to(()=>const RecruitListPage()),
+                onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const RecruitListPage()))
               ),
-              SizedBox(
-                height : 360,
-                child: Obx((){
-                  if (con.isFetching.isTrue){
-                    return const CircularProgressIndicator(
-                      strokeWidth: 2.0,
-
-                    );
-                  } else if (con.recruitlist.isEmpty){
-                    return const Center(
-                      child : Text("현재 진행중인 채용이 없어요")
-                    );
-                  } else {
-                    return CustomRefreshIndicator(
-                      onRefresh: ()=>con.getRecruitmentFirst(0, size),
-                      child: RecruitListView(
-                        feed : con.recruitlist
-                      ),
-                    );
-                  }
-                }),
-              )
             ]
           )
         ),
+        RecruitListView(
+          feed : con.recruitlist,
+          isLoading: con.isFetching.value,
+        )
       ]
     );
   }
@@ -146,7 +132,7 @@ class RecruitShortcutMenu extends StatelessWidget {
       children: [
         buttons(
           context,
-          onClick: ()=>Get.to(()=>const RecruitListPage()),
+          onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const RecruitListPage())),
           iconSrc: "/navbar/summarize.svg",
           title : "채용" , iconWidth: 16 , iconHeight: 16
         ),
@@ -160,11 +146,6 @@ class RecruitShortcutMenu extends StatelessWidget {
           iconSrc: "/navbar/navi.svg",
           title : "지도" , iconWidth: 16 , iconHeight: 16
         ),
-        buttons(
-          context,
-          iconSrc: "/common/setting.svg",
-          title : "설정" , iconWidth: 16 , iconHeight: 16
-        )
       ],
     );
   }

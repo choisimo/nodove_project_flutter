@@ -4,7 +4,7 @@ class Url{
   static const authServerUrl = "https://auth.career-block.com";
   static const chatServerUrl = "http://localhost:5050";
   static const chatServerSocketUrl = "ws://localhost:5055";
-  static const recruitServerUrl = "http://localhost:3090";
+  static const recruitServerUrl = "http://localhost:4190";
   static const fileServerUrl = "https://file.career-block.com";
   static const apiUrl = "/api";
   static const chatUrl = "/chat";

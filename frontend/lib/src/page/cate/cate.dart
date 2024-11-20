@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/writecate.dart';
@@ -186,7 +187,7 @@ class _CateRowState extends State<CateRow> {
       )
     ),*/
     return GestureDetector(
-      onTap : ()=>Get.to(()=>FeedListPage(page : cate.categoryId)),
+      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>FeedListPage(page : cate.categoryId))),
       child : Container(
       height : 64,
       decoration: BoxDecoration(
@@ -240,38 +241,35 @@ class _CateRowState extends State<CateRow> {
                 height : 32,
                 child : (false)?
                 TextButton(
-                  onPressed: (){
-                    
-                  },
+                  onPressed: (){},
                   style : TextButton.styleFrom(
                     padding: const EdgeInsets.all(0),
-                    backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     shape : const RoundedRectangleBorder(
                       borderRadius: RowContainer.radius,
-                    )
-                  ),
-                  child: const Text(
-                    "구독됨",
-                    style : TextStyle(
-                      color: Colors.white,
-                      fontSize : 16,
-                    )
-                  ),
-                )
-                :OutlinedButton(
-                  onPressed: (){},
-                  style : OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.all(0),
-                    side : BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimaryFixed
-                      ),
-                    shape : const RoundedRectangleBorder(
-                      borderRadius: RowContainer.radius,
-                      
                     )
                   ),
                   child: const Text(
                     "구독",
+                    style: TextStyle(
+                      
+                    ),
+                  ),
+                )
+                :TextButton(
+                  onPressed: (){},
+                  style : TextButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                    shape : const RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius,
+                    )
+                  ),
+                  child: Text(
+                    "구독",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimaryFixed
+                    ),
                   ),
                 ),
               ),
@@ -285,10 +283,10 @@ class _CateRowState extends State<CateRow> {
                       borderRadius: RowContainer.radius
                     )
                   ),
-                  icon: SvgPicture.asset(
-                    "assets/icons/common/right.svg",
-                    width : 16 , height : 16,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                  icon: CustomSvg(
+                    "common/right.svg",
+                    width : 12 , height : 12,
+                    iconColor: Theme.of(context).colorScheme.onSurface,
                   ),
                   onPressed: ()=>Navigator.push(
                     context,

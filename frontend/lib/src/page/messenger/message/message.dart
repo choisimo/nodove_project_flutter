@@ -6,6 +6,7 @@ import 'package:nodove_flutter/func/socket/socket.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -123,7 +124,10 @@ class _MessageBottomWriteState extends State<MessageBottomWrite> {
     final userState = Get.put(UserState());
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onPrimary
+        color: Theme.of(context).colorScheme.onPrimary,
+        border: Border(
+          top: rowBorderLine()
+        )
       ),
       child: SafeArea(
         minimum: const EdgeInsets.all(4),

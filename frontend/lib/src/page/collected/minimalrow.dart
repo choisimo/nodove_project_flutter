@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/state/color.dart';
 
 class MinimalRow extends StatelessWidget {
-  final Feed props;
+  final Feed feed;
 
-  const MinimalRow({super.key, required this.props});
+  const MinimalRow({super.key, required this.feed});
 
   @override
   Widget build(BuildContext context) {
@@ -15,42 +14,43 @@ class MinimalRow extends StatelessWidget {
       return Container(
         alignment: Alignment.center,
         padding : const EdgeInsets.all(4),
-        constraints: BoxConstraints(
-          maxWidth : constraints.maxWidth * 0.9,
-          maxHeight: constraints.maxHeight * 0.4,
-        ),
-        decoration: BoxDecoration(
-          color : Theme.of(context).colorScheme.onPrimary,
-          boxShadow: rowBorderShadow(),
-          borderRadius: RowContainer.radius
-        ),
         child : LayoutBuilder(
           builder :(cont, cons) {
             return Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    props.writerNick,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontSize : 14,
-                      fontWeight: FontWeight.bold,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          feed.title,
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize : 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        EtcCommonBtn(
+                          iconColor: Theme.of(context).colorScheme.primary
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    props.title,
-                    textAlign: TextAlign.start,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize : 16,
-                      fontWeight: FontWeight.bold,
+                    Text(
+                      "${feed.writerNick} | @${feed.writerUserId}",
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize : 12,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 Expanded(
                   flex : 0,
@@ -66,12 +66,12 @@ class MinimalRow extends StatelessWidget {
                           child : Row(
                             children: [
                               SvgPicture.asset("assets/icons/post/star.svg",
-                              width : 16, height : 16,
+                              width : 14, height : 14,
                               colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                               ),
                               const SizedBox(width : 4),
                               Text(
-                                "${props.likeCount??0}",
+                                "${feed.likeCount??0}",
                                 style : const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 )
@@ -84,12 +84,12 @@ class MinimalRow extends StatelessWidget {
                           child : Row(
                             children: [
                               SvgPicture.asset("assets/icons/navbar/msg.svg",
-                              width : 16, height : 16,
+                              width : 14, height : 14,
                               colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                               ),
                               const SizedBox(width : 4),
                               Text(
-                                "${props.commentCount??0}",
+                                "${feed.commentCount??0}",
                                 style : const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 )

@@ -19,23 +19,11 @@ class _MapPageState extends State<MapPage> {
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
       leading : BackBtn(callback : ()=>Navigator.of(context).pop()),
-      title : const NavbarTitle("내 위치"),
-      actions: [
-        IconButton(
-          onPressed: (){
-            
-          },
-          icon: SvgPicture.asset(
-            "assets/icons/navbar/menu.svg",
-            width : 16 , height : 16,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-          )
-        )
-      ]
+      title : const NavbarTitle("매칭"),
     );
     return Scaffold(
       key : key,
-      appBar: NavbarTop(navbarOpt, centerTitle : false),
+      appBar: NavbarTop(navbarOpt, centerTitle : true),
       body : const MapView(),
       bottomSheet: const MapViewBottom(),
     );

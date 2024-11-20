@@ -11,7 +11,7 @@ class LightStyle{
   static const Color darkGrey = Color.fromRGBO(144, 144, 144, 1);
   static const Color black = Color.fromRGBO(56, 56, 56 , 1);
   static const Color blackAlpha = Color.fromRGBO(56, 56, 56 , 0.75);
-  static const Color back = Color.fromRGBO(255, 255, 255, 1);
+  static const Color back = Color.fromRGBO(249, 249, 249, 1);
   static const Color backStr = Color.fromRGBO(56, 56 ,56, 1);
   static const Color backAlpha = Color.fromRGBO(237 , 241, 248, 0.5);
 

@@ -31,7 +31,7 @@ class _CommentListState extends State<CommentList> {
   Dio dio = Dio();
   final maxPage = 5;
   final TempFeed con = Get.put(TempFeed());
-  late ScrollController _scrollController = ScrollController();
+  late final ScrollController _scrollController = ScrollController();
   int pageKey = 0;
 
   void _initLoad() async{
@@ -94,7 +94,6 @@ class _CommentListState extends State<CommentList> {
                 return const Text("댓글이 없어요..");
               } else {
                 return ListView.builder(
-                  shrinkWrap: true,
                   controller : _scrollController,
                   physics : (enableScroll)?
                   const AlwaysScrollableScrollPhysics()
@@ -211,7 +210,7 @@ class _CommentRowState extends State<CommentRow> {
                     child : Text(
                       "답글 달기",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                         color: Theme.of(context).colorScheme.secondary
                       ),
                     ),
@@ -250,6 +249,7 @@ class _CommentRowState extends State<CommentRow> {
     );
   }
 }
+
 class commentList extends StatefulWidget {
   final int page;
   const commentList({super.key , required this.page});
@@ -260,6 +260,7 @@ class commentList extends StatefulWidget {
 
 class _commentListState extends State<commentList> {
   final CommentPageModel con = Get.put(CommentPageModel());
+
   @override
   Widget build(BuildContext context) {
     int page = widget.page;
@@ -281,21 +282,29 @@ class _commentListState extends State<commentList> {
                       url : url.url,
                       opt : url.opt,
                       page : page
-                      ,enableScroll: true),
+                      ,enableScroll: true
+                    ),
                   ),
-                  CustomWrite(
-                    focus : false,
-                    callback: (content) async{
-                      if (content.isNotEmpty){
-                        await con.postComment({
-                          'post_id': page,
-                          'comment': content
-                        }).then((res){
-                          Get.find<CommentPageModel>().getCommentFirst(url.url, url.opt);
-                        });
-                      }
-                    },
-                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: rowBorderLine()
+                      )
+                    ),
+                    child: CustomWrite(
+                      focus : false,
+                      callback: (content) async{
+                        if (content.isNotEmpty){
+                          await con.postComment({
+                            'post_id': page,
+                            'comment': content
+                          }).then((res){
+                            Get.find<CommentPageModel>().getCommentFirst(url.url, url.opt);
+                          });
+                        }
+                      },
+                    ),
+                  )
                 ],
               );
             }
@@ -346,11 +355,6 @@ class _CustomWriteState extends State<CustomWrite> {
             padding: const EdgeInsets.symmetric(
               vertical: 8.0,
               horizontal: 16,
-            ),
-            decoration: BoxDecoration(
-              border: Border(
-                top: rowBorderLine()
-              )
             ),
             child: Container(
             width:maxWidth * 0.9,

@@ -9,8 +9,10 @@ import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
+import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
@@ -48,92 +50,46 @@ class FeedRow extends StatelessWidget {
     final maxwidth = MediaQuery.of(context).size.width;
   
     return GestureDetector(
-      onTap: ()=>Get.to(()=>FeedPage(page : feed.id)),
+      onTap: ()=>
+        showCustomModal(context,commentList(page : feed.id)),
       child: Container(
-        width : maxwidth,
-        decoration: BoxDecoration(
-          color : Theme.of(context).colorScheme.onPrimary,
-          border: Border(
-            bottom: rowBorderLine()
-          ),
-        ),
-        child: Column(
-          children:[
-            Row(
-              children: [
-                Expanded(child: FeedTop(title : feed.title, hashtags : feed.hashtags)),
-                EtcCommonBtn(
-                  onClick: ()=>showModalBottomSheet(
-                    context: context,
-                    useRootNavigator: true,
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                    builder: (BuildContext context){
-                      return FeedModal(userId : feed.writerUserId,postId : feed.id);
-                  }),
-                ),
-              ],
-            ),
-            Carousel(imageLinks : feed.imageLinks,page : feed.id),
-            Container(
-              margin : const EdgeInsets.only(top : 8.0),
-              width : maxwidth,
-              child : LayoutBuilder(
-                builder: (ctx,constraints) {
-                  return Row(
-                    children : <Widget>[
-                      Profile(
-                        profile: feed.writerProfile,
-                        width: 40,
-                        height: 40
-                      ),
-                      Column(
-                        children : [
-                          SizedBox(
-                            width : constraints.minWidth * 0.5,
-                            child : Text(
-                              feed.writerNick,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ),
-                          SizedBox(
-                            width : constraints.minWidth * 0.5,
-                            child : Text(
-                              getDateDiff(feed.createdAt),
-                              style: TextStyle(
-                                fontSize : 12,
-                                color : Theme.of(context).colorScheme.secondary,
-                              ),
-                            )
-                          ),
-                        ]
-                      )
-                    ]
-                  );
-                }
-              )
-            ),
-            Html(data: feed.content),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FeedRowBottom(feed : feed),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "좋아요 ${feed.likeCount} | 댓글 ${feed.commentCount}",
-                    style : TextStyle(
-                      color: Theme.of(context).colorScheme.secondary
-                    )
-                  ),
-                )
-              ],
-            )
-          ],
+      width : maxwidth * 0.9,
+      decoration: BoxDecoration(
+        color : Theme.of(context).colorScheme.onPrimary,
+        border: Border(
+          bottom: rowBorderLine()
         ),
       ),
-    );
+      child: Column(
+        children:[
+          Carousel(imageLinks : feed.imageLinks,page : feed.id),
+          FeedContent(feed: feed,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FeedRowBottom(feed : feed),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "좋아요 ${feed.likeCount} | 댓글 ${feed.commentCount}",
+                  style : TextStyle(
+                    color: Theme.of(context).colorScheme.secondary
+                  )
+                ),
+              ),
+            ],
+          ),
+          Container(
+            width : double.infinity,
+            height : 0.5,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSecondary
+            ),
+          )
+        ],
+      ),
+    ));
   }
 }
 
@@ -196,7 +152,7 @@ class FeedRowBottom extends StatelessWidget {
               context: context,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               builder: (BuildContext context){
-                return ShareModal(id : feed.id);
+                return ShareModal(url : "${Url.clientList}?page=$feed.id");
             });
           },
           icon: CustomSvg(
@@ -298,6 +254,84 @@ class Profile extends StatelessWidget {
     );
   }
 }
+
+class FeedContent extends StatelessWidget {
+  final Feed feed;
+  const FeedContent({super.key,required this.feed});
+
+  @override
+  Widget build(BuildContext context) {
+    final maxwidth = MediaQuery.of(context).size.width;
+
+    return Column(
+      children: [
+      Container(
+        margin : const EdgeInsets.only(top : 8.0),
+        width : maxwidth,
+        child : LayoutBuilder(
+          builder: (ctx,constraints) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children : <Widget>[
+                    Profile(
+                      profile: feed.writerProfile,
+                      width: 40,
+                      height: 40
+                    ),
+                    Column(
+                      children : [
+                        SizedBox(
+                          width : constraints.minWidth * 0.5,
+                          child : Text(
+                            feed.writerNick,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ),
+                        SizedBox(
+                          width : constraints.minWidth * 0.5,
+                          child : Text(
+                            "소속 없음 | ${getDateDiff(feed.createdAt)}",
+                            style: TextStyle(
+                              fontSize : 12,
+                              color : Theme.of(context).colorScheme.secondary,
+                            ),
+                          )
+                        ),
+                      ]
+                    )
+                  ]
+                ),
+                EtcCommonBtn(
+                  iconSize: 32,
+                  onClick: ()=>showModalBottomSheet(
+                    context: context,
+                    useRootNavigator: true,
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    builder: (BuildContext context){
+                      return FeedModal(userId : feed.writerUserId,postId : feed.id);
+                  }),
+                ),
+              ],
+            );
+          }
+        )
+      ),
+      TagRow(
+        hashtags: feed.hashtags,
+        callback: (tag,index){
+          Get.toNamed("/tag/${Uri.encodeComponent(tag)}");
+        },
+      ),
+      Html(data: feed.content),
+      ],
+    );
+  }
+}
+
 class ProfileSkel extends StatelessWidget {
   final double width;
   final double height;
@@ -342,12 +376,6 @@ class FeedTop extends StatelessWidget {
               fontWeight: FontWeight.bold
             ),
           ),
-          TagRow(
-            hashtags: hashtags,
-            callback: (tag,index){
-              Get.toNamed("/tag/${Uri.encodeComponent(tag)}");
-            },
-          ),
         ],
       ),
     );
@@ -386,7 +414,7 @@ class _ModalState extends State<Modal> {
   Widget build(BuildContext context) {
     List<Widget> widgets = widget.widget;
     return Padding(
-      padding : const EdgeInsets.symmetric(vertical: 32),
+      padding : const EdgeInsets.only(top : 16 , bottom: 32),
       child: SizedBox(
         width : MediaQuery.of(context).size.width,
       

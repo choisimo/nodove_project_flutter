@@ -3,11 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
-import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
@@ -61,122 +62,83 @@ class _RecruitListPageState extends State<RecruitListPage> {
 
   @override
   Widget build(BuildContext context) {
-    NavbarContent navbarOpt = NavbarContent(
-      title : const NavbarTitle("채용중",),
-      actions : [
-        NavbarCommonBtn(
-          "navbar/search.svg",
-          onClick : (){},
-        ),
-      ]
-    );
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: NavbarTop(navbarOpt,centerTitle : false),
-      body: Obx((){
-        if (con.isFetching.isTrue){
-          return const CircularProgressIndicator(
-            strokeWidth: 2.0,
-
-          );
-        } else if (con.recruitlist.isEmpty){
-          return const Center(
-            child : Text("현재 진행중인 채용이 없어요")
-          );
-        } else {
-          return CustomRefreshIndicator(
-            onRefresh: ()=>con.getRecruitmentFirst(0, size),
-            child: 
-            CustomScrollView(
-            primary: false,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers : [
-              const SliverToBoxAdapter(
-                child : RecruitBottomSheet()
-              ),
-              SliverToBoxAdapter(
-                child: RecruitListView(
-                  feed : con.recruitlist
+      body: Obx(()=>
+        CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers : [
+            SliverAppBar(
+              title : const NavbarTitle("채용중",),
+              actions : [
+                NavbarCommonBtn(
+                  "navbar/search.svg",
+                  onClick : (){},
                 ),
-              )
-            ]
-          ));
-        }
-      })
-      
-    );
-  }
-}
-
-class RecruitBottomSheet extends StatefulWidget {
-  const RecruitBottomSheet({super.key});
-
-  @override
-  State<RecruitBottomSheet> createState() => _RecruitBottomSheetState();
-}
-
-class _RecruitBottomSheetState extends State<RecruitBottomSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width : double.infinity,
-      constraints: const BoxConstraints(minHeight: 42),
-      child : Row(
-        children: [
-          TextButton(
-            style : TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              padding: const EdgeInsets.all(0)
+              ]
             ),
-            onPressed: (){},
-            child: Text(
-              "채용중",
-              style : TextStyle(
-                color: Theme.of(context).colorScheme.primary
-              )
+            SliverPersistentHeader(
+              delegate: SliverCustomBarDelegate(
+                widget: RecruitBottomSheet(
+                  onClick:(index){},
+                )
+              ),
             ),
-          ),
-          const SizedBox(width : 8),
-          TextButton(
-            style : TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              padding: const EdgeInsets.all(0)
+            RecruitListView(
+              isLoading: con.isFetching.value,
+              feed : con.recruitlist
             ),
-            onPressed: (){},
-            child: Text(
-              "완료",
-              style : TextStyle(
-                color: Theme.of(context).colorScheme.primary
-              )
-            ),
-          ),
-        ],
+          ]
+        )
       )
     );
   }
 }
 
-class RecruitListView extends StatefulWidget {
+class RecruitBottomSheet extends StatelessWidget {
+  final Function(int index) onClick;
+  const RecruitBottomSheet({super.key,required this.onClick});
+
+  @override
+  Widget build(BuildContext context) {
+    return MinimalVList(
+      list: const ["채용중","완료"],
+      onClick: (int index)=>onClick.call(index),
+    );
+  }
+}
+
+class RecruitListView extends StatelessWidget {
   final List<RecruitFeed> feed;
+  final bool isLoading;
   const RecruitListView({
     super.key,
     required this.feed,
+    this.isLoading = true
   });
 
-  @override
-  State<RecruitListView> createState() => _RecruitListViewState();
-}
-
-class _RecruitListViewState extends State<RecruitListView> {
-  @override
+   @override
   Widget build(BuildContext context) {
-    final List<RecruitFeed> feed = widget.feed;
-    return ListView.builder(
-      padding: const EdgeInsets.all(0.0),
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => FeedRow(feed : feed[index]),
-      itemCount: feed.length,
-    );
+    if (isLoading){
+      return const SliverToBoxAdapter(
+        child: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.0,
+          ),
+        ),
+      );
+    } else if (feed.isEmpty){
+      return const SliverToBoxAdapter(
+        child: Center(
+          child : Text("현재 진행중인 채용이 없어요")
+        ),
+      );
+    } else {
+      return SliverList.builder(
+        itemBuilder: (context, index) => FeedRow(feed : feed[index]),
+        itemCount: feed.length,
+      );
+    }
   }
 }
 
@@ -248,7 +210,7 @@ class FeedRow extends StatelessWidget {
             height : 32,
             decoration: BoxDecoration(
               borderRadius: RowContainer.radius,
-              border: Border.all(width: 1,color : Theme.of(context).colorScheme.onPrimaryFixed)
+              color: Theme.of(context).colorScheme.onSecondary
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -349,7 +311,7 @@ class RecruitVList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height : 240,
+      height : 180,
       child: ListView.builder(
         padding: const EdgeInsets.all(0.0),
         itemCount: feeds.length,
@@ -367,7 +329,7 @@ class RecruitCollectedRow extends StatelessWidget {
   final double size;
   const RecruitCollectedRow({
     super.key,required this.feed,
-    this.size = 240
+    this.size = 180
   });
 
   @override
@@ -378,76 +340,46 @@ class RecruitCollectedRow extends StatelessWidget {
       onTap:() => {},
       child: Container(
         width : size,
+        height : size,
         margin : const EdgeInsets.all(4.0),
-        decoration: const BoxDecoration(
-          color: Colors.transparent
-        ),
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          fit : StackFit.loose,
-          children: [
-            Container(
-              width : maxwidth,
-              height : maxwidth,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                border: rowBorderLineAll(),
-                color : Theme.of(context).colorScheme.onPrimary,
-                borderRadius:RowContainer.radius
+        padding: const EdgeInsets.all(8.0),
+        child:Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+              aspectRatio: 16/9,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  image: DecorationImage(
+                    fit : BoxFit.cover,
+                    image: 
+                    customImgProvider(
+                      (feed.images.isNotEmpty)?feed.images[0]:"",
+                    )
+                  )
+                ),
               ),
-              child: (profile != null)?
-              Image.network(
-                profile,
-                fit : BoxFit.cover,
-                errorBuilder :(context, error, stackTrace){
-                  return Image.asset("assets/images/logo.png",fit : BoxFit.cover);
-                },
-              ):const SizedBox.shrink(),
             ),
-            Container(
-              width : 220,
-              height : 120,
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                border: rowBorderLineAll(),
-                color: Theme.of(context).colorScheme.onPrimary,
-                borderRadius: RowContainer.radius
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    feed.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        feed.user.name,
-                        style: const TextStyle(
-                          fontSize : 16,
-                        ),
-                      ),
-                      Text(
-                        "@${feed.user.userId}",
-                        style: TextStyle(
-                          color : Theme.of(context).colorScheme.secondary
-                        ),
-                      ),
-                    ],
-                  ),
-                  TagRow(
-                    hashtags: feed.hashtags,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+          Text(
+            feed.title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+          Text(
+            "${feed.user.name} | @${feed.user.userId}",
+            style: const TextStyle(
+              fontSize : 12,
+            ),
+          ),
+          TagRow(
+            hashtags: feed.hashtags,
+            fontSize: 12,
+          ),
+        ]),
       ),
     );
   }

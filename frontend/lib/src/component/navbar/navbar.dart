@@ -75,17 +75,17 @@ class BottomNavbar extends GetView<PageState>{
 
   @override
   Widget build(context){
-    return Obx(()=>
+    return 
       ClipRRect(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(RowContainer.bottomBarRadius),
           topRight: Radius.circular(RowContainer.bottomBarRadius)
         ),
-        child: BottomNavigationBar(
+        child: Obx(()=>BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.onSecondary,
           type: BottomNavigationBarType.fixed,
-          unselectedItemColor:Theme.of(context).colorScheme.secondary,
-          selectedItemColor: Theme.of(context).colorScheme.onPrimaryFixed,
+          unselectedItemColor:Theme.of(context).colorScheme.primary,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
           currentIndex: controller.index.value,
           onTap : controller.setIndex,
           unselectedLabelStyle: TextStyle(
@@ -207,11 +207,11 @@ class FeedBottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(RowContainer.bottomBarRadius),
-        topRight: Radius.circular(RowContainer.bottomBarRadius)
-      ),
-      child: BottomNavigationBar(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(RowContainer.bottomBarRadius),
+          topRight: Radius.circular(RowContainer.bottomBarRadius)
+        ),
+        child: BottomNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.onSecondary,
         type: BottomNavigationBarType.fixed,
         onTap : (int index)=>onTap(context,index),
@@ -253,7 +253,6 @@ class FeedBottomNavbar extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+    ));
   }
 }

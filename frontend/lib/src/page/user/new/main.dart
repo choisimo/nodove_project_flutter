@@ -1,5 +1,4 @@
 
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -10,7 +9,6 @@ import 'package:nodove_flutter/src/component/oauth/kakao.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
-import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -36,8 +34,9 @@ class _LoginPageState extends State<LoginMainPage> {
         user.setIndex(res['parsed']['userId']);
         Get.off(()=>const MyHome());
       } else {
-        setState((){loaded = true;});
+        //setState((){loaded = true;});
         print("아이디 찾기 오류");
+        Get.off(()=>const MyHome());
       }
     } else{
       //setState((){loaded = true;});

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -108,6 +109,7 @@ List<Widget> pages = [
 ];
 class _MyHomeState extends State<MyHome>{
   late List<GlobalKey<NavigatorState>> navigatorKeyList;
+  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -116,13 +118,20 @@ class _MyHomeState extends State<MyHome>{
     super.initState();
   }
 
-  Future<void> popFunc() async {
-    navigatorKeyList[PageState.page.index.value].currentState!.maybePop();
+  void systemBackButtonPressed(bool didPop,_) {
+    if (navigatorKeyList[PageState.page.index.value].currentState!.canPop()) {
+      navigatorKeyList[PageState.page.index.value]
+          .currentState!
+          .pop(navigatorKeyList[PageState.page.index.value].currentContext);
+    } else {
+      SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+    }
   }
+
+
   @override
   Widget build(BuildContext context){
     Get.put(PageState());
-    bool canPop = true;
     return Scaffold(
       key: navigatorKeyList[PageState.page.index.value],
       bottomNavigationBar: const BottomNavbar(),
@@ -130,22 +139,8 @@ class _MyHomeState extends State<MyHome>{
       body : 
       Obx((){
         return PopScope(
-          canPop: canPop,
-          onPopInvokedWithResult: (b,result){
-            if (Navigator.of(context,rootNavigator: true) == Navigator.of(context)
-            ){
-              final index = PageState.page.index.value;
-              if (index == 0){
-                setState((){canPop = true;});
-              } else {
-                setState((){canPop = false;});
-                PageState.page.setIndex(0);
-              }
-              
-            } else {
-              setState((){canPop = true;});
-            }
-          },
+          canPop: false,
+          onPopInvokedWithResult: systemBackButtonPressed,
           child: IndexedStack(
             index: PageState.page.index.value,
             children: pages.map((page){

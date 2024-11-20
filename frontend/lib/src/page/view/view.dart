@@ -100,7 +100,6 @@ class _FeedPageState extends State<FeedPage>{
     );
   }
 }
-
 class FeedView extends StatefulWidget {
   final int page;
   final String url;

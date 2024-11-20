@@ -124,8 +124,11 @@ class _WritePageState extends State<WritePage> {
         )
       ),
     ];
-    return Scaffold(
-      body: contentPage[page]
+    return GestureDetector(
+      onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        body: contentPage[page]
+      )
     );
   }
 }
