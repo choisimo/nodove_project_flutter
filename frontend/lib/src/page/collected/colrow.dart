@@ -19,10 +19,7 @@ class CollectedRow extends StatelessWidget {
   
     return GestureDetector(
       onTap:() => Get.toNamed("/view/${feed.id}"),
-      child: Container(
-        decoration: BoxDecoration(
-          border: rowBorderLineAll()
-        ),
+      child: SizedBox(
         child: Column(
           children: [
             AspectRatio(
@@ -79,7 +76,7 @@ class CollectedVRow extends StatelessWidget {
                     fit : BoxFit.cover,
                     image: 
                     customImgProvider(
-                      (feed.imageLinks.isNotEmpty)?feed.imageLinks[0]:"",
+                      (imageLinks.isNotEmpty)?imageLinks[0]:"",
                     )
                   )
                 ),

@@ -5,16 +5,21 @@ import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/notification/notisetting.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NotiPage extends StatelessWidget {
-  const NotiPage({super.key});
+  final int initialPage;
+  const NotiPage({
+    super.key,
+    this.initialPage = 0
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +42,17 @@ class NotiPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt,centerTitle : false,),
-      body: const NotiList()
+      body: NotiList(initialPage: initialPage,)
     );
   }
 }
 
 class NotiList extends StatefulWidget {
-  const NotiList({super.key});
+  final int initialPage;
+  const NotiList({
+    super.key,
+    this.initialPage = 0
+  });
 
   @override
   State<NotiList> createState() => _NotiListState();
@@ -51,6 +60,11 @@ class NotiList extends StatefulWidget {
 
 class _NotiListState extends State<NotiList> {
   final NotiListModel con = Get.put(NotiListModel());
+  final List<String> notiList = [
+    "피드",
+    "메신저",
+    "채용"
+  ];
 
   @override
   void initState(){
@@ -64,80 +78,111 @@ class _NotiListState extends State<NotiList> {
 
   @override
   Widget build(BuildContext context) {
+    PageController pageController = PageController(
+      initialPage: widget.initialPage,
+    );
     return CustomRefreshIndicator(
       onRefresh: ()=>initLoad(),
-      child: SizedBox(
-        height : MediaQuery.of(context).size.height,
-        child : Obx((){
-          if (con.isFetching.isTrue){
-            return ListView.builder(
-              itemCount: 5,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context,index){
-                return Shimmer.fromColors(
-                  baseColor: Theme.of(context).colorScheme.surface,
-                  highlightColor: Theme.of(context).colorScheme.onPrimary,
-                  child: Container(
-                    height : 96,
-                    margin : const EdgeInsets.symmetric(vertical: 8.0),
-                    decoration: BoxDecoration(
-                      color : Theme.of(context).colorScheme.onPrimary,
-                      boxShadow: [
-                        BoxShadow(
-                          color : Theme.of(context).colorScheme.shadow,
-                          offset: RowContainer.offset,
-                          blurRadius: RowContainer.blurRadius
-                        )
-                      ],
-                    ),
-                  )
-                );
-              }
-            );
-          } else if (con.notilist.isEmpty){
-            return const Center(child: Text("알림이 없어요"));
-          } else {
-            return ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: con.notilist.length,
-              itemBuilder:(BuildContext context,int index){
-                return Dismissible(
-                  background: Container(
-                    color: Theme.of(context).colorScheme.error,
-                    child : Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          "삭제",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Theme.of(context).colorScheme.onPrimary
-                          ),
-                        ),
-                      ),
-                    )
-                  ),
-                  direction: DismissDirection.endToStart,
-                  key : Key(con.notilist[index].toString()),
-                  onDismissed: (direction){
-                    /*if (direction == DismissDirection.endToStart){
-                      con.deleteNotification(index);
-                    }*/
-                  },
-                  child: NotiRow(
-                    notification: con.notilist[index],
-                    index : index
-                  )
-                );
-              }
-            );
-          }
-        }),
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverPersistentHeader(
+            delegate: SliverCustomBarDelegate(
+              widget: MinimalVList(
+                list : notiList,
+                onClick: (index)=>pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOutCubic)
+              )
+            )
+          )
+        ],
+        body : PageView(
+          controller: pageController,
+          children: const [
+            NotiFeedSetting(),
+            SizedBox.shrink(),
+            SizedBox.shrink()
+          ],
+        )
       )
     );
   }
 }
+
+class NotiFeedSetting extends StatelessWidget {
+  const NotiFeedSetting({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    NotiListModel con = Get.find();
+
+    return Obx((){
+      if (con.isFetching.isTrue){
+        return ListView.builder(
+          itemCount: 5,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context,index){
+            return Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surface,
+              highlightColor: Theme.of(context).colorScheme.onPrimary,
+              child: Container(
+                height : 96,
+                margin : const EdgeInsets.symmetric(vertical: 8.0),
+                decoration: BoxDecoration(
+                  color : Theme.of(context).colorScheme.onPrimary,
+                  boxShadow: [
+                    BoxShadow(
+                      color : Theme.of(context).colorScheme.shadow,
+                      offset: RowContainer.offset,
+                      blurRadius: RowContainer.blurRadius
+                    )
+                  ],
+                ),
+              )
+            );
+          }
+        );
+      } else if (con.notilist.isEmpty){
+        return const Center(child: Text("알림이 없어요"));
+      } else {
+        return ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: con.notilist.length,
+          itemBuilder:(BuildContext context,int index){
+            return Dismissible(
+              background: Container(
+                color: Theme.of(context).colorScheme.error,
+                child : Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      "삭제",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onPrimary
+                      ),
+                    ),
+                  ),
+                )
+              ),
+              direction: DismissDirection.endToStart,
+              key : Key(con.notilist[index].toString()),
+              onDismissed: (direction){
+                /*if (direction == DismissDirection.endToStart){
+                  con.deleteNotification(index);
+                }*/
+              },
+              child: NotiRow(
+                notification: con.notilist[index],
+                index : index
+              )
+            );
+          }
+        );
+      }
+    });
+  }
+}
+
 class NotiRow extends StatelessWidget {
   final Noti notification;
   final int index;

@@ -45,13 +45,13 @@ class TooltipShape extends ShapeBorder {
     
     final RRect rrect = _borderRadius.resolve(textDirection).toRRect(rect);
     final double vOffset = math.min(vertical,rrect.width - triSize);
-    final double hOffset = math.min(horizontal,rrect.width - triSize);
+    //final double hOffset = math.min(horizontal,rrect.width - triSize);
     
     switch(direction){
       case 'bottom' : return 
       tooltipBottomSidePath(
         rrect,
-        speechBubble(
+        SpeechBubble(
           radius: rRadius,
           offset : vOffset,
           triSize: triSize,
@@ -60,7 +60,7 @@ class TooltipShape extends ShapeBorder {
       default : return 
       tooltipTopSidePath(
         rrect,
-        speechBubble(
+        SpeechBubble(
           radius: rRadius,
           offset : vOffset,
           triSize: triSize,
@@ -92,19 +92,19 @@ class TooltipShape extends ShapeBorder {
   );
 }
 
-class speechBubble {
+class SpeechBubble {
   double offset;
   double triSize;
   double radius;
 
-  speechBubble({
+  SpeechBubble({
     this.offset = 0.0,
     this.triSize = 0.0,
     this.radius = 0.0,
   });
 }
 
-Path tooltipTopSidePath(rrect,speechBubble bubble) {
+Path tooltipTopSidePath(rrect,SpeechBubble bubble) {
   final Map<String,double> radiusAuto = {
     "left" : 
     (rrect.width - (bubble.offset + bubble.triSize * 2) < bubble.radius && rrect.width > bubble.offset)?
@@ -133,7 +133,7 @@ Path tooltipTopSidePath(rrect,speechBubble bubble) {
     ..lineTo(0, radiusAuto['left']!);
 }
 
-Path tooltipBottomSidePath(rrect,speechBubble bubble) {
+Path tooltipBottomSidePath(rrect,SpeechBubble bubble) {
   final Map<String,double> radiusAuto = {
     "left" : 
     (rrect.width - (bubble.offset + bubble.triSize * 2) < bubble.radius && rrect.width > bubble.offset)?

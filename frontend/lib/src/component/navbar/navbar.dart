@@ -57,6 +57,9 @@ class _NavbarTopState extends State<NavbarTop> {
       actions : widget.content.actions??[const SizedBox.shrink()],
       shadowColor : widget.shadowColor,
       elevation: widget.elevation,
+      iconTheme: IconThemeData(
+        color: Theme.of(context).colorScheme.onPrimaryFixed
+      ),
     ):AppBar(
       scrolledUnderElevation: 0.0,
       centerTitle: widget.centerTitle,
@@ -66,9 +69,69 @@ class _NavbarTopState extends State<NavbarTop> {
       actions : widget.content.actions??[const SizedBox.shrink()],
       shadowColor : widget.shadowColor,
       elevation: widget.elevation,
+      iconTheme: IconThemeData(
+        color: Theme.of(context).colorScheme.onPrimaryFixed
+      ),
     );
   }
 }
+
+class SliverNavbarTop extends StatefulWidget implements PreferredSizeWidget {
+  final NavbarContent content;
+  final bool centerTitle;
+  final Color? color;
+  final Color shadowColor;
+  final double elevation;
+
+  const SliverNavbarTop(this.content,{
+    super.key,
+    this.centerTitle = false,
+    this.color,
+    this.shadowColor = Colors.transparent,
+    this.elevation = 0.0
+  });
+
+  @override
+  State<SliverNavbarTop> createState() => _SliverNavbarTopState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(54);
+}
+
+class _SliverNavbarTopState extends State<SliverNavbarTop> {
+  @override
+  Widget build(BuildContext context) {
+    return 
+    (widget.centerTitle)?
+    SliverAppBar(
+      scrolledUnderElevation: 0.0,
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: !widget.centerTitle,
+      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
+      leading: widget.content.leading,
+      title : widget.content.title??const SizedBox.shrink(),
+      actions : widget.content.actions??[const SizedBox.shrink()],
+      shadowColor : widget.shadowColor,
+      elevation: widget.elevation,
+      iconTheme: IconThemeData(
+        color: Theme.of(context).colorScheme.onPrimaryFixed
+      ),
+    ):SliverAppBar(
+      scrolledUnderElevation: 0.0,
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: !widget.centerTitle,
+      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
+      title : widget.content.title??const SizedBox.shrink(),
+      actions : widget.content.actions??[const SizedBox.shrink()],
+      shadowColor : widget.shadowColor,
+      elevation: widget.elevation,
+      iconTheme: IconThemeData(
+        color: Theme.of(context).colorScheme.onPrimaryFixed
+      ),
+    );
+  }
+}
+
 
 class BottomNavbar extends GetView<PageState>{
   const BottomNavbar({super.key});
@@ -122,21 +185,6 @@ class BottomNavbar extends GetView<PageState>{
               ),
               activeIcon: CustomSvg(
                 'navbar/msg.svg',
-                width : 18,
-                height : 18,
-                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
-              ),
-            ),
-            BottomNavigationBarItem(
-              label: '블록',
-              icon: CustomSvg(
-                'navbar/summarize.svg',
-                width : 18,
-                height : 18,
-                iconColor : Theme.of(context).colorScheme.secondary
-              ),
-              activeIcon: CustomSvg(
-                'navbar/summarize.svg',
                 width : 18,
                 height : 18,
                 iconColor : Theme.of(context).colorScheme.onPrimaryFixed

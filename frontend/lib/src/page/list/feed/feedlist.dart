@@ -5,13 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
-import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,8 +36,14 @@ class _FeedListPageState extends State<FeedListPage>{
 
   @override
   void initState() {
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    /*ccon.getCate(
+    _checksettings();
+    refresh();
+    super.initState();
+  }
+
+  void refresh(){
+    /*final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    ccon.getCate(
       page : cateid,
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
@@ -46,8 +52,6 @@ class _FeedListPageState extends State<FeedListPage>{
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
     );*/
-    _checksettings();
-    super.initState();
   }
 
   void _checksettings() async{
@@ -77,6 +81,12 @@ class _FeedListPageState extends State<FeedListPage>{
           },
         ),
         NavbarCommonBtn(
+          "common/setting.svg",
+          onClick : ()=>Navigator.of(context).push(
+            MaterialPageRoute(builder: (_)=>const FeedSettingPage())
+          ),
+        ),
+        NavbarCommonBtn(
           "post/edit.svg",
           width : 16,
           height : 16,
@@ -96,45 +106,51 @@ class _FeedListPageState extends State<FeedListPage>{
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       bottomNavigationBar: FeedBottomNavbar(cate : ccon.currentCate.value),
       body : 
-      CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            leading: navbarOpt.leading,
-            title: navbarOpt.title,
-            actions: navbarOpt.actions,
-            pinned: true,
-            backgroundColor: Theme.of(context).colorScheme.onPrimary,
-            shadowColor: Colors.transparent,
-            elevation: 0.0,
-            scrolledUnderElevation: 0.0,
-            flexibleSpace: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: const FlexibleSpaceBar(
-                centerTitle: true,
+      CustomRefreshIndicator(
+        edgeOffset : 54,
+        displacement: 54,
+        onRefresh: ()=>refresh(),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              leading: navbarOpt.leading,
+              title: navbarOpt.title,
+              actions: navbarOpt.actions,
+              pinned: true,
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              shadowColor: Colors.transparent,
+              elevation: 0.0,
+              scrolledUnderElevation: 0.0,
+              flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: const FlexibleSpaceBar(
+                  centerTitle: true,
+                ),
               ),
             ),
-          ),
-          ),
-          SliverPersistentHeader(
-            delegate: SliverCustomBarDelegate(
-              widget: MinimalVList(
-                list : ccon.catelist[0].children!.map((dynamic cate)=>cate.categoryName).toList(),
-                onClick: (index)=>
-                Get.to(
-                  ()=>FeedListPage(page : ccon.catelist[0].children?[index].categoryId),
-                  preventDuplicates: false
-                )
-              )
             ),
-          ),
-          FeedList(
-            collected: collected,
-            url : "${Url.apiUrl}${Url.feedList}",
-            opt : "pageSize=$size&categoryId=$cateid",
-          ),
-        ],
+            SliverPersistentHeader(
+              delegate: SliverCustomBarDelegate(
+                widget: MinimalVList(
+                  list : ccon.catelist[0].children!.map((dynamic cate)=>cate.categoryName).toList(),
+                  onClick: (index)=>
+                  Get.to(
+                    ()=>FeedListPage(page : ccon.catelist[0].children?[index].categoryId),
+                    preventDuplicates: false
+                  )
+                )
+              ),
+            ),
+            FeedList(
+              collected: collected,
+              url : "${Url.apiUrl}${Url.feedList}",
+              opt : "pageSize=$size&categoryId=$cateid",
+            ),
+            const SliverPadding(padding: EdgeInsets.all(32))
+          ],
+        ),
       ),
     );
   }
@@ -161,9 +177,9 @@ class _FeedListState extends State<FeedList> {
   int pageKey = 0;
 
   void fetchPage() async {
-    String url = widget.url;
+    /*String url = widget.url;
     String opt = widget.opt;
-    /*if (!con.isFetching.value && 
+    if (!con.isFetching.value && 
     !con.isFragFetching.value &&
     con.isLastAppend.isFalse&&
     _scrollController.position.extentAfter < 100){
@@ -269,9 +285,9 @@ class _CollectedVListState extends State<CollectedVList> {
   final TempFeed con = Get.put(TempFeed());
 
   void _initLoad() async{
-    String url = widget.url;
+    /*String url = widget.url;
     String opt = widget.opt;
-    //con.getFeedFirst(url,opt);
+    con.getFeedFirst(url,opt);*/
   }
   
   @override
@@ -289,7 +305,7 @@ class _CollectedVListState extends State<CollectedVList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Align(
+        (widget.title != null)?Align(
           alignment: Alignment.centerLeft,
           child: Text(
             widget.title??"",
@@ -298,7 +314,7 @@ class _CollectedVListState extends State<CollectedVList> {
               color: Theme.of(context).colorScheme.onPrimaryFixed
             )
           )
-        ),
+        ):const SizedBox.shrink(),
         Obx((){
           if(con.isFetching.isTrue){
             return SizedBox(

@@ -50,6 +50,7 @@ class _RecruitMainViewState extends State<RecruitMainView>{
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers : [
         SliverAppBar(
           centerTitle: false,
@@ -116,7 +117,8 @@ class _RecruitMainViewState extends State<RecruitMainView>{
         RecruitListView(
           feed : con.recruitlist,
           isLoading: con.isFetching.value,
-        )
+        ),
+        const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
       ]
     );
   }

@@ -23,7 +23,7 @@ class DarkStyle{
   static const Color black = Color.fromRGBO(255, 255, 255 , 1);
   static const Color blackAlpha = Color.fromRGBO(255, 255, 255 , 0.75);
   static const Color shadow = Color.fromRGBO(0, 0, 0, 0.5);
-  static const Color back = Color.fromRGBO(35 , 35, 35, 1);
+  static const Color back = Color.fromRGBO(35, 35, 35, 1);
   static const Color backStr = Color.fromRGBO(255 , 255, 255, 1);
   static const Color backAlpha = Color.fromRGBO(248 , 248, 248, 0.5);
   static const Color darkGrey = Color.fromRGBO(202, 202, 202, 1);
@@ -52,6 +52,7 @@ class RowContainer{
   static const double bottomBarRadius = 16;
   static const BorderRadius radius = BorderRadius.all(Radius.circular(radiusV));
   static const Color background = LightStyle.white;
+  static const double paddingSize = 54;
 }
 
 class RowTextStyle{

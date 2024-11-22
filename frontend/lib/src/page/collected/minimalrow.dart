@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 
@@ -10,6 +9,9 @@ class MinimalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle nicknameStyle = TextStyle(
+      fontSize : 12,
+    );
     return LayoutBuilder(builder: (context,constraints){
       return Container(
         alignment: Alignment.center,
@@ -19,7 +21,7 @@ class MinimalRow extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -43,62 +45,38 @@ class MinimalRow extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Text(
-                      "${feed.writerNick} | @${feed.writerUserId}",
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize : 12,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  flex : 0,
-                  child: Container(
-                    width : cons.maxWidth,
-                    padding : const EdgeInsets.all(4),
-                    height : 28,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    Row(
                       children: [
-                        SizedBox(
-                          width : cons.maxWidth * 0.45,
-                          child : Row(
-                            children: [
-                              SvgPicture.asset("assets/icons/post/star.svg",
-                              width : 14, height : 14,
-                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                              ),
-                              const SizedBox(width : 4),
-                              Text(
-                                "${feed.likeCount??0}",
-                                style : const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )
-                              ),
-                            ],
-                          )
+                        Flexible(
+                          child : Text(
+                            feed.writerNick,
+                            overflow: TextOverflow.ellipsis,
+                            style : nicknameStyle
+                          ),
                         ),
-                        SizedBox(
-                          width : cons.maxWidth * 0.45,
-                          child : Row(
-                            children: [
-                              SvgPicture.asset("assets/icons/navbar/msg.svg",
-                              width : 14, height : 14,
-                              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
-                              ),
-                              const SizedBox(width : 4),
-                              Text(
-                                "${feed.commentCount??0}",
-                                style : const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )
-                              ),
-                            ],
-                          )
+                        Text(
+                          " | ",
+                          overflow: TextOverflow.ellipsis,
+                          style : nicknameStyle
+                        ),
+                        Flexible(
+                          child: Text(
+                            "@${feed.writerUserId}",
+                            overflow: TextOverflow.ellipsis,
+                            style : nicknameStyle
+                          ),
                         )
                       ],
-                    ),
+                    )
+                  ],
+                ),
+                Text(
+                  "좋아요 ${feed.likeCount??0} | 댓글 ${feed.commentCount??0}",
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 12
                   ),
                 ),
               ],

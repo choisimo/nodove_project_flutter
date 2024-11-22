@@ -5,12 +5,12 @@ import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
-import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -18,7 +18,6 @@ import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
-import "dart:math" as math;
 /*
 TextButton(
 style : TextButton.styleFrom(
@@ -245,7 +244,7 @@ class Profile extends StatelessWidget {
           ),
           fit: BoxFit.cover
         ),
-        borderRadius: BorderRadius.all(Radius.circular(math.min(width / 3,RowContainer.radiusV))),
+        borderRadius: BorderRadius.all(Radius.circular(width)),
         border : Border.all(
           color : Theme.of(context).colorScheme.onSecondary,
           width : borderRadius??1.0

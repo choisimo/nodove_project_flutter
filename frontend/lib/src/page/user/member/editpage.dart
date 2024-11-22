@@ -8,6 +8,7 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -71,9 +72,6 @@ class _EditUserState extends State<EditUser> {
     final TextStyle statusStyle = TextStyle(
       color: Theme.of(context).colorScheme.onPrimary,
     );
-    final TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-    );
     return CustomRefreshIndicator(
       onRefresh: ()=>refreshState(),
       child: Obx((){
@@ -125,8 +123,7 @@ class _EditUserState extends State<EditUser> {
                   onTap: (){
                     
                   },
-                  child : profileSetting(
-                    context,
+                  child : ProfileSetting(
                     current : user.profile,
                     onUpdated: (image){
 

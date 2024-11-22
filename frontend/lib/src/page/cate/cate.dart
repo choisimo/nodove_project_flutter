@@ -6,6 +6,8 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/writecate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -98,13 +100,15 @@ class CateList extends StatefulWidget {
   final String? opt;
   final int? selection;
   final bool scroll;
+  final bool collected;
   const CateList({
     super.key,
     required this.page,
     this.url,
     this.opt,
     this.selection,
-    this.scroll = true
+    this.scroll = true,
+    this.collected = false
   });
 
   @override
@@ -132,40 +136,45 @@ class _CateListState extends State<CateList> {
   Widget build(BuildContext context) {
     return Obx((){
       list = con.catelist;
-      if (con.isFetching.isTrue){
-        return ListView.builder(
-          shrinkWrap: (widget.selection != null),
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 7,
-          itemBuilder: (context,index){
-            return const CateRowSkel();
-          }
-        );
-      } else if (list.isEmpty){
-        return ListView.builder(
-          padding: const EdgeInsets.all(0),
-          shrinkWrap: (widget.selection != null),
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 1,
-          itemBuilder: (context,index){
-            return const Text("카테고리가 없어요");
-          }
-        );
-      } else{
-        return ListView.builder(
-          padding: const EdgeInsets.all(0),
-          shrinkWrap: (widget.selection != null),
-          physics: (widget.selection != null||!widget.scroll)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
-          itemCount: math.min(widget.selection??list.length,list.length),
-          itemBuilder :(context, index) {
-            return CateRow(cate: list[index],key : Key("${list[index].categoryId}"));
-          },
-        );
+      if (widget.collected){
+        return const SizedBox.shrink();
+      } else {
+        if (con.isFetching.isTrue){
+          return ListView.builder(
+            shrinkWrap: (widget.selection != null),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 7,
+            itemBuilder: (context,index){
+              return const CateRowSkel();
+            }
+          );
+        } else if (list.isEmpty){
+          return ListView.builder(
+            padding: const EdgeInsets.all(0),
+            shrinkWrap: (widget.selection != null),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 1,
+            itemBuilder: (context,index){
+              return const Text("카테고리가 없어요");
+            }
+          );
+        } else{
+          return ListView.builder(
+            padding: const EdgeInsets.all(0),
+            shrinkWrap: (widget.selection != null),
+            physics: (widget.selection != null||!widget.scroll)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
+            itemCount: math.min(widget.selection??list.length,list.length),
+            itemBuilder :(context, index) {
+              return CateRow(cate: list[index],key : Key("${list[index].categoryId}"));
+            },
+          );
+        }
       }
     }
   );
   }
 }
+
 class CateRow extends StatefulWidget {
   final Categories cate;
   const CateRow({super.key,required this.cate});
@@ -218,9 +227,8 @@ class _CateRowState extends State<CateRow> {
                         cate.categoryName,
                         maxLines: 1,
                         textAlign: TextAlign.start,
-                        style : TextStyle(
+                        style : const TextStyle(
                           fontSize : 16,
-                          color : Theme.of(context).colorScheme.onPrimaryFixed,
                         )
                       ),
                       Text(
@@ -229,7 +237,7 @@ class _CateRowState extends State<CateRow> {
                         textAlign: TextAlign.start,
                         style : TextStyle(
                           fontSize : 12,
-                          color : Theme.of(context).colorScheme.primary,
+                          color : Theme.of(context).colorScheme.secondary,
                         )
                       ),
                     ],
@@ -239,7 +247,7 @@ class _CateRowState extends State<CateRow> {
               SizedBox(
                 width : constraint.minWidth * 0.15,
                 height : 32,
-                child : (false)?
+                child : /*(false)?
                 TextButton(
                   onPressed: (){},
                   style : TextButton.styleFrom(
@@ -256,7 +264,7 @@ class _CateRowState extends State<CateRow> {
                     ),
                   ),
                 )
-                :TextButton(
+                :*/TextButton(
                   onPressed: (){},
                   style : TextButton.styleFrom(
                     padding: const EdgeInsets.all(0),
@@ -306,6 +314,36 @@ class _CateRowState extends State<CateRow> {
         }
       )
     ),
+    );
+  }
+}
+
+class MinimalCateRow extends StatelessWidget {
+  final Categories cate;
+  const MinimalCateRow({super.key,required this.cate});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>FeedListPage(page : cate.categoryId))),
+      child : SizedBox(
+      child : Column(
+        children: [
+          const Profile(
+            profile: "https://top.jbnu.ac.kr/sites/archinst/atchmnfl/bbs/5131/thumbnail/temp_1707368024381100.png",
+            width: 42,
+            height: 42
+          ),
+          Text(
+            cate.categoryName,
+            maxLines: 1,
+            textAlign: TextAlign.start,
+            style : const TextStyle(
+              fontSize : 16,
+            )
+          ),
+        ],
+      ))
     );
   }
 }
@@ -381,8 +419,8 @@ class CateRowSkel extends StatelessWidget {
   }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-    _SliverAppBarDelegate(this._tabBar);
+class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+    SliverAppBarDelegate(this._tabBar);
 
     final TabBar _tabBar;
 
@@ -401,7 +439,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     }
 
     @override
-    bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    bool shouldRebuild(SliverAppBarDelegate oldDelegate) {
       return false;
     }
   }

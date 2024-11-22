@@ -13,23 +13,7 @@ import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';
-import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
-import 'package:nodove_flutter/state/user.dart';
-
-class InitViewModel implements Bindings{
-  @override
-  void dependencies(){
-    Get.create<FeedListModel>(()=>FeedListModel());
-    Get.put<UserState>(UserState());
-    Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
-    Get.create<UserInfoModel>(()=> UserInfoModel());
-    Get.lazyPut<FeedImageModel>(()=>FeedImageModel());
-    Get.put<ViewPageState>(ViewPageState());
-    Get.create<CateListModel>(()=> CateListModel());
-    Get.create<TagListModel>(()=>TagListModel());
-  }
-}
 
 class FeedListModel extends GetxController {
   final FeedRepo _feedrepo = FeedRepo();

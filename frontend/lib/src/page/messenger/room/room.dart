@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/messenger/room/addroom.dart';
 import 'package:nodove_flutter/src/page/messenger/message/message.dart';
@@ -19,13 +19,12 @@ class RoomPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.primary
+    );
     NavbarContent navbarOpt = NavbarContent(
       title : const NavbarTitle("메신저"),
       actions: [
-        NavbarCommonBtn(
-        "user/normalusr.svg",
-        onClick : (){}
-        ),
         PopupMenuButton(
           color : Theme.of(context).colorScheme.onPrimary,
           shadowColor: Colors.transparent,
@@ -38,7 +37,7 @@ class RoomPage extends StatelessWidget {
             return [
               popupMenu(
                 context,
-                title: const NavbarTitle("대화하기",fontSize : 16),
+                title: Text("새로 작성",style: textStyle,),
                 onClick : ()=>Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_)=>const AddRoomPage(),
@@ -46,23 +45,17 @@ class RoomPage extends StatelessWidget {
                   )
                 )
               ), 
-              popupMenu(
-                context,
-                title: const NavbarTitle("혼잣말..",fontSize : 16),
-                onClick : ()=> {}
-              ), 
             ];
           },
-          icon: CustomSvg(
-            "navbar/noBorderAdd.svg",
-            width : 18, height : 18,
-            iconColor: Theme.of(context).colorScheme.primary,
+          icon: NavbarCommonBtn(
+            "post/edit.svg",
+            iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
           ),
         ),
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body : const RoomList(),
     );

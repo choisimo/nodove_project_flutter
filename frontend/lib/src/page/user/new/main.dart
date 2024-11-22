@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
 import 'package:nodove_flutter/src/component/oauth/kakao.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -35,7 +35,6 @@ class _LoginPageState extends State<LoginMainPage> {
         Get.off(()=>const MyHome());
       } else {
         //setState((){loaded = true;});
-        print("아이디 찾기 오류");
         Get.off(()=>const MyHome());
       }
     } else{

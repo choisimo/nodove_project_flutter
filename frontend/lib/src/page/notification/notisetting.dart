@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/setting.dart';
 
 class NotiSettingPage extends StatelessWidget {
   const NotiSettingPage({super.key});

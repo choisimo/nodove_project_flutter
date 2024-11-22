@@ -7,6 +7,7 @@ import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -334,8 +335,6 @@ class RecruitCollectedRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double maxwidth = MediaQuery.of(context).size.width;
-    String? profile = feed.user.profile;
     return GestureDetector(
       onTap:() => {},
       child: Container(

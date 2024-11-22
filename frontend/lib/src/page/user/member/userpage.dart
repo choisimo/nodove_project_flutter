@@ -7,6 +7,8 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
@@ -57,9 +59,9 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
 
   Future<void> refreshState() async{
     final userState = Get.put(UserState());
-    String? widgetId = widget.id;
+    /*String? widgetId = widget.id;
     String myid = userState.id.value;
-    //_con.getUserInfo(widgetId??myid);
+    _con.getUserInfo(widgetId??myid);*/
   }
 
   @override
@@ -143,6 +145,8 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
             ];
           }
           return CustomRefreshIndicator(
+            edgeOffset: 54,
+            displacement: 40,
             onRefresh: (){},
             child: NestedScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -160,6 +164,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                         url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
                         opt : "pageSize=$size",
                       ),
+                      const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
                     ]
                   ),
                   const Text("tab3"),

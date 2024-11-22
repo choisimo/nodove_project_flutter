@@ -6,6 +6,7 @@ import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -172,9 +173,6 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
   bool sendMail = false;
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-    );
     final maxWidth = MediaQuery.of(context).size.width;
     final BoxDecoration boxDecoration = BoxDecoration(
       borderRadius: RowContainer.radius,
@@ -334,16 +332,7 @@ class JoinFormProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool private = false;
-    final TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-    );
-    final BoxDecoration boxDecoration = BoxDecoration(
-      borderRadius: RowContainer.radius,
-      border : Border.all(
-        color: Theme.of(context).colorScheme.onSurface,
-        width: 0.5
-      )
-    );
+
     return Obx(()=>
       Center(
         child: SizedBox(
@@ -355,10 +344,7 @@ class JoinFormProfile extends StatelessWidget {
               const SizedBox(height : 32),
               const Text("나만의 프로필을 작성해주세요"),
               const SizedBox(height : 16),
-              profileSetting(
-                context,
-
-              ),
+              const ProfileSetting(),
               const SizedBox(height : 42),
               CommonTextInput(
                 initialValue: con.joinForm['userNick'],
@@ -405,18 +391,6 @@ class JoinCompleted extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    String profile = "";
-    bool private = false;
-    final TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-    );
-    final BoxDecoration boxDecoration = BoxDecoration(
-      borderRadius: RowContainer.radius,
-      border : Border.all(
-        color: Theme.of(context).colorScheme.onSurface,
-        width: 0.5
-      )
-    );
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width*0.9,

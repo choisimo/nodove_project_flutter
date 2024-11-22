@@ -34,11 +34,11 @@ class CustomClip extends CustomClipper<Path> {
   Path getClip(Size size, {TextDirection? textDirection}) {
     final Rrect rrect = Rrect(width : size.width , height : size.height - triSize);
     final double vOffset = math.min(vertical,size.width - triSize);
-    final double hOffset = math.min(horizontal,size.width - triSize);
+    //final double hOffset = math.min(horizontal,size.width - triSize);
     
     return tooltipBottomSidePath(
         rrect,
-        speechBubble(
+        SpeechBubble(
           radius: rRadius,
           offset : vOffset,
           triSize: triSize,

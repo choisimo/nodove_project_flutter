@@ -4,102 +4,64 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/notification/noti.dart';
+import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 
-class FeedMainPage extends StatefulWidget {
-  const FeedMainPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<FeedMainPage> createState() => _FeedMainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _FeedMainPageState extends State<FeedMainPage> {
-  late ScrollController scrollController;
-  bool exposed = true;
+class _MainPageState extends State<MainPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      body: const FeedMainList(),
+    );
+  }
+}
+
+class FeedMainList extends StatefulWidget {
+  const FeedMainList({super.key});
 
   @override
-  void initState(){
-    scrollController = ScrollController()..addListener(scrollRef);
-    super.initState();
-  }
+  State<FeedMainList> createState() => _FeedMainListState();
+}
 
-  void scrollRef(){
-    try{
-      if (scrollController.position.pixels < 16){
-        if (exposed == false){
-          setState((){
-            exposed = true;
-          });
-        }
-      } else {
-        if (exposed == true){
-          setState((){
-            exposed = false;
-          });
-        }
-      }
-    } catch(_){
-
-    }
-  }
-
+class _FeedMainListState extends State<FeedMainList> {
+  List<String> tagList = [
+    '게시글 테스트',
+    '여행',
+    "태그"
+  ];
+  int pageSize = 3;
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
-      title : const NavbarTitle("피드"),
+      title : const NavbarTitle("홈"),
       actions : [
         NavbarCommonBtn(
-          "navbar/search.svg",
-          onClick : (){
-            if (exposed == true){
-              setState((){
-                exposed = false;
-              });
-            }
-          }
+          "navbar/alert.svg",
+          onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const NotiPage())),
         )
       ]
     );
-    PreferredSize appbar = PreferredSize(
-      preferredSize: const Size.fromHeight(54),
-      child: AnimatedCrossFade(
-        firstChild: NavbarTop(navbarOpt, centerTitle : false),
-        secondChild: const SearchPart(),
-        crossFadeState: (exposed)?CrossFadeState.showFirst:CrossFadeState.showSecond,
-        duration: const Duration(milliseconds: 300),
-      ),
-    );
-    return Scaffold(
-      appBar: appbar,
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      body: FeedMainList(
-        scrollController: scrollController,
-      ),
-    );
-  }
-}
-
-class FeedMainList extends StatelessWidget {
-  final ScrollController? scrollController;
-  const FeedMainList({
-    super.key,
-    this.scrollController
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> tagList = [
-      '게시글 테스트',
-      '여행',
-      "태그"
-    ];
-    int pageSize = 3;
-    int tagSize = 3;
+        
     return CustomScrollView(
-      controller: scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
+        SliverNavbarTop(
+          navbarOpt,
+        ),
+        const SliverToBoxAdapter(
+          child: SearchPart(),
+        ),
         SliverToBoxAdapter(
           child : PartContainer(
             children: [
@@ -115,35 +77,64 @@ class FeedMainList extends StatelessWidget {
           )
         ),
         SliverToBoxAdapter(
-          child : PartContainer(
-            children: [
-              TitleRow(
-                title : "추천하는 #해시태그에요",
-                onTap : ()=>Get.to(()=>const CatePage(page: 0))
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  border: Border(
-                    bottom: rowBorderLine()
-                  ),
-                ),
-                child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: tagSize,
-                  itemBuilder: (context,index){
-                    return CollectedVList(
-                      url: "${Url.apiUrl}/getPostListByTag/${Uri.encodeComponent(tagList[index])}",
-                      opt: "pageSize=3",
-                      title: "#${tagList[index]}",
-                    );
-                  }
-                ),
-              )
-            ]
-          )
+          child : MainTagList(tagList: tagList)
         ),
+        const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
+      ]
+    );
+  }
+}
+
+class MainTagList extends StatefulWidget {
+  final List<String> tagList;
+  const MainTagList({super.key,required this.tagList});
+
+  @override
+  State<MainTagList> createState() => _MainTagListState();
+}
+
+class _MainTagListState extends State<MainTagList> {
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+    viewportFraction: 1.0
+  );
+  
+  int pageSize = 3;
+  @override
+  Widget build(BuildContext context) {
+    return  PartContainer(
+      children: [
+        TitleRow(
+          title : "추천하는 #해시태그에요",
+          onTap : ()=>Get.to(()=>const CatePage(page: 0))
+        ),
+        SizedBox(
+          height : 52,
+          child:  MinimalVList(
+            list : widget.tagList,
+            onClick: (index)=>pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOutCubic)
+          ),
+        ),
+        Container(
+          height : 210,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+            border: Border(
+              bottom: rowBorderLine()
+            ),
+          ),
+          child: PageView.builder(
+            controller: pageController,
+            itemCount: widget.tagList.length,
+            itemBuilder: (context,index){
+              return CollectedVList(
+                url: "${Url.apiUrl}/getPostListByTag/${Uri.encodeComponent(widget.tagList[index])}",
+                opt: "pageSize=3",
+              );
+            }
+          ),
+        )
       ]
     );
   }
@@ -155,14 +146,8 @@ class PartContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BoxDecoration boxDecoration = BoxDecoration(
-      border: Border(
-        bottom: rowBorderLine()
-      ),
-      color : Theme.of(context).colorScheme.onPrimary,
-    );
     return Container(
-      //decoration : boxDecoration,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child : SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Column(
@@ -193,7 +178,7 @@ class TitleRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         margin: const EdgeInsets.only(
           bottom: 8.0,
-          top : 16.0
+          top : 8.0
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,43 +210,39 @@ class SearchPart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return SafeArea(
-      child: Center(
-        child: Container(
-          width : MediaQuery.of(context).size.width * 0.9,
-          height : 42,
-          margin:const EdgeInsets.only(top : 8),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border : Border.all(
-              color : Theme.of(context).colorScheme.onPrimaryFixed
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(100))
-          ),
-          child : LayoutBuilder(
-            builder: (context,layout) {
-              return Row(
-                children: [
-                  SizedBox(
-                    width : layout.maxWidth - 54,
-                    child: CommonTextInput(
-                      bColor: Colors.transparent,
-                      placeholder: "피드를 검색해주세요",
-                      placeholderStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary
-                      )
-                    )
-                  ),
-                  NavbarCommonBtn(
-                    "navbar/search.svg",
-                    onClick : (){},
-                  ),
-                ],
-              );
-            }
-          ),
-        ),
+   return Center(
+     child: Container(
+      width : MediaQuery.of(context).size.width * 0.9,
+      height : 42,
+      margin:const EdgeInsets.only(top : 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSecondary,
+        borderRadius: const BorderRadius.all(Radius.circular(100))
       ),
-    );
+      child : LayoutBuilder(
+        builder: (context,layout) {
+          return Row(
+            children: [
+              SizedBox(
+                width : layout.maxWidth - 54,
+                child: CommonTextInput(
+                  bColor: Colors.transparent,
+                  placeholder: "검색어를 입력해주세요",
+                  placeholderStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary
+                  )
+                )
+              ),
+              NavbarCommonBtn(
+                "navbar/search.svg",
+                onClick : (){},
+                iconColor: Theme.of(context).colorScheme.primary,
+              ),
+            ],
+          );
+        }
+      ),
+       ),
+   );
   }
 }

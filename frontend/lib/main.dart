@@ -9,15 +9,13 @@ import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/list/other/taglist.dart';
 import 'package:nodove_flutter/src/page/messenger/room/room.dart';
-import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/src/page/recruit/main.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
-import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/src/vmodel/binding.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 
@@ -103,7 +101,6 @@ class MyHome extends StatefulWidget{
 List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
   const RoomPage(key : Key('messengerPage')),
-  const FeedMainPage(key : Key('listPage')),
   const RecruitMainPage(key : Key("RecruitMainPage")),
   const UserPage(key : Key('userPage')),
 ];
@@ -157,57 +154,6 @@ class _MyHomeState extends State<MyHome>{
           ),
         );
       }),
-    );
-  }
-}
-
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  int univPage = 3;
-  int companyPage = 2;
-  int maxSize = 7;
-
-  @override
-  Widget build(BuildContext context) {
-    NavbarContent navbarOpt = NavbarContent(
-      title : const NavbarTitle("메인"),
-      actions : [
-        NavbarCommonBtn(
-          "navbar/alert.svg",
-          onClick : ()=>Navigator.of(context).push(
-            MaterialPageRoute(builder: (_)=>const NotiPage(key : Key("notiPage")))
-          ),
-          width : 18, height : 18
-        ),
-        NavbarCommonBtn(
-          "navbar/search.svg",
-          onClick : (){},
-        ),
-      ]
-    );
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: NavbarTop(
-        navbarOpt,
-        centerTitle : false,
-      ),
-      body: RefreshIndicator(
-        onRefresh: ()=>Future.delayed(const Duration(milliseconds: 1000),()=>setState((){})),
-        child: const SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              
-            ]
-          ),
-        ),
-      ),
     );
   }
 }

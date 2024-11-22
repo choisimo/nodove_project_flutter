@@ -8,6 +8,7 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';

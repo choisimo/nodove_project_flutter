@@ -19,7 +19,7 @@ class Carousel extends StatefulWidget {
 }
 
 class _CarouselState extends State<Carousel> {
-  int _current = 0;
+  int current = 0;
   var error = false;
   final CarouselSliderController _controller = CarouselSliderController();
   
@@ -92,7 +92,7 @@ class _CarouselState extends State<Carousel> {
         autoPlay: false,
         onPageChanged: (index ,reason){
           setState(() {
-            _current = index;
+            current = index;
           });
         }
       )
@@ -101,7 +101,6 @@ class _CarouselState extends State<Carousel> {
   Widget carouselIndicator(){
     List<dynamic> imageLinks = widget.imageLinks;
     const double size = 32;
-    double width = MediaQuery.of(context).size.width;
     return
     (imageLinks.isNotEmpty)?
       SizedBox(

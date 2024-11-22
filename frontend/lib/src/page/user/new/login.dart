@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

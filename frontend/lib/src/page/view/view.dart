@@ -3,6 +3,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
@@ -122,8 +124,8 @@ class _FeedViewState extends State<FeedView> {
   int pageKey = 0;
 
   Future<void> refresh() async{
-    PageUrl url = ViewPageState.page.comment.value;
-    //con.getCommentFirst(url.url,url.opt);
+    /*PageUrl url = ViewPageState.page.comment.value;
+    con.getCommentFirst(url.url,url.opt);*/
   }
 
   @override

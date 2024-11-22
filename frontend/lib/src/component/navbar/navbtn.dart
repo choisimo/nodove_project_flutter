@@ -40,13 +40,16 @@ class BackBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      style: const ButtonStyle(
+        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+      ),
       onPressed: ()=>callback?.call(),
       child : (displayText != null)?
       Text(
         displayText.toString(),
         style: TextStyle(
           fontSize: 18,
-          color : Theme.of(context).colorScheme.primary
+          color : Theme.of(context).colorScheme.onPrimaryFixed
         ),
       )
       :SvgPicture.asset(
@@ -70,19 +73,22 @@ class NextBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+    style: const ButtonStyle(
+      overlayColor: WidgetStatePropertyAll(Colors.transparent),
+    ),
     onPressed: ()=>callback?.call(),
     child : (displayText != null)?
     Text(
       displayText.toString(),
       style: TextStyle(
         fontSize: 18,
-        color : Theme.of(context).colorScheme.primary
+        color : Theme.of(context).colorScheme.onPrimaryFixed
       ),
     ):SvgPicture.asset(
         'assets/icons/common/right.svg',
         width : 18,
         height : 18,
-        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimary,BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
       )
   );
   }
@@ -105,25 +111,26 @@ class _etcBtnState extends State<etcBtn> {
     final dynamic id = widget.id;
     return 
     TextButton(
+      style: ButtonStyle(
+        foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface),
+        overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
       iconAlignment: IconAlignment.end,
-        onPressed: ()=>cb?.call(id),
-        style : TextButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.onSurface,
+      onPressed: ()=>cb?.call(id),
+      child: Rotate(
+        angle : 90,
+        child: Text(
+          '•••',
+          overflow: TextOverflow.visible,
+          softWrap: false,
+          style : TextStyle(
+            fontSize: widget.fontSize,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface
+          )
         ),
-        child: Rotate(
-          angle : 90,
-          child: Text(
-            '•••',
-            overflow: TextOverflow.visible,
-            softWrap: false,
-            style : TextStyle(
-              fontSize: widget.fontSize,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface
-            )
-          ),
-        )
-      );
+      )
+    );
   }
 }
 
@@ -142,7 +149,7 @@ PopupMenuItem popupMenu(BuildContext context,{
           child: SvgPicture.asset(
             iconSrc,
             width : 12 , height : 12,
-            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
           ),
         ):const SizedBox.shrink(),
         title??const SizedBox.shrink()
@@ -212,6 +219,9 @@ class NavbarCommonBtn extends StatelessWidget {
     return 
     (onClick != null)?
     IconButton(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
       onPressed: ()=>onClick?.call(),
       icon : icon(context)
     ):icon(context);
@@ -222,7 +232,7 @@ class NavbarCommonBtn extends StatelessWidget {
       src,
       width : width,
       height : height,
-      iconColor : iconColor??Theme.of(context).colorScheme.primary,
+      iconColor : iconColor??Theme.of(context).colorScheme.onPrimaryFixed,
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/setting.dart';
 import 'package:nodove_flutter/state/color.dart';
 
 class FeedSettingPage extends StatelessWidget {
@@ -47,13 +47,6 @@ class _FeedSettingListState extends State<FeedSettingList> {
   }
   @override
   Widget build(BuildContext context) {
-    final BoxDecoration boxDecoration = BoxDecoration(
-      borderRadius: RowContainer.radius,
-      border : Border.all(
-        color: Theme.of(context).colorScheme.onSurface,
-        width: 0.5
-      )
-    );
     
     TextStyle content = const TextStyle(
       fontSize: 16,

@@ -57,12 +57,12 @@
 		<false/>
 		<key>CFBundleURLTypes</key>
 		<array>
-		<dict>
-		<key>CFBundleURLSchemes</key>
-			<array>
-				<string>socialloginapp</string>
-			</array>
-		</dict>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>socialloginapp</string>
+				</array>
+			</dict>
 		</array>
 		<key>naverConsumerKey</key>
 		<string>xojbsza50HOJOGiCOQbc</string>
