@@ -32,10 +32,11 @@ class _WritePageState extends State<WritePage> {
   @override
   Widget build(BuildContext context) {
     final FeedListModel formData = Get.put(FeedListModel());
-    final url = ViewPageState.page.view.value;
+    final url = PageState.page.view.value;
     NavbarContent navbarOpt = NavbarContent(
+      leading: CloseButton(onPressed : ()=>Get.back()),
       actions : [
-        NextBtn(displayText: "쓰기", callback : (){
+        NextBtn(displayText: "쓰기", onPressed : (){
           formData.postWrite(formData.writeForm);
           Get.find<FeedListModel>().getFeedFirst(url.url, url.opt);
           Get.back();
@@ -45,7 +46,7 @@ class _WritePageState extends State<WritePage> {
     List<Widget> contentPage = [
       Scaffold(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        appBar: NavbarTop(navbarOpt, centerTitle : false),
+        appBar: NavbarTop(navbarOpt, centerTitle : true),
         body : WriteContent(controller: _controller,),
         bottomNavigationBar:Container(
           decoration: BoxDecoration(
@@ -218,45 +219,23 @@ class _WriteContentState extends State<WriteContent> {
                     shadowColor: Colors.transparent,
                     shape : TooltipShape(
                       vertical : 84,
-                      borderColor : Theme.of(context).colorScheme.shadow),
+                      borderColor : Theme.of(context).colorScheme.secondary),
                     offset : const Offset(0,64),
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
                           onTap: imageUpload,
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/post/picture.svg',
-                                width : 24,
-                                height : 24,
-                                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                              ),
-                              const SizedBox(width : 8),
-                              Text(
-                                "사진",
-                                style:textStyle,
-                              ),
-                            ],
-                          )
+                          child: Text(
+                            "사진",
+                            style:textStyle,
+                          ),
                         ),
                         PopupMenuItem(
                           onTap: videoUpload,
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/post/video.svg',
-                                width : 24,
-                                height : 24,
-                                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                              ),
-                              const SizedBox(width : 8),
-                              Text(
-                                "동영상",
-                                style: textStyle,
-                              ),
-                            ],
-                          )
+                          child:Text(
+                            "동영상",
+                            style: textStyle,
+                          ),
                         )
                       ];
                     },
@@ -264,14 +243,13 @@ class _WriteContentState extends State<WriteContent> {
                       width : 48,
                       height : 48,
                       decoration: BoxDecoration(
-                        color : Theme.of(context).colorScheme.onPrimaryFixed,
+                        color : Theme.of(context).colorScheme.onSecondary,
                         borderRadius: RowContainer.radius
                       ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/icons/navbar/noBorderAdd.svg',
+                      child: const Center(
+                        child: CustomSvg(
+                          'post/file.svg',
                           width : 24, height : 24,
-                          colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
                         ),
                       ),
                     ),

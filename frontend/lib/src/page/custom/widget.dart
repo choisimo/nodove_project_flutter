@@ -150,12 +150,12 @@ class MinimalVRow extends StatelessWidget {
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(
-            vertical: 4.0,
-            horizontal: 8.0
+            horizontal: 2.0,
+            vertical: 2.0,
           ),
           side: rowBorderLine(color : Theme.of(context).colorScheme.secondary),
           shape: const RoundedRectangleBorder(
-            borderRadius: RowContainer.radius
+            borderRadius: BorderRadius.all(Radius.circular(6))
           ),
         ),
         onPressed: ()=>onClick?.call(),

@@ -5,7 +5,7 @@ import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -39,8 +39,9 @@ class _RecruitViewPageState extends State<RecruitViewPage>{
   @override
   Widget build(BuildContext context){
     int page = widget.page??int.parse(Get.parameters['page']??'3');
+    PageUrl url = PageState.page.comment.value;
     NavbarContent navbarOpt = NavbarContent(
-      leading: BackBtn(callback: ()=>Navigator.of(context).pop()),
+      leading: BackBtn(onPressed: ()=>Navigator.of(context).pop()),
       actions : <Widget>[
         etcBtn(
           cb : (id){
@@ -93,7 +94,11 @@ class _RecruitViewPageState extends State<RecruitViewPage>{
             ),
           ],
         ),
-        child : commentList(page : page),
+        child : CommentListPage(
+          page : page,
+          url : url.url,
+          opt : url.opt
+        ),
       ),
       body : FeedView(
         page : page,
@@ -130,7 +135,7 @@ class _FeedViewState extends State<FeedView> {
 
   @override
   void initState() {
-    ViewPageState.page.setView(widget.url,"/${widget.page}");
+    PageState.page.setView(widget.url,"/${widget.page}");
     //vcon.getFeedPage(widget.page);
     super.initState();
   }

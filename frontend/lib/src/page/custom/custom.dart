@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
@@ -49,6 +49,25 @@ void showToast(String msg) {
     dismissType: DismissType.onSwipe,
     animationDuration: const Duration(milliseconds: 500),
     padding: const EdgeInsets.all(0),
+  );
+}
+
+void showCustomModal(BuildContext context,Widget child){
+  showModalBottomSheet(
+    context: context,
+    enableDrag: true,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+    builder :(BuildContext context) {
+      return Padding(
+        padding : EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom
+        ),
+        child: child
+      );
+    },
   );
 }
 
@@ -153,23 +172,4 @@ class _ProfileSettingState extends State<ProfileSetting> {
       ],
     );
   }
-}
-
-void showCustomModal(BuildContext context,Widget child){
-  showModalBottomSheet(
-    enableDrag: true,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    context: context,
-    showDragHandle: true,
-    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-    builder :(BuildContext context) {
-      return Padding(
-        padding : EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom
-        ),
-        child: child
-      );
-    },
-  );
 }

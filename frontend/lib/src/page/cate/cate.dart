@@ -8,8 +8,8 @@ import 'package:nodove_flutter/src/page/cate/writecate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -51,7 +51,7 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
         onClick: ()=>Get.to(()=>const WriteCatePage(),fullscreenDialog: true),
         backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
         child : SvgPicture.asset(
-          'assets/icons/navbar/noBorderAdd.svg',
+          'assets/icons/post/edit.svg',
           width : 24,
           height : 24,
           colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
@@ -63,6 +63,7 @@ class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin
         slivers: [
           SliverAppBar(
             centerTitle: false,
+            leading : BackBtn(onPressed: ()=>Navigator.of(context).pop()),
             title : (arg !=null )?
             NavbarTitle(arg)
             :const NavbarTitle("카테고리"),
@@ -291,10 +292,9 @@ class _CateRowState extends State<CateRow> {
                       borderRadius: RowContainer.radius
                     )
                   ),
-                  icon: CustomSvg(
+                  icon: const CustomSvg(
                     "common/right.svg",
                     width : 12 , height : 12,
-                    iconColor: Theme.of(context).colorScheme.onSurface,
                   ),
                   onPressed: ()=>Navigator.push(
                     context,

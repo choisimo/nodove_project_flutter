@@ -7,7 +7,7 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/messenger/room/addroom.dart';
 import 'package:nodove_flutter/src/page/messenger/message/message.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -47,9 +47,8 @@ class RoomPage extends StatelessWidget {
               ), 
             ];
           },
-          icon: NavbarCommonBtn(
+          icon: const NavbarCommonBtn(
             "post/edit.svg",
-            iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
           ),
         ),
       ]

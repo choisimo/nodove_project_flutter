@@ -272,34 +272,27 @@ class TempFeed extends GetxController{
 
   RxList<Categories> catelist = [
     Categories(
-      categoryId : 2,
-      categoryName : "테스트1",
-      categoryDescription : "테스트1",
+      categoryId : 1,
+      categoryName : "공모전",
+      categoryDescription : "행사와 이벤트 등의 대외적인 활동에 대한 정보를 다룹니다",
+      categoryImage : "",
       depth : 1,
       parentCategoryName: "",
-      children : [
-        Categories(
-        categoryId : 4,
-        categoryName : "테스트2",
-        categoryDescription : "테스트2",
-        parentCategoryName: "테스트1",
-        depth : 2,
-        children: [
-          Categories(
-            categoryId : 8,
-            categoryName : "테스트3",
-            categoryDescription : "테스트3",
-            depth : 3,
-            parentCategoryName: "테스트2",
-          )
-        ]
-      )
-      ]
+      children : []
     ),
-     Categories(
-      categoryId : 16,
-      categoryName : "테스트4",
-      categoryDescription : "테스트4",
+    Categories(
+      categoryId : 2,
+      categoryName : "경진대회",
+      categoryDescription : "기관이나 학교의 경진대회에 대한 정보가 올라옵니다",
+      categoryImage : "",
+      depth : 1,
+      parentCategoryName: "",
+    ),
+    Categories(
+      categoryId : 2,
+      categoryName : "기타 대외활동",
+      categoryImage : "",
+      categoryDescription : "그 외 경험 해보지 못한 대외활동을 다룹니다",
       depth : 1,
       parentCategoryName: "",
     )
@@ -387,4 +380,21 @@ class TempFeed extends GetxController{
         createdAt: "2024-11-14 11:16:00"
       )
     ].obs;
+
+  RxList<Feed> community = [
+    Feed(
+      id: 1,
+      title : "테스트2",
+      writerNick: "커리어블록",
+      writerId : 6,
+      writerUserId: "careerblock",
+      writerProfile: "https://file.career-block.com/attach/images/logo.jpg",
+      createdAt : "2024-11-14 12:12:12",
+      updatedAt: "2024-11-14 12:12:12",
+      content : "<p>테스트</p>",
+      hashtags: [],
+      imageLinks: [],
+      private : false,
+    ),
+  ].obs;
 }

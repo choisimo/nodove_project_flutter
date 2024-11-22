@@ -2,6 +2,7 @@ class Categories {
   int categoryId;
   String categoryName;
   String categoryDescription;
+  String? categoryImage;
   List<dynamic>? children;
   int depth;
   String parentCategoryName;
@@ -11,6 +12,7 @@ class Categories {
     required this.categoryId,
     required this.categoryName,
     required this.categoryDescription,
+    this.categoryImage,
     this.children,
     required this.depth,
     required this.parentCategoryName,

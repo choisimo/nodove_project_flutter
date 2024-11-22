@@ -17,7 +17,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : BackBtn(callback : ()=>Navigator.of(context).pop()),
+      leading : BackBtn(onPressed : ()=>Navigator.of(context).pop()),
       title : const NavbarTitle("매칭"),
     );
     return Scaffold(

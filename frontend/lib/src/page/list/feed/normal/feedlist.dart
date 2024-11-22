@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/page/collected/colrow.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -70,8 +70,18 @@ class _FeedListPageState extends State<FeedListPage>{
     
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : BackBtn(callback: ()=>Navigator.of(context).pop()),
+      leading : BackBtn(onPressed: ()=>Navigator.of(context).pop()),
       actions: [
+        NavbarCommonBtn(
+          "post/edit.svg",
+          onClick: ()=>Get.to(
+            ()=>const WritePage(),
+            fullscreenDialog: true,
+            arguments: {
+              'postCategory' : cateid
+            }
+          ),
+        ),
         NavbarCommonBtn(
           "navbar/search.svg",
           onClick : (){
@@ -82,20 +92,9 @@ class _FeedListPageState extends State<FeedListPage>{
         ),
         NavbarCommonBtn(
           "common/setting.svg",
+          iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
           onClick : ()=>Navigator.of(context).push(
             MaterialPageRoute(builder: (_)=>const FeedSettingPage())
-          ),
-        ),
-        NavbarCommonBtn(
-          "post/edit.svg",
-          width : 16,
-          height : 16,
-          onClick: ()=>Get.to(
-            ()=>const WritePage(),
-            fullscreenDialog: true,
-            arguments: {
-              'postCategory' : cateid
-            }
           ),
         ),
       ]
@@ -204,7 +203,7 @@ class _FeedListState extends State<FeedList> {
     String url = widget.url;
     String opt = widget.opt;
     pageKey = 0;
-    ViewPageState.page.setView(url, opt);
+    PageState.page.setView(url, opt);
     //con.getFeedFirst(url,opt);
   }
   

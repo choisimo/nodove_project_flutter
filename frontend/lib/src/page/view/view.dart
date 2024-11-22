@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
-import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -40,7 +38,7 @@ class _FeedPageState extends State<FeedPage>{
   Widget build(BuildContext context){
     int page = widget.page??int.parse(Get.parameters['page']??'3');
     NavbarContent navbarOpt = NavbarContent(
-      leading: BackBtn(callback: ()=>Navigator.of(context).pop()),
+      leading: BackBtn(onPressed: ()=>Navigator.of(context).pop()),
       actions : <Widget>[
         etcBtn(
           cb : (id){
@@ -56,45 +54,23 @@ class _FeedPageState extends State<FeedPage>{
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: NavbarTop(navbarOpt,centerTitle : true),
-      floatingActionButton: CustomModalFloatingButton(
-        heroTag: 'comment',
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        iconHeight: 54,
-        iconWidth: 54,
-        icon : Stack(
-          alignment: Alignment.topRight,
-          children: [
-            const Center(
-              child: CustomSvg(
-                'navbar/msg.svg',
-                width : 24,
-                height : 24,
-                iconColor : CommonStyle.first
-              ),
-            ),
-            Container(
-              constraints: const BoxConstraints(
-                maxWidth: 20,
-                minWidth: 20
-              ),
-              height : 20,
-              decoration: const BoxDecoration(
-                color: CommonStyle.first,
-                borderRadius: RowContainer.radius
-              ),
-              child: Center(
-                child: Text(
-                  vpage.content.value.commentCount.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        child : commentList(page : page),
+      bottomNavigationBar: Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        border: Border(
+          top: rowBorderLine()
+        )
       ),
+      child: SafeArea(
+        minimum: const EdgeInsets.all(4),
+        child: CustomWrite(
+          focus: false,
+          onPressed: (){
+
+          },
+        ),
+      ),
+    ),
       body : FeedView(
         page : page,
         url : widget.url,
@@ -124,14 +100,19 @@ class _FeedViewState extends State<FeedView> {
   int pageKey = 0;
 
   Future<void> refresh() async{
+    
+    String commentUrl = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/${widget.page}";
+    String commentOpt = "maxSize=$maxPage";
+    PageState.page.setView(widget.url,"/${widget.page}");
+    PageState.page.setComment(commentUrl, commentOpt);
     /*PageUrl url = ViewPageState.page.comment.value;
     con.getCommentFirst(url.url,url.opt);*/
+    //vcon.getFeedPage(widget.page);
   }
 
   @override
   void initState() {
-    ViewPageState.page.setView(widget.url,"/${widget.page}");
-    //vcon.getFeedPage(widget.page);
+    refresh();
     super.initState();
   }
 
@@ -140,46 +121,55 @@ class _FeedViewState extends State<FeedView> {
     BoxDecoration commonDecor = BoxDecoration(
       color : Theme.of(context).colorScheme.onPrimary,
     );
-
     return Obx((){
         final feed = vcon.content.value;
+        PageUrl url = PageState.page.comment.value;
         if (vcon.isFetching.isFalse){
           return CustomRefreshIndicator(
             onRefresh: ()=>refresh(),
-            strokeColor : Theme.of(context).colorScheme.onSurface,
-            backgroundColor : Theme.of(context).colorScheme.onPrimary,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  Container(
-                    decoration: commonDecor,
-                    child:FeedTop(title: feed.title,hashtags: feed.hashtags)
-                  ),
-                  Carousel(imageLinks: feed.imageLinks, page: feed.id),
-                  Container(
-                    decoration: BoxDecoration(
-                      color : Theme.of(context).colorScheme.onPrimary,
-                      border: Border(
-                        bottom: rowBorderLine()
-                      )
+            child: Container(
+              decoration : BoxDecoration(
+                color : Theme.of(context).colorScheme.onPrimary,
+                border: Border(
+                  bottom: rowBorderLine()
+                )
+              ),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Container(
+                      decoration: commonDecor,
+                      child:FeedTop(title: feed.title,hashtags: feed.hashtags)
                     ),
-                    child: Column(
-                      children: [
-                        pageUserInfo(
-                          context,feed
-                        ),
-                        Html(data: feed.content),
-                        FeedRowBottom(
-                          iconSize: 20,
-                          feed : feed
-                        ),
-                      ],
-                    )
-                  )
+                  ),
+                  SliverToBoxAdapter(
+                    child: Carousel(imageLinks: feed.imageLinks, page: feed.id),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Carousel(imageLinks: feed.imageLinks, page: feed.id),
+                  ),
+                  SliverToBoxAdapter(
+                    child: pageUserInfo(
+                      context,feed
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child : Html(data: feed.content),
+                  ),
+                  SliverToBoxAdapter(
+                    child: FeedRowBottom(
+                      iconSize: 20,
+                      feed : feed
+                    ),
+                  ),
+                  CommentListPage(
+                    page: widget.page,
+                    url : url.url,
+                    opt : url.opt
+                  ),
                 ],
               ),
-            ),
+            )
           );
         } else{
           return const FeedViewSkel();

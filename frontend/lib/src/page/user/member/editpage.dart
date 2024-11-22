@@ -25,7 +25,7 @@ class EditUserPage extends StatelessWidget {
       actions : [
         NextBtn(
           displayText: "수정",
-          callback: (){}
+          onPressed: (){}
         ),
       ]
     );
@@ -49,7 +49,7 @@ class EditUser extends StatefulWidget {
 
 class _EditUserState extends State<EditUser> {
   final UserInfoModel _con = Get.put(UserInfoModel());
-  final userState = Get.put(UserState());
+  final UserState userState = Get.find();
   late Future<User> userInfo;
   final TextEditingController controller = TextEditingController();
 

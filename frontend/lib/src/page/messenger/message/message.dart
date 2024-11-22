@@ -7,7 +7,7 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -45,7 +45,7 @@ with SingleTickerProviderStateMixin, WidgetsBindingObserver {
     final Room room = widget.room;
     NavbarContent navbarOpt = NavbarContent(
       leading: BackBtn(
-        callback: ()=>Get.back()
+        onPressed: ()=>Get.back()
       ),
       title : NavbarTitle(
         room.roomName.split("_")[0]
@@ -121,7 +121,7 @@ class _MessageBottomWriteState extends State<MessageBottomWrite> {
   @override
   Widget build(BuildContext context) {
     SocketIO socket = widget.socket;
-    final userState = Get.put(UserState());
+    final UserState userState = Get.find();
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -133,7 +133,8 @@ class _MessageBottomWriteState extends State<MessageBottomWrite> {
         minimum: const EdgeInsets.all(4),
         child: CustomWrite(
           focus: false,
-          callback: (content){
+          placeholder: "메세지를 남겨주세요",
+          onPressed: (content){
             socket.sendMessage({
               "sender": userState.id.value,
               "content": content,

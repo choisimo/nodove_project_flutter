@@ -59,7 +59,7 @@ class CollectedVRow extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: ()=>
-        showCustomModal(context,commentList(page : feed.id)),
+        showCustomModal(context,CommentListModal(page : feed.id)),
       child: Container(
         width : size,
         height : size,

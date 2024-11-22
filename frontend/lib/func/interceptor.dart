@@ -52,7 +52,7 @@ class ApiInterceptors extends Interceptor {
   void onResponse(response, ResponseInterceptorHandler handler) async{
     final String? cookie = response.headers['set-cookie']?[0];
     final String? jwt = response.headers['Authorization']?[0];
-    final user = Get.put(UserState());
+    final UserState user = Get.find();
 
     if (jwt != null && cookie != null){
       final res = await decoding(jwt,cookie);

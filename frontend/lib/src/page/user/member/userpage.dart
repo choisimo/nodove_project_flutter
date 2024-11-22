@@ -9,9 +9,10 @@ import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
+import 'package:nodove_flutter/src/page/setting/setting.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
@@ -44,6 +45,7 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin {
   final TempFeed _con = Get.put(TempFeed());
   late Future<User> userInfo;
+  final UserState userState = Get.find();
   ScrollController scrollController = ScrollController();
   late TabController tabController = TabController(
     length: 4,
@@ -58,8 +60,8 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
   }
 
   Future<void> refreshState() async{
-    final userState = Get.put(UserState());
-    /*String? widgetId = widget.id;
+    /*
+    String? widgetId = widget.id;
     String myid = userState.id.value;
     _con.getUserInfo(widgetId??myid);*/
   }
@@ -186,9 +188,8 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
       (id == null)?
       NavbarCommonBtn(
         "common/setting.svg",
-        onClick: (){
-
-        },
+        iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
+        onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const SettingPage())),
       ):const SizedBox.shrink(),
       NavbarCommonBtn(
         "post/share.svg",

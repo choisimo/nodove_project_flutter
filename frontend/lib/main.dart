@@ -6,12 +6,13 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
+import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/list/other/taglist.dart';
 import 'package:nodove_flutter/src/page/messenger/room/room.dart';
 import 'package:nodove_flutter/src/page/recruit/main.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
@@ -101,6 +102,7 @@ class MyHome extends StatefulWidget{
 List<Widget> pages = [
   const MainPage(key : Key("mainPage")),
   const RoomPage(key : Key('messengerPage')),
+  const CommuListPage(),
   const RecruitMainPage(key : Key("RecruitMainPage")),
   const UserPage(key : Key('userPage')),
 ];

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/model/cate.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedsetting.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 
@@ -39,7 +39,7 @@ class NavbarTop extends StatefulWidget implements PreferredSizeWidget {
   State<NavbarTop> createState() => _NavbarTopState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(54);
+  Size get preferredSize => const Size.fromHeight(RowContainer.paddingSize);
 }
 
 class _NavbarTopState extends State<NavbarTop> {
@@ -147,7 +147,7 @@ class BottomNavbar extends GetView<PageState>{
         child: Obx(()=>BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.onSecondary,
           type: BottomNavigationBarType.fixed,
-          unselectedItemColor:Theme.of(context).colorScheme.primary,
+          unselectedItemColor:Theme.of(context).colorScheme.secondary,
           selectedItemColor: Theme.of(context).colorScheme.primary,
           currentIndex: controller.index.value,
           onTap : controller.setIndex,
@@ -168,11 +168,10 @@ class BottomNavbar extends GetView<PageState>{
                 height : 18,
                 iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: CustomSvg(
+              activeIcon: const CustomSvg(
                 'navbar/home.svg',
                 width : 18,
                 height : 18,
-                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
@@ -183,11 +182,24 @@ class BottomNavbar extends GetView<PageState>{
                 height : 18,
                 iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: CustomSvg(
+              activeIcon: const CustomSvg(
                 'navbar/msg.svg',
                 width : 18,
                 height : 18,
-                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: '블록',
+              icon: CustomSvg(
+                'navbar/summarize.svg',
+                width : 18,
+                height : 18,
+                iconColor : Theme.of(context).colorScheme.secondary
+              ),
+              activeIcon: const CustomSvg(
+                'navbar/summarize.svg',
+                width : 18,
+                height : 18,
               ),
             ),
             BottomNavigationBarItem(
@@ -198,11 +210,10 @@ class BottomNavbar extends GetView<PageState>{
                 height :18,
                 iconColor : Theme.of(context).colorScheme.secondary
               ),
-              activeIcon: CustomSvg(
+              activeIcon: const CustomSvg(
                 'user/company.svg',
                 width : 18,
                 height : 18,
-                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
             BottomNavigationBarItem(
@@ -213,11 +224,10 @@ class BottomNavbar extends GetView<PageState>{
                 height : 18,
                 iconColor: Theme.of(context).colorScheme.secondary,
               ),
-              activeIcon: CustomSvg(
+              activeIcon: const CustomSvg(
                 'navbar/user.svg',
                 width : 24,
                 height : 18,
-                iconColor : Theme.of(context).colorScheme.onPrimaryFixed
               ),
             ),
           ],
@@ -263,14 +273,13 @@ class FeedBottomNavbar extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.onSecondary,
         type: BottomNavigationBarType.fixed,
         onTap : (int index)=>onTap(context,index),
-        items: [
+        items: const [
           BottomNavigationBarItem(
             label: '구독',
             icon: CustomSvg(
-              'navbar/noBorderAdd.svg',
+              'common/subscribe.svg',
               width : 18,
               height :18,
-              iconColor : Theme.of(context).colorScheme.secondary
             ),
           ),
           BottomNavigationBarItem(
@@ -279,7 +288,6 @@ class FeedBottomNavbar extends StatelessWidget {
               'navbar/summarize.svg',
               width : 18,
               height : 18,
-              iconColor : Theme.of(context).colorScheme.secondary
             ),
           ),
           BottomNavigationBarItem(
@@ -288,7 +296,6 @@ class FeedBottomNavbar extends StatelessWidget {
               'navbar/hashtag.svg',
               width : 18,
               height : 18,
-              iconColor : Theme.of(context).colorScheme.secondary
             ),
           ),
           BottomNavigationBarItem(
@@ -297,7 +304,6 @@ class FeedBottomNavbar extends StatelessWidget {
               'common/setting.svg',
               width : 18,
               height : 18,
-              iconColor : Theme.of(context).colorScheme.secondary
             ),
           ),
         ],

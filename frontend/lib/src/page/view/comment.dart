@@ -8,8 +8,7 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
-import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedrow.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -17,28 +16,26 @@ import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 
-class CommentList extends StatefulWidget {
+class CommentListPage extends StatefulWidget {
   final String url;
   final String? opt;
   final int page;
-  final bool? enableScroll;
-  const CommentList({super.key ,required this.url, required this.page , this.opt , this.enableScroll});
+  const CommentListPage({super.key ,required this.url, required this.page , this.opt});
   
   @override
-  State<CommentList> createState() => _CommentListState();
+  State<CommentListPage> createState() => _CommentListPageState();
 }
 
-class _CommentListState extends State<CommentList> {
+class _CommentListPageState extends State<CommentListPage> {
   Dio dio = Dio();
   final maxPage = 5;
   final TempFeed con = Get.put(TempFeed());
-  late final ScrollController _scrollController = ScrollController();
   int pageKey = 0;
 
   void _initLoad() async{
     String commentUrl = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/${widget.page}";
     String commentOpt = "maxSize=$maxPage";
-    ViewPageState.page.setComment(commentUrl,commentOpt);
+    PageState.page.setComment(commentUrl,commentOpt);
     //con.getCommentFirst(commentUrl,commentOpt);
   }
 
@@ -78,45 +75,32 @@ class _CommentListState extends State<CommentList> {
 
   @override
   Widget build(BuildContext context) {
-    bool enableScroll = widget.enableScroll??false;
-    PageUrl url = ViewPageState.page.comment.value;
-    return LayoutBuilder(
-      builder: (context,constraint) {
-        return CustomRefreshIndicator(
-          onRefresh: ()=>Future.sync(()=>{/*con.getCommentFirst(url.url,url.opt)*/}),
-          child: Obx((){
-              if (con.isFetching.value){
-                return const Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                );
-              } else if(con.commentList.isEmpty){
-                return const Text("댓글이 없어요..");
-              } else {
-                return ListView.builder(
-                  controller : _scrollController,
-                  physics : (enableScroll)?
-                  const AlwaysScrollableScrollPhysics()
-                  :const NeverScrollableScrollPhysics(),
-                  itemBuilder:(context, index) {
-                    return CommentRow(props: con.commentList[index], constraint: constraint);
-                  },
-                  itemCount: con.commentList.length,
-                );
-              }
-            }
-          )
-        );
-      }
-    );
+    if (con.isFetching.value){
+      return const SliverToBoxAdapter(
+        child: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+          ),
+        ),
+      );
+    } else if(con.commentList.isEmpty){
+      return const SliverToBoxAdapter(
+        child: Center(child: Text("댓글이 없어요.."))
+      );
+    } else {
+      return SliverList.builder(
+        itemBuilder:(context, index) {
+          return CommentRow(props: con.commentList[index]);
+        },
+        itemCount: con.commentList.length,
+      );
+    }
   }
 }
 
 class CommentRow extends StatefulWidget {
   final Comment props;
-  final BoxConstraints constraint;
-  const CommentRow({super.key ,required this.props , required this.constraint});
+  const CommentRow({super.key ,required this.props});
 
   @override
   State<CommentRow> createState() => _CommentRowState();
@@ -159,7 +143,7 @@ class _CommentRowState extends State<CommentRow> {
                       Row(
                         children: [
                           Text(
-                            "${"소속 없음"} |",
+                            "${"소속 없음"} | ",
                             style: TextStyle(
                               fontSize : 12,
                               color : Theme.of(context).colorScheme.secondary,
@@ -251,23 +235,22 @@ class _CommentRowState extends State<CommentRow> {
   }
 }
 
-class commentList extends StatefulWidget {
+class CommentListModal extends StatefulWidget {
   final int page;
-  const commentList({super.key , required this.page});
+  const CommentListModal({super.key , required this.page});
 
   @override
-  State<commentList> createState() => _commentListState();
+  State<CommentListModal> createState() => _CommentListModalState();
 }
 
-class _commentListState extends State<commentList> {
+class _CommentListModalState extends State<CommentListModal> {
   final CommentPageModel con = Get.put(CommentPageModel());
 
   @override
   Widget build(BuildContext context) {
     int page = widget.page;
-    PageUrl url = ViewPageState.page.comment.value;
+    PageUrl url = PageState.page.comment.value;
     final height = MediaQuery.of(context).size.height;
-    FocusNode nfocus = FocusNode();
     return GestureDetector(
       onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
       child: SafeArea(
@@ -279,11 +262,14 @@ class _commentListState extends State<commentList> {
               return Column(
                 children: [
                   Expanded(
-                    child: CommentList(
-                      url : url.url,
-                      opt : url.opt,
-                      page : page
-                      ,enableScroll: true
+                    child: CustomScrollView(
+                      slivers : [
+                        CommentListPage(
+                          url : url.url,
+                          opt : url.opt,
+                          page : page
+                        ),
+                      ]
                     ),
                   ),
                   Container(
@@ -294,7 +280,7 @@ class _commentListState extends State<commentList> {
                     ),
                     child: CustomWrite(
                       focus : false,
-                      callback: (content) async{
+                      onPressed: (content) async{
                         if (content.isNotEmpty){
                           await con.postComment({
                             'post_id': page,
@@ -318,11 +304,13 @@ class _commentListState extends State<commentList> {
 
 class CustomWrite extends StatefulWidget {
   final bool focus;
-  final Function? callback;
-
+  final Function? onPressed;
+  final String placeholder;
   const CustomWrite({super.key ,
   required this.focus,
-  required this.callback});
+  required this.onPressed,
+  this.placeholder = "댓글을 남겨주세요"
+  });
 
   @override
   State<CustomWrite> createState() => _CustomWriteState();
@@ -399,7 +387,7 @@ class _CustomWriteState extends State<CustomWrite> {
                       keyboardType: TextInputType.multiline,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "답글 남기기",
+                        hintText: widget.placeholder,
                         hintStyle : TextStyle(
                           color : Theme.of(context).colorScheme.secondary
                         )
@@ -418,7 +406,7 @@ class _CustomWriteState extends State<CustomWrite> {
                         color: Theme.of(context).colorScheme.onPrimaryFixed
                       ),
                     ),
-                    onPressed: () => widget.callback?.call(content),
+                    onPressed: () => widget.onPressed?.call(content),
                   ),
                 ),
               ],

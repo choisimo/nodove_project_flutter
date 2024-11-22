@@ -12,7 +12,7 @@ class InitViewModel implements Bindings{
     Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
     Get.create<UserInfoModel>(()=> UserInfoModel());
     Get.lazyPut<FeedImageModel>(()=>FeedImageModel());
-    Get.put<ViewPageState>(ViewPageState());
+    Get.put<PageState>(PageState(),permanent: true);
     Get.create<CateListModel>(()=> CateListModel());
     Get.create<TagListModel>(()=>TagListModel());
   }

@@ -14,7 +14,7 @@ class WriteCatePage extends StatelessWidget {
       actions : [
         NextBtn(
           displayText: "작성",
-          callback: (){
+          onPressed: (){
             
           }
         )

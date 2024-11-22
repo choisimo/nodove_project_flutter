@@ -113,12 +113,12 @@ class CustomSvg extends StatelessWidget {
   final String src;
   final double width;
   final double height;
-  final Color iconColor;
+  final Color? iconColor;
   const CustomSvg(this.src,{
     super.key, 
     this.width = 16,
     this.height = 16,
-    this.iconColor = Colors.black,
+    this.iconColor,
   });
 
   @override
@@ -127,10 +127,12 @@ class CustomSvg extends StatelessWidget {
       "assets/icons/$src",
       width: width,
       height : height,
-      colorFilter: ColorFilter.mode(
-        iconColor,
+      colorFilter: 
+      (iconColor != null)?
+      ColorFilter.mode(
+        iconColor!,
         BlendMode.srcIn
-      ),
+      ):const ColorFilter.mode(Colors.transparent, BlendMode.color),
     );
   }
 }

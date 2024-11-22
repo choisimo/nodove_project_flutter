@@ -50,7 +50,7 @@ class FeedRow extends StatelessWidget {
   
     return GestureDetector(
       onTap: ()=>
-        showCustomModal(context,commentList(page : feed.id)),
+        showCustomModal(context,CommentListModal(page : feed.id)),
       child: Container(
       width : maxwidth * 0.9,
       decoration: BoxDecoration(
@@ -122,7 +122,6 @@ class FeedRowBottom extends StatelessWidget {
                 'post/star-empty.svg',
                 width : iconSize,
                 height : iconSize,
-                iconColor: Theme.of(context).colorScheme.onPrimaryFixed
               ),
               const SizedBox(width:4),
               Text(
@@ -138,10 +137,8 @@ class FeedRowBottom extends StatelessWidget {
         IconButton(
           onPressed: (){},
           icon: CustomSvg(
-            'common/bookmark-empty.svg',
-            width : iconSize,
-            height : iconSize,
-            iconColor: Theme.of(context).colorScheme.onSurface,
+            'post/bookmark-empty.svg',
+            height : iconSize + 2,
           )
         ),
         IconButton(
@@ -158,7 +155,6 @@ class FeedRowBottom extends StatelessWidget {
             'post/share.svg',
             width : iconSize,
             height : iconSize,
-            iconColor: Theme.of(context).colorScheme.onSurface
           )
         ),
       ]
@@ -177,7 +173,7 @@ class FeedModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myid = UserState.page.id;
+    String myid = UserState.page.id.value;
   return Modal(
       widget : [
         const MenuTitle(title : '이 작성자' , key : Key("작성자 제목")),
@@ -319,13 +315,19 @@ class FeedContent extends StatelessWidget {
           }
         )
       ),
-      TagRow(
-        hashtags: feed.hashtags,
-        callback: (tag,index){
-          Get.toNamed("/tag/${Uri.encodeComponent(tag)}");
-        },
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 16.0),
+        child: TagRow(
+          hashtags: feed.hashtags,
+          callback: (tag,index){
+            Get.toNamed("/tag/${Uri.encodeComponent(tag)}");
+          },
+        ),
       ),
-      Html(data: feed.content),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Html(data: feed.content),
+      ),
       ],
     );
   }
@@ -363,19 +365,14 @@ class FeedTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding : const EdgeInsets.all(4),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style : const TextStyle(
-              fontSize : 18,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-        ],
+      child: Text(
+        title,
+        style : const TextStyle(
+          fontSize : 18,
+          fontWeight: FontWeight.bold
+        ),
       ),
     );
   }

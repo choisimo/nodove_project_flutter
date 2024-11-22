@@ -21,7 +21,7 @@ class NavbarTitle extends StatelessWidget {
         style : TextStyle(
           color : textColor??Theme.of(context).colorScheme.onPrimaryFixed,
           fontWeight: FontWeight.w900,
-          fontSize : fontSize??18,
+          fontSize : fontSize??20,
         )
       ),
     );
@@ -30,11 +30,11 @@ class NavbarTitle extends StatelessWidget {
 
 class BackBtn extends StatelessWidget {
   final String? displayText;
-  final Function? callback;
+  final Function? onPressed;
   const BackBtn({
     super.key,
     this.displayText,
-    this.callback,
+    this.onPressed,
   });
 
   @override
@@ -43,31 +43,28 @@ class BackBtn extends StatelessWidget {
       style: const ButtonStyle(
         overlayColor: WidgetStatePropertyAll(Colors.transparent),
       ),
-      onPressed: ()=>callback?.call(),
+      onPressed: ()=>onPressed?.call(),
       child : (displayText != null)?
       Text(
         displayText.toString(),
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           color : Theme.of(context).colorScheme.onPrimaryFixed
         ),
       )
-      :SvgPicture.asset(
-        'assets/icons/common/left.svg',
-        width : 18,
-        height : 18,
-        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
+      :const CustomSvg(
+        'common/left.svg',
       )
     );
   }
 }
 class NextBtn extends StatelessWidget {
   final String? displayText;
-  final Function? callback;
+  final Function? onPressed;
   const NextBtn({
     super.key,
     this.displayText,
-    this.callback,
+    this.onPressed,
   });
 
   @override
@@ -76,19 +73,16 @@ class NextBtn extends StatelessWidget {
     style: const ButtonStyle(
       overlayColor: WidgetStatePropertyAll(Colors.transparent),
     ),
-    onPressed: ()=>callback?.call(),
+    onPressed: ()=>onPressed?.call(),
     child : (displayText != null)?
     Text(
       displayText.toString(),
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 20,
         color : Theme.of(context).colorScheme.onPrimaryFixed
       ),
-    ):SvgPicture.asset(
-        'assets/icons/common/right.svg',
-        width : 18,
-        height : 18,
-        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onPrimaryFixed,BlendMode.srcIn),
+    ):const CustomSvg(
+        'common/right.svg',
       )
   );
   }
@@ -209,8 +203,8 @@ class NavbarCommonBtn extends StatelessWidget {
   const NavbarCommonBtn(this.src,{
     super.key,
     this.onClick,
-    this.width = 18,
-    this.height = 18,
+    this.width = 21,
+    this.height = 21,
     this.iconColor
   });
 
@@ -232,7 +226,7 @@ class NavbarCommonBtn extends StatelessWidget {
       src,
       width : width,
       height : height,
-      iconColor : iconColor??Theme.of(context).colorScheme.onPrimaryFixed,
+      iconColor : iconColor
     );
   }
 }

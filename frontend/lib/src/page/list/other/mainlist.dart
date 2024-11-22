@@ -5,7 +5,7 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/feed/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -47,7 +47,7 @@ class _FeedMainListState extends State<FeedMainList> {
       title : const NavbarTitle("홈"),
       actions : [
         NavbarCommonBtn(
-          "navbar/alert.svg",
+          "navbar/alert-empty.svg",
           onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const NotiPage())),
         )
       ]

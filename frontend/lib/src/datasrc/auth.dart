@@ -54,7 +54,7 @@ class AuthDataSrc{
   }
   
   Future<void> postLogin(Map<String,String> formData) async{  //유저 로그인 요청
-    final user = Get.put(UserState());
+    final UserState user = Get.find();
     try{
       final res = await dio.post(
         "/login",

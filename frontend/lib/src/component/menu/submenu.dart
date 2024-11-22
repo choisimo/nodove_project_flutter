@@ -48,10 +48,6 @@ class menuBtn extends StatelessWidget {
                   iconSrc!,
                   width : iconSize,
                   height : iconSize,
-                  colorFilter: ColorFilter.mode(
-                    iconColor??Theme.of(context).colorScheme.onSurface,
-                    BlendMode.srcIn
-                  ),
                 ): const SizedBox.shrink(),
                 const SizedBox(width : 8),
                 Container(

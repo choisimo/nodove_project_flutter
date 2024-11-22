@@ -88,7 +88,6 @@ class _ImgZoomViewState extends State<ImgZoomView> {
                       "assets/icons/common/close.svg",
                       width : 16,
                       height : 16,
-                      colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                     )
                   )
                 )
@@ -133,7 +132,6 @@ Widget imgZoomBottom(BuildContext context,{
               "assets/icons/post/star-empty.svg",
               width : 32 , height : 32,
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
             )
           ),
         ),
@@ -153,7 +151,6 @@ Widget imgZoomBottom(BuildContext context,{
               "assets/icons/post/share.svg",
               width : 32 , height : 32,
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
             )
           ),
         ),

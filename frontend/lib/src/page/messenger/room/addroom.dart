@@ -14,10 +14,11 @@ class AddRoomPage extends StatelessWidget {
     AddRoomModel con = Get.put(AddRoomModel());
     RoomListModel lcon = Get.put(RoomListModel());
     NavbarContent navbarOpt = NavbarContent(
+      leading: BackBtn(onPressed: ()=>Get.back()),
       actions: [
         NextBtn(
           displayText: "시작",
-          callback : () async{
+          onPressed : () async{
             final result = await con.addRoom();
             Get.back();
             if (result){

@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginMainPage> {
 
   void _checkToken() async{
     if(await token != null&&await cookie != null){
-        final user = Get.put(UserState());
+      final UserState user = Get.find();
 
       final res = await decoding(await token,await cookie);
       if (res['parsed'] != null){
