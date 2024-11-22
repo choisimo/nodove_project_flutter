@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 195.98 198.48">
-  <rect x="108.54" y="111.04" width="87.43" height="87.43" rx="25.64" ry="25.64"  fill="current" stroke="none"/>
-  <rect y="111.04" width="87.43" height="87.43" rx="25.64" ry="25.64"  fill="current" stroke="none"/>
-  <rect width="87.43" height="87.43" rx="25.64" ry="25.64"  fill="current" stroke="none"/>
-  <rect x="108.54" width="87.43" height="87.43" rx="25.64" ry="25.64"  fill="current" stroke="none"/>
+<svg id="_레이어_2" data-name="레이어 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.63 22.73">
+  <g id="_레이어_1-2" data-name="레이어 1">
+    <path d="M22.32,22.73H12.56c-.17,0-.31-.14-.31-.31V8.89c0-.17,.14-.31,.31-.31h9.76c.17,0,.31,.14,.31,.31v13.53c0,.17-.14,.31-.31,.31Z" style="fill: #1534b1;"/>
+    <path d="M22.32,7.04H12.56c-.17,0-.31-.14-.31-.31V.31c0-.17,.14-.31,.31-.31h9.76c.17,0,.31,.14,.31,.31V6.72c0,.17-.14,.31-.31,.31Z" style="fill: #0487ff;"/>
+    <path d="M10.07,14.16H.31c-.17,0-.31-.14-.31-.31V.31c0-.17,.14-.31,.31-.31H10.07c.17,0,.31,.14,.31,.31V13.84c0,.17-.14,.31-.31,.31Z" style="fill: #1534b1;"/>
+    <path d="M10.07,22.73H.31c-.17,0-.31-.14-.31-.31v-6.41c0-.17,.14-.31,.31-.31H10.07c.17,0,.31,.14,.31,.31v6.41c0,.17-.14,.31-.31,.31Z" style="fill: #0487ff;"/>
+  </g>
 </svg>

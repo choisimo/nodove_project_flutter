@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132.08 219.13">
-  <path d="M124.37,54.55c4.4,0,7.74-4,6.92-8.33C126.37,20.13,98.91,0,66.04,0h0C33.17,0,5.71,20.13,.79,46.22c-.82,4.33,2.52,8.33,6.92,8.33H124.37Z" fill="current"/>
-  <path d="M0,80.74v70.64c0,5.08,1.96,9.96,5.47,13.62,15.35,16.02,30.69,32.04,46.04,48.06,7.72,8.06,20.59,8.1,28.36,.08,15.55-16.04,31.1-32.08,46.65-48.13,3.56-3.67,5.55-8.59,5.55-13.71V80.74c0-3.62-2.93-6.55-6.55-6.55H6.55c-3.62,0-6.55,2.93-6.55,6.55Z" fill="current"/>
+<svg id="_레이어_2" data-name="레이어 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.41 22.41">
+  <g id="_레이어_1-2" data-name="레이어 1">
+    <g>
+      <rect x="1.18" y="1.11" width="6.72" height="6.85" rx=".63" ry=".63" transform="translate(-1.88 4.54) rotate(-45)" style="fill: #1534b1;"/>
+      <rect x="8.81" y="3.94" width="3.36" height="17.87" transform="translate(-6.03 11.19) rotate(-45.01)" style="fill: #0487ff;"/>
+      <rect x="11.19" y="1.56" width="3.36" height="17.87" transform="translate(-3.65 12.17) rotate(-45)" style="fill: #0487ff;"/>
+      <rect x="10" y="2.75" width="3.36" height="17.87" transform="translate(-4.84 11.68) rotate(-45)" style="fill: #1534b1;"/>
+      <rect x=".88" y="3.46" width="6.72" height="1.56" transform="translate(-1.76 4.24) rotate(-45)" style="fill: #0487ff;"/>
+      <polygon points="15.62 20.37 22.41 22.41 20.37 15.62 15.62 20.37" style="fill: #1534b1;"/>
+    </g>
+  </g>
 </svg>
