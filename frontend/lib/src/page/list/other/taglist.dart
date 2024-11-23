@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -24,11 +27,21 @@ class _TagListPageState extends State<TagListPage>{
   final storage = const FlutterSecureStorage();
   late bool collected = false;
   final int size = 10;
+  int pageKey = 0;
+  TempFeed ccon = Get.put(TempFeed());
 
   @override
   void initState() {
     _checkcollected();
     super.initState();
+  }
+
+  void _initLoad() async{
+    String url = "${Url.apiUrl}${Url.tagFeed}/$tag";
+    String opt = "pageSize=15";
+    pageKey = 0;
+    PageState.page.setView(url, opt);
+    //con.getFeedFirst(url,opt);
   }
 
   void _checkcollected() async{
@@ -94,19 +107,19 @@ class _TagListPageState extends State<TagListPage>{
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Column(
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "#해시태그",
-                            style : TextStyle(
-                              fontSize: 18,
+                            "#$tag",
+                            style : const TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                             )
                           ),
                           Text(
-                            '"#해시태그를 공유한 피드들입니다"',
+                            '#$tag 해시태그를 공유한 피드들입니다',
                           ),
                         ],
                       ),
@@ -132,10 +145,10 @@ class _TagListPageState extends State<TagListPage>{
             ),
           ),
           FeedList(
-            key : const Key("tag-page-key"),
+            key : Key("tag-page-key-$tag"),
             collected: collected,
-            url : "${Url.apiUrl}${Url.tagFeed}/$tag",
-            opt : "pageSize=15",
+            feed: ccon.tagList[tag]??[Feed.defaultState()],
+            onFeedClick: (id)=>Get.to(()=>FeedPage(feed: ccon.tagList[tag]![id],)),
           ),
         ],
       ),

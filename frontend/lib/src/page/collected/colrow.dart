@@ -48,37 +48,41 @@ class CollectedRow extends StatelessWidget {
 
 class CollectedVRow extends StatelessWidget {
   final Feed feed;
+  final Function(int page)? onFeedClick;
 
-  const CollectedVRow({super.key, required this.feed});
+  const CollectedVRow({super.key, required this.feed,this.onFeedClick});
 
   @override
   Widget build(BuildContext context) {
     final List<dynamic> imageLinks = feed.imageLinks;
-    double size = 180;
+    final int defaultIndex = feed.defaultIndex;
+    double width = 200;
+    double height = 240;
   
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: ()=>
-        showCustomModal(context,CommentListModal(page : feed.id)),
+      onTap: ()=>onFeedClick?.call(feed.id),
       child: Container(
-        width : size,
-        height : size,
-        margin: const EdgeInsets.all(4),
-        padding : const EdgeInsets.all(8),
+        width : width,
+        height : height,
+        margin: const EdgeInsets.all(8),
         child: Column(
           children: [
-            AspectRatio(
-              aspectRatio: 16/9,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: RowContainer.radius,
-                  image: DecorationImage(
-                    fit : BoxFit.cover,
-                    image: 
-                    customImgProvider(
-                      (imageLinks.isNotEmpty)?imageLinks[0]:"",
+            SizedBox(
+              width: width * 0.9,
+              child: AspectRatio(
+                aspectRatio : 16/9,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: RowContainer.radius,
+                    image: DecorationImage(
+                      fit : BoxFit.cover,
+                      image: 
+                      customImgProvider(
+                        (imageLinks.isNotEmpty)?imageLinks[defaultIndex]:"",
+                      )
                     )
-                  )
+                  ),
                 ),
               ),
             ),

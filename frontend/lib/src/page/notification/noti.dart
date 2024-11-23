@@ -196,7 +196,7 @@ class NotiRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final NotiListModel con = Get.put(NotiListModel());
     return GestureDetector(
-      onTap: ()=>Get.to(()=>FeedPage(page: notification.postId,)),
+      //onTap: ()=>Get.to(()=>FeedPage(page: notification.postId,)),
       onLongPress: (){
         showModalBottomSheet(
           useRootNavigator : true,

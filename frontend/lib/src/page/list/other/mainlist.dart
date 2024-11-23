@@ -5,8 +5,13 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/cate/cate.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
+import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
+import 'package:nodove_flutter/src/page/view/comment.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 
@@ -36,9 +41,8 @@ class FeedMainList extends StatefulWidget {
 
 class _FeedMainListState extends State<FeedMainList> {
   List<String> tagList = [
-    '게시글 테스트',
-    '여행',
-    "태그"
+    '토목공학',
+    '건설사',
   ];
   int pageSize = 3;
   @override
@@ -61,6 +65,9 @@ class _FeedMainListState extends State<FeedMainList> {
         ),
         const SliverToBoxAdapter(
           child: SearchPart(),
+        ),
+        const SliverToBoxAdapter(
+          child: Expanded(child: MainCommList()),
         ),
         SliverToBoxAdapter(
           child : PartContainer(
@@ -85,6 +92,55 @@ class _FeedMainListState extends State<FeedMainList> {
   }
 }
 
+class MainCommList extends StatefulWidget {
+  const MainCommList({super.key});
+
+  @override
+  State<MainCommList> createState() => _MainCommListState();
+}
+
+class _MainCommListState extends State<MainCommList> {
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+    viewportFraction: 1.0
+  );
+  TempFeed con = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return  PartContainer(
+      children: [
+        TitleRow(
+          title : "커리어블록 커뮤니티",
+          onTap : ()=>Get.to(()=>const CatePage(page: 0))
+        ),
+        SizedBox(
+          height : 52,
+          child:  MinimalVList(
+            list : categories,
+            onClick: (index)=>pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOutCubic)
+          ),
+        ),
+        Container(
+          height : 200,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+            border: Border(
+              bottom: rowBorderLine()
+            ),
+          ),
+          child: PageView(
+            controller: pageController,
+            children: con.comm.map((e) => 
+              FeedContent(feed: e[0])).toList(),
+            )
+        )
+      ]
+    );
+  }
+}
+
 class MainTagList extends StatefulWidget {
   final List<String> tagList;
   const MainTagList({super.key,required this.tagList});
@@ -94,11 +150,24 @@ class MainTagList extends StatefulWidget {
 }
 
 class _MainTagListState extends State<MainTagList> {
+  TempFeed con = Get.find();
   PageController pageController = PageController(
     initialPage: 0,
     keepPage: true,
     viewportFraction: 1.0
   );
+
+  void _initLoad() async{
+    /*String url = "${Url.apiUrl}/getPostListByTag/${Uri.encodeComponent(widget.tagList[index])}";
+    String opt = "pageSize=3";
+    con.getFeedFirst(url,opt);*/
+  }
+  
+  @override
+  void initState(){
+    _initLoad();
+    super.initState();
+  }
   
   int pageSize = 3;
   @override
@@ -126,11 +195,11 @@ class _MainTagListState extends State<MainTagList> {
           ),
           child: PageView.builder(
             controller: pageController,
-            itemCount: widget.tagList.length,
+            itemCount: con.tagList.length,
             itemBuilder: (context,index){
               return CollectedVList(
-                url: "${Url.apiUrl}/getPostListByTag/${Uri.encodeComponent(widget.tagList[index])}",
-                opt: "pageSize=3",
+                feed : con.tagList[widget.tagList[index]]!, 
+                onFeedClick: (id)=>Get.to(()=>FeedPage(feed: con.tagList[widget.tagList[index]]!.singleWhere((el)=>el.id == id))),
               );
             }
           ),

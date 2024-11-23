@@ -1,5 +1,6 @@
 
 import 'package:get/get.dart';
+import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -15,5 +16,6 @@ class InitViewModel implements Bindings{
     Get.put<PageState>(PageState(),permanent: true);
     Get.create<CateListModel>(()=> CateListModel());
     Get.create<TagListModel>(()=>TagListModel());
+    Get.create<TempFeed>(()=>TempFeed());
   }
 }

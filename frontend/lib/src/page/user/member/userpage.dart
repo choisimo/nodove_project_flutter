@@ -52,6 +52,14 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
     vsync: this,
     initialIndex: 0,
   );
+  int size = 15;
+  int pageKey = 0;
+  List<Widget> tabList = const [
+    Tab(text: "홈"),
+    Tab(text: "피드"),
+    Tab(text: "구독"),
+    Tab(text: "활동"),
+  ];
 
   @override
   void initState() {
@@ -66,15 +74,16 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
     _con.getUserInfo(widgetId??myid);*/
   }
 
+  void _initLoad() async{
+    String url = "${Url.apiUrl}${Url.userFeed}/${_con.userInfo.value.userId}";
+    String opt = "pageSize=$size";
+    pageKey = 0;
+    //con.getFeedFirst(url,opt);
+  }
+  
+
   @override
   Widget build(BuildContext context) {
-    int size = 15;
-    List<Widget> tabList = const [
-      Tab(text: "홈"),
-      Tab(text: "피드"),
-      Tab(text: "구독"),
-      Tab(text: "활동"),
-    ];
     return Container(
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
@@ -163,8 +172,7 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
                     slivers: [
                       FeedList(
                         collected: true,
-                        url : "${Url.apiUrl}${Url.userFeed}/${user.userId}",
-                        opt : "pageSize=$size",
+                        feed : _con.userContent
                       ),
                       const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
                     ]
@@ -342,7 +350,7 @@ Widget userInfoWithProfile(BuildContext context, User info){
 Widget userButtons(BuildContext context,User info){
   final myid = UserState.page.id;
   return Obx((){
-  if (info.userId.obs == myid){
+  if (info.userId.obs == myid||true){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,

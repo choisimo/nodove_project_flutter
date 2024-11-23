@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget{
       getPages: [
         GetPage(name: "/", page: ()=>const MainPage()),
         GetPage(name: "/list/:page" , page : ()=>const FeedListPage()),
-        GetPage(name : "/view/:page" , page : ()=>const FeedPage()),
+        //GetPage(name : "/view/:page" , page : ()=>const FeedPage()),
         GetPage(name : "/tag/:tag" , page : ()=>const TagListPage())
       ],
       initialBinding: InitViewModel(),

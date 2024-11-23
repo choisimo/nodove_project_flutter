@@ -20,10 +20,12 @@ import 'package:shimmer/shimmer.dart';
 
 class FeedPage extends StatefulWidget{
   final int? page;
+  final Feed feed;
   final String url = "${Url.apiUrl}${Url.feedPage}";
   const FeedPage({
     super.key,
     this.page,
+    required this.feed
   });
 
   @override
@@ -74,6 +76,7 @@ class _FeedPageState extends State<FeedPage>{
       body : FeedView(
         page : page,
         url : widget.url,
+        feed : widget.feed
       )
     );
   }
@@ -81,11 +84,12 @@ class _FeedPageState extends State<FeedPage>{
 class FeedView extends StatefulWidget {
   final int page;
   final String url;
-
+  final Feed feed;
   const FeedView({
     super.key ,
     required this.page,
-    required this.url
+    required this.url,
+    required this.feed,
   });
   
   @override
@@ -122,7 +126,7 @@ class _FeedViewState extends State<FeedView> {
       color : Theme.of(context).colorScheme.onPrimary,
     );
     return Obx((){
-        final feed = vcon.content.value;
+        final Feed feed = widget.feed;
         PageUrl url = PageState.page.comment.value;
         if (vcon.isFetching.isFalse){
           return CustomRefreshIndicator(
@@ -143,10 +147,10 @@ class _FeedViewState extends State<FeedView> {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Carousel(imageLinks: feed.imageLinks, page: feed.id),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Carousel(imageLinks: feed.imageLinks, page: feed.id),
+                    child: 
+                    (feed.imageLinks.isNotEmpty)?
+                    Carousel(imageLinks: feed.imageLinks, page: feed.id,mode: "view",)
+                    :const SizedBox.shrink(),
                   ),
                   SliverToBoxAdapter(
                     child: pageUserInfo(

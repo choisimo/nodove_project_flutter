@@ -5,12 +5,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
+import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
+import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 
@@ -25,21 +29,30 @@ class CommuListPage extends StatefulWidget{
   State<CommuListPage> createState() => _CommuListPageState();
 }
 
+final List<String> categories = [
+  "공기업" , "사기업" , "대외활동"
+];
+
 class _CommuListPageState extends State<CommuListPage>{
   final storage = const FlutterSecureStorage();
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+    viewportFraction: 1.0
+  );
   late bool collected = false;
   int size = 10;
   bool search = false;
   TempFeed ccon = Get.put(TempFeed());
   final int cateid = 16;
-  final List<String> categories = [
-    "전체" , "공기업" , "인턴십" , "커리어" , "대외활동"
-  ];
+  
+  int pageKey = 0;
 
   @override
   void initState() {
     _checksettings();
     refresh();
+    _initLoad();
     super.initState();
   }
 
@@ -56,6 +69,15 @@ class _CommuListPageState extends State<CommuListPage>{
     );*/
   }
 
+  void _initLoad() async{
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    String url = "${Url.apiUrl}${Url.feedList}";
+    String opt = "pageSize=$size&categoryId=$cateid";
+    pageKey = 0;
+    PageState.page.setView(url, opt);
+    //con.getFeedFirst(url,opt);
+  }
+
   void _checksettings() async{
     String? c = await storage.read(key: 'collectedView');
     String? s = await storage.read(key: 'ContentSize');
@@ -68,7 +90,7 @@ class _CommuListPageState extends State<CommuListPage>{
   @override
   Widget build(BuildContext context){
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    
+    int page = 0;
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
       title : const NavbarTitle("블록"),
@@ -137,17 +159,32 @@ class _CommuListPageState extends State<CommuListPage>{
                 widget: MinimalVList(
                   list : categories,
                   onClick: (index){
-
+                    pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOutCubic);
                   }
                 )
               ),
             ),
-            FeedList(
-              collected: collected,
-              url : "${Url.apiUrl}${Url.feedList}",
-              opt : "pageSize=$size&categoryId=$cateid",
-            ),
-            const SliverPadding(padding: EdgeInsets.all(32))
+            SliverFillRemaining(
+              child: PageView(
+                controller: pageController,
+                children: ccon.comm.map((e) => 
+                  CustomScrollView(
+                    slivers: [
+                      FeedList(
+                        collected: collected,
+                        feed : e,
+                        shortContent: false,
+                        onFeedClick: (id)=>showCustomModal(
+                          context,
+                          CommentListModal(page: id,feed: e.singleWhere((el)=>el.id == id,orElse: ()=>Feed.defaultState()))
+                        ),
+                      ),
+                      const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
+                    ],
+                  )).toList(),
+                )
+                
+              ),
           ],
         ),
       ),

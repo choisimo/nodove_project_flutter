@@ -7,11 +7,13 @@ import 'package:nodove_flutter/src/component/media/zoom.dart';
 class Carousel extends StatefulWidget {
   final List<dynamic> imageLinks;
   final int page;
+  final String? mode;
 
   const Carousel({
     super.key,
     required this.imageLinks,
     required this.page,
+    this.mode = "view"
   });
 
   @override
@@ -58,7 +60,7 @@ class _CarouselState extends State<Carousel> {
                 onScaleStart: (detail){
                   if (!error){
                     Get.to(
-                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key),
+                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key ,  mode : widget.mode),
                       fullscreenDialog: true
                     );
                   }
@@ -66,13 +68,13 @@ class _CarouselState extends State<Carousel> {
                 onTap: (){
                   if (!error){
                     Get.to(
-                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key),
+                      ()=>ImgZoomView(page : page , imageLinks: imageLinks, index: i.key , mode : widget.mode),
                       fullscreenDialog: true
                     );
                   }
                 },
                 child : Hero(
-                  tag : "$page-${imageLinks[i.key]}",
+                  tag : "$page-${widget.mode}-${imageLinks[i.key]}",
                   child: CustomImage(
                     imageLinks[i.key],
                     fit : BoxFit.cover,

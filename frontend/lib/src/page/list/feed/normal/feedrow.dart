@@ -11,6 +11,7 @@ import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -41,18 +42,26 @@ child: Text(
  */
 class FeedRow extends StatelessWidget {
   final Feed feed;
+  final bool shortContent;
+  final Function(int id)? onFeedClick;
+  final Function(int id)? onCommentClick;
 
-  const FeedRow({super.key, required this.feed});
+  const FeedRow({
+    super.key,
+    required this.feed,
+    this.onCommentClick,
+    this.onFeedClick,
+    this.shortContent = true
+  });
 
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
   
     return GestureDetector(
-      onTap: ()=>
-        showCustomModal(context,CommentListModal(page : feed.id)),
+      onTap: ()=>onFeedClick?.call(feed.id),
       child: Container(
-      width : maxwidth * 0.9,
+      width : maxwidth,
       decoration: BoxDecoration(
         color : Theme.of(context).colorScheme.onPrimary,
         border: Border(
@@ -61,31 +70,36 @@ class FeedRow extends StatelessWidget {
       ),
       child: Column(
         children:[
-          Carousel(imageLinks : feed.imageLinks,page : feed.id),
-          FeedContent(feed: feed,),
+          (feed.imageLinks.isNotEmpty)?
+          Carousel(imageLinks : feed.imageLinks,page : feed.id,mode: "list")
+          :const SizedBox.shrink(),
+          FeedContent(feed: feed,shortContent: shortContent,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              FeedRowBottom(feed : feed),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "좋아요 ${feed.likeCount} | 댓글 ${feed.commentCount}",
-                  style : TextStyle(
-                    color: Theme.of(context).colorScheme.secondary
-                  )
+              FeedRowBottom(feed : feed,borderRadius: RowContainer.radiusV,),
+              GestureDetector(
+                onTap: ()=>onCommentClick?.call(feed.id),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "좋아요 ${feed.likeCount} | 댓글 ${feed.commentCount}",
+                    style : TextStyle(
+                      color: Theme.of(context).colorScheme.secondary
+                    )
+                  ),
                 ),
               ),
             ],
           ),
-          Container(
+          /*Container(
             width : double.infinity,
             height : 0.5,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onSecondary
             ),
-          )
+          )*/
         ],
       ),
     ));
@@ -103,61 +117,66 @@ class FeedRow extends StatelessWidget {
 class FeedRowBottom extends StatelessWidget {
   final Feed feed;
   final double iconSize;
+  final double borderRadius;
   const FeedRowBottom({
     super.key,
     required this.feed,
     this.iconSize = 16,
+    this.borderRadius = 0.0
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children : <Widget>[
-        TextButton(
-          onPressed: (){},
-          child: Row(
-            children: [
-              CustomSvg(
-                'post/star-empty.svg',
-                width : iconSize,
-                height : iconSize,
-              ),
-              const SizedBox(width:4),
-              Text(
-                "${feed.likeCount}",
-                style : TextStyle(
-                  fontSize : 16,
-                  color: Theme.of(context).colorScheme.onSurface
-                )
-              ),
-            ]
-          )
-        ),
-        IconButton(
-          onPressed: (){},
-          icon: CustomSvg(
-            'post/bookmark-empty.svg',
-            height : iconSize + 2,
-          )
-        ),
-        IconButton(
-          onPressed: (){
-            showModalBottomSheet(
-              useRootNavigator: true,
-              context: context,
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              builder: (BuildContext context){
-                return ShareModal(url : "${Url.clientList}?page=$feed.id");
-            });
-          },
-          icon: CustomSvg(
-            'post/share.svg',
-            width : iconSize,
-            height : iconSize,
-          )
-        ),
-      ]
+    return Container(
+      height : 42,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children : <Widget>[
+          TextButton(
+            onPressed: (){},
+            child: Row(
+              children: [
+                CustomSvg(
+                  'post/star.svg',
+                  width : iconSize,
+                  height : iconSize,
+                ),
+                const SizedBox(width:4),
+                Text(
+                  "${feed.likeCount}",
+                  style : TextStyle(
+                    fontSize : 16,
+                    color: Theme.of(context).colorScheme.onSurface
+                  )
+                ),
+              ]
+            )
+          ),
+          IconButton(
+            onPressed: (){},
+            icon: CustomSvg(
+              'post/bookmark.svg',
+              height : iconSize + 2,
+            )
+          ),
+          IconButton(
+            onPressed: (){
+              showModalBottomSheet(
+                useRootNavigator: true,
+                context: context,
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                builder: (BuildContext context){
+                  return ShareModal(url : "${Url.clientList}?page=$feed.id");
+              });
+            },
+            icon: CustomSvg(
+              'post/share.svg',
+              width : iconSize,
+              height : iconSize,
+            )
+          ),
+        ]
+      ),
     );
   }
 }
@@ -252,11 +271,13 @@ class Profile extends StatelessWidget {
 
 class FeedContent extends StatelessWidget {
   final Feed feed;
-  const FeedContent({super.key,required this.feed});
+  final bool shortContent;
+  const FeedContent({super.key,required this.feed,this.shortContent = true});
 
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
+    final maxHeight = MediaQuery.of(context).size.height;
 
     return Column(
       children: [
@@ -324,10 +345,34 @@ class FeedContent extends StatelessWidget {
           },
         ),
       ),
-      Padding(
+      Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Html(data: feed.content),
+        constraints: BoxConstraints(
+          minHeight: 32,
+          maxHeight: (shortContent)?maxHeight * 0.1:double.infinity,
+        ),
+        child : Html(data: feed.content),
       ),
+      (shortContent)?
+      Container(
+        height : 32,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.onPrimary,
+              offset: const Offset(-4, -4),
+              blurRadius: 10,
+              spreadRadius: 10
+            )
+          ],
+        ),
+        child: Center(child: Text(
+          "자세히 보기",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary
+          ),
+        )),
+      ):const SizedBox.shrink()
       ],
     );
   }

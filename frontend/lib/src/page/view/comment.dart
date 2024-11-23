@@ -90,9 +90,9 @@ class _CommentListPageState extends State<CommentListPage> {
     } else {
       return SliverList.builder(
         itemBuilder:(context, index) {
-          return CommentRow(props: con.commentList[index]);
+          return CommentRow(props: con.commComment[widget.page][index]);
         },
-        itemCount: con.commentList.length,
+        itemCount: con.commComment[widget.page].length,
       );
     }
   }
@@ -118,7 +118,7 @@ class _CommentRowState extends State<CommentRow> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Profile(profile: "https://file.career-block.com/attach/images/logo.jpg", width: 42, height: 42),
+          const Profile(profile: "", width: 42, height: 42),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +237,8 @@ class _CommentRowState extends State<CommentRow> {
 
 class CommentListModal extends StatefulWidget {
   final int page;
-  const CommentListModal({super.key , required this.page});
+  final Feed? feed;
+  const CommentListModal({super.key , required this.page , this.feed});
 
   @override
   State<CommentListModal> createState() => _CommentListModalState();
@@ -264,6 +265,9 @@ class _CommentListModalState extends State<CommentListModal> {
                   Expanded(
                     child: CustomScrollView(
                       slivers : [
+                        SliverToBoxAdapter(
+                          child: (widget.feed != null)?FeedContent(feed: widget.feed!,shortContent: false,):const SizedBox.shrink(),
+                        ),
                         CommentListPage(
                           url : url.url,
                           opt : url.opt,

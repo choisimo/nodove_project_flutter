@@ -212,8 +212,8 @@ class _CateRowState extends State<CateRow> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Profile(
-                profile: "https://top.jbnu.ac.kr/sites/archinst/atchmnfl/bbs/5131/thumbnail/temp_1707368024381100.png",
+              Profile(
+                profile: cate.categoryImage??"",
                 width: 42,
                 height: 42
               ),
@@ -418,28 +418,3 @@ class CateRowSkel extends StatelessWidget {
     );
   }
 }
-
-class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-    SliverAppBarDelegate(this._tabBar);
-
-    final TabBar _tabBar;
-
-    @override
-    double get minExtent => _tabBar.preferredSize.height;
-    @override
-    double get maxExtent => _tabBar.preferredSize.height;
-
-    @override
-    Widget build(
-        BuildContext context, double shrinkOffset, bool overlapsContent) {
-      return Container(
-        color : Theme.of(context).colorScheme.onPrimary,
-        child: _tabBar,
-      );
-    }
-
-    @override
-    bool shouldRebuild(SliverAppBarDelegate oldDelegate) {
-      return false;
-    }
-  }

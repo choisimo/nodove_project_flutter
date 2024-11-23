@@ -15,6 +15,7 @@ class Feed{
   final dynamic commentCount;
   final List<dynamic> hashtags;
   final List<dynamic> imageLinks;
+  final int defaultIndex;
   final bool private;
 
   Feed({
@@ -33,6 +34,7 @@ class Feed{
     this.commentCount = 0,
     required this.hashtags,
     required this.imageLinks,
+    this.defaultIndex = 0,
     required this.private,
   });
 
