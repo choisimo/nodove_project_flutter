@@ -9,7 +9,6 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/notification/notisetting.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
-import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';

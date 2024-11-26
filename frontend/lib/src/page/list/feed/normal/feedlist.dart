@@ -12,7 +12,6 @@ import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
-import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';

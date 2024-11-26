@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/cate.dart';

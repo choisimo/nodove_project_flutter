@@ -9,11 +9,9 @@ import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
-import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:nodove_flutter/state/url.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

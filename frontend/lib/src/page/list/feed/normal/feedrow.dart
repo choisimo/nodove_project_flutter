@@ -10,8 +10,6 @@ import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/component/menu/submenu.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
-import 'package:nodove_flutter/src/page/view/comment.dart';
-import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -127,7 +125,7 @@ class FeedRowBottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height : 42,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

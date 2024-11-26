@@ -3,7 +3,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/setting.dart';
-import 'package:nodove_flutter/state/color.dart';
 
 class FeedCommuSettingPage extends StatelessWidget {
   const FeedCommuSettingPage({super.key});

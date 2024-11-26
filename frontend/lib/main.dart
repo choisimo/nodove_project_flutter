@@ -14,7 +14,6 @@ import 'package:nodove_flutter/src/page/recruit/main.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
-import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/vmodel/binding.dart';
 import 'package:nodove_flutter/state/color.dart';

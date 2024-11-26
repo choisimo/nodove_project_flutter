@@ -9,7 +9,7 @@ class MinimalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle nicknameStyle = TextStyle(
+    TextStyle nicknameStyle = const TextStyle(
       fontSize : 12,
     );
     return Container(
