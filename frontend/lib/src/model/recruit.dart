@@ -1,27 +1,27 @@
 
+import 'package:nodove_flutter/src/model/user.dart';
+
 class RecruitFeed{
   String id;
   String title;
-  List<dynamic> images;
+  List<dynamic> imageLinks;
   String? content;
   String url;
   String createdAt;
   String? updatedAt;
-  String from;
   String to;
   List<dynamic> hashtags;
-  List<dynamic> region;
+  List<Pos> region;
   Company user;
 
   RecruitFeed({
     required this.id,
     required this.title,
-    this.images = const [],
+    this.imageLinks = const [],
     this.content = "",
     required this.url,
     required this.createdAt,
     this.updatedAt,
-    required this.from,
     required this.to,
     required this.user,
     this.hashtags = const [],
@@ -34,26 +34,32 @@ class RecruitFeed{
     return RecruitFeed(
       id : json['_id'],
       title : json['title'],
-      images : json['images'],
+      imageLinks : json['imageLinks'],
       content : json['content'],
       url : json['url'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
-      from: json['from'],
       to: json['to'],
       hashtags: json['tag'],
-      region: json['region'],
+      region: json['region'].map<Pos>((a)=>Pos(
+        lat: a['lat'],
+        lon: a['lon'],
+        name : a['name']
+      )).toList(),
       user: Company(
         id : user['_id'],
         name : user['name'],
-        userId : user['userId'],
         rating : user['rating'],
         profile : user['profile'],
         createdAt: user['createdAt'],
         founded: user['founded'],
+        headcount : user['headcount'],
+        header : user['header'],
+        description: user['description'],
         pos: Pos(
           lat: pos['lat'],
-          long: pos['long']
+          lon: pos['long'],
+          name : pos['name']
         ),
       )
     );
@@ -63,26 +69,31 @@ class RecruitFeed{
     return RecruitFeed(
       id : "",
       title : "",
-      images : [],
+      imageLinks : [],
       content : "",
       url : "",
       createdAt: "",
       updatedAt: "",
-      from: "",
       to : "",
       hashtags: [],
-      region: [],
+      region: [
+        Pos(
+          lat: 0,
+          lon: 0,
+          name : ""
+        )
+      ],
       user: Company(
         id : "",
         name : "",
         rating : 0,
-        userId : "",
         profile : "",
         createdAt: "",
         founded: "",
         pos: Pos(
           lat: 0,
-          long: 0,
+          lon: 0,
+          name : ""
         ),
       )
     );
@@ -91,11 +102,13 @@ class RecruitFeed{
 
 class Pos{
   double lat;
-  double long;
+  double lon;
+  String name;
 
   Pos({
     required this.lat,
-    required this.long
+    required this.lon,
+    this.name = ""
   });
 }
 
@@ -104,19 +117,25 @@ class Company{
   String name;
   int rating;
   String? profile;
-  String userId;
   Pos pos;
   String createdAt;
   String founded;
+  int headcount;
+  String header;
+  String description;
+  List<User> editor;
 
   Company({
     required this.id,
     required this.name,
     required this.rating,
-    required this.userId,
     this.profile = "/asset/images/logo.png",
     required this.pos,
     required this.createdAt,
-    required this.founded
+    required this.founded,
+    this.description = "",
+    this.headcount = 0,
+    this.header = "",
+    this.editor = const [],
   });
 }

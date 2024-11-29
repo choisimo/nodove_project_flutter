@@ -8,9 +8,11 @@ import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
+import 'package:nodove_flutter/src/page/recruit/view.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/src/vmodel/vrecruit.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -23,7 +25,7 @@ class RecruitListPage extends StatefulWidget {
 }
 
 class _RecruitListPageState extends State<RecruitListPage> {
-  RecruitListModel con = Get.put(RecruitListModel());
+  RecruitModel con = Get.put(RecruitModel());
   final ScrollController _scrollController = ScrollController();
   int pageKey = 0;
   int size = 15;
@@ -70,7 +72,12 @@ class _RecruitListPageState extends State<RecruitListPage> {
           physics: const AlwaysScrollableScrollPhysics(),
           slivers : [
             SliverAppBar(
+              centerTitle: false,
               title : const NavbarTitle("채용중",),
+              leading : BackBtn(
+                onPressed: ()=>Navigator.of(context).pop(),
+              ),
+              automaticallyImplyLeading: false,
               actions : [
                 NavbarCommonBtn(
                   "navbar/search.svg",
@@ -156,75 +163,73 @@ class FeedRow extends StatelessWidget {
       fontSize: 14,
       color: Theme.of(context).colorScheme.secondary
     );
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color : Theme.of(context).colorScheme.onPrimary,
-        border: Border.symmetric(horizontal: rowBorderLine())
-      ),
-      child : Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(
-                feed.title,
-                style : RowTextStyle.title
-              ),
-              const SizedBox(width : 4),
-              Text(
-                "${feed.region.first.split(" ")[0]}${(feed.region.length>1)?
-                " 외 ${feed.region.length - 1}곳"
-                :""}",
-                style : idStyle
-              ),
-            ],
-          ),
-          TagRow(
-            hashtags: feed.hashtags,
-          ),
-          SizedBox(
-            child :Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      feed.user.name,
-                      style : RowTextStyle.userId
-                    ),
-                    const SizedBox(width : 4),
-                    Text(
-                      "@${feed.user.userId}",
-                      style : idStyle
-                    ),
-                  ],
-                ),
-              ],
-            )
-          ),
-          Container(
-            height : 32,
-            decoration: BoxDecoration(
-              borderRadius: RowContainer.radius,
-              color: Theme.of(context).colorScheme.onSecondary
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>RecruitViewPage(page: feed.id,))),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color : Theme.of(context).colorScheme.onPrimary,
+          border: Border(bottom: rowBorderLine())
+        ),
+        child : Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Text(
-                  "${getFutureDiff(feed.to)} 까지",
-                  style : RowTextStyle.subContent
+                  feed.title,
+                  style : RowTextStyle.title
+                ),
+                const SizedBox(width : 4),
+                Text(
+                  "${feed.region.first.name.split(" ")[0]}${(feed.region.length>1)?
+                  " 외 ${feed.region.length - 1}곳"
+                  :""}",
+                  style : idStyle
                 ),
               ],
             ),
-          )
-        ],
-      )
+            TagRow(
+              hashtags: feed.hashtags,
+            ),
+            SizedBox(
+              child :Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        feed.user.name,
+                        style : RowTextStyle.userId
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ),
+            Container(
+              height : 32,
+              decoration: BoxDecoration(
+                borderRadius: RowContainer.radius,
+                color: Theme.of(context).colorScheme.onSecondary
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "${getFutureDiff(feed.to.toString())} 까지",
+                    style : RowTextStyle.subContent
+                  ),
+                ],
+              ),
+            )
+          ],
+        )
+      ),
     );
   }
 }
@@ -239,7 +244,7 @@ class RecruitVPage extends StatefulWidget {
 
 class _RecruitVPageState extends State<RecruitVPage> {
   int maxContent = 7;
-  RecruitListModel con = Get.put(RecruitListModel());
+  RecruitModel con = Get.put(RecruitModel());
 
   void _initLoad() async{
     int pageKey = 0;
@@ -355,7 +360,7 @@ class RecruitCollectedRow extends StatelessWidget {
                     fit : BoxFit.cover,
                     image: 
                     customImgProvider(
-                      (feed.images.isNotEmpty)?feed.images[0]:"",
+                      (feed.imageLinks.isNotEmpty)?feed.imageLinks[0]:"",
                     )
                   )
                 ),
@@ -369,7 +374,7 @@ class RecruitCollectedRow extends StatelessWidget {
             ),
           ),
           Text(
-            "${feed.user.name} | @${feed.user.userId}",
+            feed.user.name,
             style: const TextStyle(
               fontSize : 12,
             ),

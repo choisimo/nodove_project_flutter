@@ -65,7 +65,7 @@ class _FeedMainListState extends State<FeedMainList> {
           child: SearchPart(),
         ),
         const SliverToBoxAdapter(
-          child: Expanded(child: MainCommList()),
+          child: MainCommList(),
         ),
         SliverToBoxAdapter(
           child : PartContainer(
@@ -215,12 +215,9 @@ class PartContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child : SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
-          children: children!,
-        ),
-      )
+      child : Column(
+        children: children!,
+      ),
     );
   }
 }

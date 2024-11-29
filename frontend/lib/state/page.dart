@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/model/recruit.dart';
 
 class PageState extends GetxController{
   static PageState get page => Get.find();
@@ -9,6 +10,7 @@ class PageState extends GetxController{
   final RxInt cateIndex = 0.obs;
   final Rx<PageUrl> view = PageUrl(url: "").obs;
   final Rx<PageUrl> comment = PageUrl(url: "").obs;
+  
 
   void setView(String url,String? opt){
     view(PageUrl(url: url,opt : opt!));

@@ -244,7 +244,7 @@ class DataSrc{
       final res = await dio.get(
         "${Url.recruitServerUrl}/feed?id=$id"
       );
-      final list = res.data.map<RecruitFeed>((json)=>RecruitFeed.fromJson(json)).toList();
+      final list = RecruitFeed.fromJson(res.data);
       return list;
     }catch(e){
       print(e);

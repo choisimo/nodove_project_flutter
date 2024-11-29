@@ -35,11 +35,21 @@ String getFutureDiff(String string){
       return '${compared.inMinutes} 분';
     } else if (compared.inDays < 1) {
       return '${compared.inHours} 시간';
-    } else {
+    } else if (compared.inMinutes > 0){
       return '${createdAt.year}.${createdAt.month}.${createdAt.day}';
+    } else {
+      return "err";
     }
 }
 String getDateFull(String string){
     DateTime createdAt = getDateTime(string);
-    return DateFormat("yyyy월 MM월 dd일 hh시 mm분").format(createdAt);
+    return DateFormat("yyyy년 MM월 dd일 hh시 mm분").format(createdAt);
+}
+String getDateOnly(String string){
+    DateTime createdAt = getDateTime(string);
+    return DateFormat("yyyy년 MM월 dd일").format(createdAt);
+}
+String getYearOnly(String string){
+    DateTime createdAt = getDateTime(string);
+    return DateFormat("yyyy년").format(createdAt);
 }
