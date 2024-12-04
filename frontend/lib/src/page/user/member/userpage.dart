@@ -16,6 +16,7 @@ import 'package:nodove_flutter/src/page/setting/setting.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:nodove_flutter/state/user.dart';
@@ -43,7 +44,8 @@ class UserInfo extends StatefulWidget {
 }
 
 class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin {
-  final TempFeed _con = Get.put(TempFeed());
+  final FeedListModel con = Get.put(FeedListModel());
+  final UserInfoModel _con = Get.put(UserInfoModel());
   late Future<User> userInfo;
   final UserState userState = Get.find();
   ScrollController scrollController = ScrollController();
@@ -68,17 +70,18 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
   }
 
   Future<void> refreshState() async{
-    /*
+    
     String? widgetId = widget.id;
     String myid = userState.id.value;
-    _con.getUserInfo(widgetId??myid);*/
+    _con.getUserInfo(widgetId??myid);
+    initLoad();
   }
 
-  void _initLoad() async{
+  void initLoad() async{
     String url = "${Url.apiUrl}${Url.userFeed}/${_con.userInfo.value.userId}";
     String opt = "pageSize=$size";
     pageKey = 0;
-    //con.getFeedFirst(url,opt);
+    con.getFeedFirst(url,opt);
   }
   
 
@@ -167,12 +170,28 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
               TabBarView(
                 controller: tabController,
                 children: [
-                  const Text("tab1"),
+                  CustomScrollView(
+                    slivers: [
+                      
+                      SliverToBoxAdapter(
+                        child: CollectedVList(
+                          title : "내가 쓴 글",
+                          feed: con.feedList
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: CollectedVList(
+                          title : "구독",
+                          feed: con.feedList
+                        ),
+                      )
+                    ],
+                  ),
                   CustomScrollView(
                     slivers: [
                       FeedList(
                         collected: true,
-                        feed : _con.userContent
+                        feed: con.feedList
                       ),
                       const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
                     ]
@@ -197,7 +216,7 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
       NavbarCommonBtn(
         "common/setting.svg",
         iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
-        onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const SettingPage())),
+        onClick: ()=>Get.toNamed("/setting/0"),
       ):const SizedBox.shrink(),
       NavbarCommonBtn(
         "post/share.svg",
@@ -350,7 +369,7 @@ Widget userInfoWithProfile(BuildContext context, User info){
 Widget userButtons(BuildContext context,User info){
   final myid = UserState.page.id;
   return Obx((){
-  if (info.userId.obs == myid||true){
+  if (info.userId.obs == myid){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,
@@ -366,10 +385,9 @@ Widget userButtons(BuildContext context,User info){
                 borderRadius: RowContainer.radius
               ),
             ),
-            onPressed: ()=>Get.to(
-              ()=>const EditUserPage(),
-              fullscreenDialog: true
-            ),
+            onPressed: (){
+
+            },
             child: Text(
               "활동 관리",
               style : TextStyle(

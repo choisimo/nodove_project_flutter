@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
-import 'package:nodove_flutter/src/model/recruit.dart';
 
 class PageState extends GetxController{
   static PageState get page => Get.find();
 
   final RxInt index = 0.obs;
   final RxInt cateIndex = 0.obs;
+  final RxInt joinIndex = 0.obs;
   final Rx<PageUrl> view = PageUrl(url: "").obs;
   final Rx<PageUrl> comment = PageUrl(url: "").obs;
   
@@ -26,6 +26,9 @@ class PageState extends GetxController{
     index(i);
   }
   void setCateIndex(int i){
+    index(i);
+  }
+  void setJoinIndex(int i){
     index(i);
   }
 }

@@ -112,8 +112,11 @@ class _RecruitViewPageState extends State<RecruitViewPage>{
                     width : double.infinity,
                     child: AspectRatio(
                       aspectRatio: 32/9,
-                      child : MapView(
-                        feed: feed,
+                      child : MapPreview(
+                        position: feed.user.pos,
+                        onClick: (_,__)=>Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_)=>const MapPage())
+                        ),
                       )
                     ),
                   )
@@ -176,7 +179,7 @@ class _RecruitViewPageState extends State<RecruitViewPage>{
     );
   }
   Widget pageFeedInfo(BuildContext context,RecruitFeed feed){
-    return Column(
+    return const Column(
       children: [
         
       ],

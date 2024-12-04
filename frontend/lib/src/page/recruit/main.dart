@@ -10,7 +10,7 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/recruit/list.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vrecruit.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -53,77 +53,71 @@ class _RecruitMainViewState extends State<RecruitMainView>{
   Widget build(BuildContext context) {
     return CustomRefreshIndicator(
       onRefresh: ()=>_initLoad(),
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers : [
-          SliverAppBar(
-            centerTitle: false,
-            title : const NavbarTitle(
-              "채용",
-              textColor: Colors.white,
-            ),
-            actions : [
-              NavbarCommonBtn(
-                "navbar/search.svg",
-                onClick : (){},
-                iconColor: Colors.white,
+      child: Obx(()=>
+        CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers : [
+            const SliverAppBar(
+              centerTitle: false,
+              title : NavbarTitle(
+                "채용",
               ),
-            ],
-            flexibleSpace: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: const BannerCarousel(
+              shadowColor: Colors.transparent,
+              elevation: 0.0,
+              scrolledUnderElevation: 0.0,
+              pinned: true,
+            ),
+            const SliverToBoxAdapter(
+              child : AspectRatio(
+                aspectRatio: 32/9,
+                child: BannerCarousel(
                   imageLinks: [
                     "assets/images/background.jpg",
                     "assets/images/background2.jpg"
                   ],
                 ),
-              ),
+              )
             ),
-            shadowColor: Colors.transparent,
-            elevation: 0.0,
-            scrolledUnderElevation: 0.0,
-            pinned: true,
-            expandedHeight: 240
-          ),
-          const SliverToBoxAdapter(
-            child: Column(
-              children: [
-                TitleRow(
-                  title : "추천 채용",
-                ),
-                RecruitVPage()
-              ]
-            )
-          ),
-          SliverToBoxAdapter(
-            child : Column(
-              children: [
-                TitleRow(
-                  title : "내 위치",
-                  onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const MapPage()))
-                ),
-                const MapPreview()
-              ],
-            )
-          ),
-          SliverToBoxAdapter(
-            child : Column(
-              children: [
-                TitleRow(
-                  title : "채용 진행중",
-                  onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const RecruitListPage()))
-                ),
-              ]
-            )
-          ),
-          RecruitListView(
-            feed : con.recruitlist,
-            isLoading: con.isFetching.value,
-          ),
-          const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
-        ]
-      ),
+            const SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  TitleRow(
+                    title : "추천 채용",
+                  ),
+                  RecruitVPage()
+                ]
+              )
+            ),
+            SliverToBoxAdapter(
+              child : Column(
+                children: [
+                  TitleRow(
+                    title : "내 위치",
+                    onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const MapPage()))
+                  ),
+                  const MapPreview()
+                ],
+              )
+            ),
+            SliverToBoxAdapter(
+              child : Column(
+                children: [
+                  TitleRow(
+                    title : "채용 진행중",
+                    onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const RecruitListPage()))
+                  ),
+                ]
+              )
+            ),
+            RecruitListView(
+              feed : con.recruitlist,
+              isLoading: con.isFetching.value,
+              minimalView: true,
+            ),
+            const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
+          ]
+        ),
+      )
     );
   }
 }

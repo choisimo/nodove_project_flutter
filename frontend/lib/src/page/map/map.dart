@@ -25,11 +25,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.bottomSheet(
-        const MapViewBottom(),
-        isDismissible: false,
-        barrierColor: Colors.transparent,
-
+      showBottomSheet(
+        context: context,
+        builder:(context) => const MapViewBottom(),
+        enableDrag: false,
+        showDragHandle : true
       );
     });
     super.initState();
@@ -39,24 +39,27 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : BackBtn(onPressed : ()=>Navigator.of(context).pop()),
+      leading : BackBtn(onPressed : (){
+        Get.back();
+        Navigator.of(context).pop();
+      }),
       title : const NavbarTitle("매칭"),
     );
     return Scaffold(
       key : key,
       appBar: NavbarTop(navbarOpt, centerTitle : true),
       body : MapView(
-        feed : widget.feed,
+        region : widget.feed?.region,
       ),
     );
   }
 }
 
 class MapView extends StatefulWidget {
-  final RecruitFeed? feed;
+  final List<Pos>? region;
   const MapView({
     super.key,
-    this.feed
+    this.region
   });
 
   @override
@@ -76,29 +79,36 @@ class _MapViewState extends State<MapView> {
   late final NaverMapController controller;
   final Completer<NaverMapController> mapControllerCompleter = Completer();
   final maxHeight = MediaQuery.of(context).size.height;
-  final currentMarker = NMarker(id: "currentPos", position: const NLatLng(37.5666805, 126.9784147));
 
   return SizedBox(
     height : maxHeight,
     child: NaverMap(
-      options : const NaverMapViewOptions(
+      options : NaverMapViewOptions(
           mapType: NMapType.basic,
           initialCameraPosition: NCameraPosition(
             target : NLatLng(
-              37.5666805,
-              126.9784147
+              UserState.page.position.value.lat,
+              UserState.page.position.value.lon
             ),
             zoom: 17
           ),
           indoorEnable: true,
-          locationButtonEnable: false,
+          locationButtonEnable: true,
           consumeSymbolTapEvents: false,
+          rotationGesturesEnable : false,
+          scrollGesturesEnable : true,
+          tiltGesturesEnable : false,
+          zoomGesturesEnable : true,
+          stopGesturesEnable : false,
         ),
+        onSymbolTapped: (symbolInfo) {
+          
+        },
         onMapReady :(c) async{
           controller = c;
           mapControllerCompleter.complete(controller);
-          await controller.addOverlay(currentMarker);
-          Set<NMarker>? markers = widget.feed?.region.map((Pos pos)=>NMarker(id: pos.name, position: NLatLng(pos.lat, pos.lon))).toSet();
+          Set<NMarker>? markers = widget.region?.map((Pos pos)=>
+          NMarker(id: pos.name, position: NLatLng(pos.lat, pos.lon))).toSet();
           if (markers != null) await controller.addOverlayAll(markers);
         },
     ),
@@ -120,7 +130,7 @@ class _MapViewBottomState extends State<MapViewBottom> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Container(
       width : double.infinity,
-      height : MediaQuery.of(context).size.height * 0.4,
+      height : MediaQuery.of(context).size.height * 0.3,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28),
@@ -138,7 +148,12 @@ class _MapViewBottomState extends State<MapViewBottom> with SingleTickerProvider
 }
 
 class MapPreview extends StatefulWidget {
-  const MapPreview({super.key});
+  final Pos? position;
+  final Function(NPoint, NLatLng)? onClick;
+  const MapPreview({super.key,
+    this.position,
+    this.onClick
+  });
 
   @override
   State<MapPreview> createState() => _MapPreviewState();
@@ -146,26 +161,37 @@ class MapPreview extends StatefulWidget {
 
 class _MapPreviewState extends State<MapPreview> {
   late final NaverMapController controller;
-  final NMarker currentMarker = NMarker(id: "currentPos", position: NLatLng(UserState().position.value.lat, UserState().position.value.lon));
-
+  
   @override
   Widget build(BuildContext context) {
     final maxSize = MediaQuery.of(context).size.width;
+    
     return SizedBox(
-      width : maxSize,
-      height : maxSize,
-      child: NaverMap(
-        options : const NaverMapViewOptions(
-          mapType: NMapType.basic,
-          indoorEnable: true,
-          locationButtonEnable: false,
-          consumeSymbolTapEvents: false,
+        width : maxSize,
+        height : maxSize,
+        child: NaverMap(
+          options : const NaverMapViewOptions(
+            mapType: NMapType.basic,
+            indoorEnable: true,
+            locationButtonEnable: false,
+            consumeSymbolTapEvents: false,
+            rotationGesturesEnable : false,
+            scrollGesturesEnable : false,
+            tiltGesturesEnable : false,
+            zoomGesturesEnable : false,
+            stopGesturesEnable : false,
+          ),
+          onMapTapped : widget.onClick,
+          onMapReady :(c) async{
+            controller = c;
+            final NMarker currentMarker = NMarker(
+            id: "currentPos", position: NLatLng(
+              widget.position?.lat??UserState().position.value.lat,
+              widget.position?.lon??UserState().position.value.lon
+            ));
+            await controller.addOverlay(currentMarker);
+          },
         ),
-        onMapReady :(c) async{
-          controller = c;
-          await controller.addOverlay(currentMarker);
-        },
-      ),
     );
   }
 }

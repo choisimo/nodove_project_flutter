@@ -34,12 +34,12 @@ class _LoginPageState extends State<LoginMainPage> {
         user.setIndex(res['parsed']['userId']);
         Get.off(()=>const MyHome());
       } else {
-        //setState((){loaded = true;});
-        Get.off(()=>const MyHome());
+        setState((){loaded = true;});
+        //Get.off(()=>const MyHome());
       }
     } else{
-      //setState((){loaded = true;});
-      Get.off(()=>const MyHome());
+      setState((){loaded = true;});
+      //Get.off(()=>const MyHome());
     }
   }
 
@@ -160,9 +160,8 @@ class LoginMainForm extends StatelessWidget {
                 FormCommitButton(
                   width : maxwidth * 0.8,
                   height : 48,
-                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: ()=>Get.to(
-                    ()=>const JoinPage(page : 0),
+                    ()=>const JoinPage(),
                   ),
                   title : "새로 시작하기"
                 )
@@ -172,7 +171,6 @@ class LoginMainForm extends StatelessWidget {
               children: [
                 FormCommitButton(
                   height : 48,
-                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                   onPressed: ()=>Get.to(
                     ()=>const LoginPage(),
                   ),

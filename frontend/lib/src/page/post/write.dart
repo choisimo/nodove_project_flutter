@@ -10,6 +10,7 @@ import 'package:nodove_flutter/graphic/transform.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
+import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:image_picker/image_picker.dart';
@@ -145,6 +146,7 @@ class WriteContent extends StatefulWidget {
 class _WriteContentState extends State<WriteContent> {
   final ImagePicker _picker = ImagePicker();
   final FeedListModel formData = Get.put(FeedListModel());
+  bool community = Get.arguments['community']??false;
   
   final FeedImageModel _imageModel = Get.put(FeedImageModel());
   void imageUpload() async{
@@ -206,7 +208,49 @@ class _WriteContentState extends State<WriteContent> {
     );
     var controller = TextEditingController(text : formData.writeForm['title']);
     return SingleChildScrollView(
-      child: Column(
+      child: 
+      (community)?
+      Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            writeTitle(context,title : "내용"),
+            Container(
+              height : 320,
+              margin : const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                borderRadius: RowContainer.radius,
+                border : Border.all(
+                  width : 0.5,
+                  color : Theme.of(context).colorScheme.secondary
+                )
+              ),
+              child: QuillEditor.basic(
+                controller: widget.controller,
+                configurations: QuillEditorConfigurations(
+                  customStyles: DefaultStyles(
+                    placeHolder: DefaultListBlockStyle(
+                      TextStyle(
+                        fontSize : 18,
+                        color: Theme.of(context).colorScheme.secondary
+                      ),
+                      HorizontalSpacing.zero,
+                      VerticalSpacing.zero,
+                      VerticalSpacing.zero,
+                      null,
+                      null
+                    )
+                  ),
+                  padding : const EdgeInsets.all(4),
+                  placeholder: "피드 내용을 입력해주세요",
+                  scrollPhysics: const AlwaysScrollableScrollPhysics(),
+                  expands: true
+                ),
+              )
+            ),
+        ],
+      )
+      :Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -620,8 +664,8 @@ class SelectedDateButton extends StatelessWidget {
         );
       },
       style: OutlinedButton.styleFrom(
-        shape : const RoundedRectangleBorder(
-          side : BorderSide(width : 0.5),
+        shape : RoundedRectangleBorder(
+          side : rowBorderLine(),
           borderRadius: RowContainer.radius
         )
       ),
@@ -698,6 +742,8 @@ class _SelectDateState extends State<SelectDate> with SingleTickerProviderStateM
                 children: [
                   CupertinoDatePicker(
                     minimumYear: 1970,
+                    maximumYear: 2024,
+                    maximumDate: DateTime.now(),
                     mode: CupertinoDatePickerMode.date,
                     initialDateTime: current,
                     onDateTimeChanged: (DateTime dt) {

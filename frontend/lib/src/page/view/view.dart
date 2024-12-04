@@ -20,12 +20,10 @@ import 'package:shimmer/shimmer.dart';
 
 class FeedPage extends StatefulWidget{
   final int? page;
-  final Feed feed;
   final String url = "${Url.apiUrl}${Url.feedPage}";
   const FeedPage({
     super.key,
     this.page,
-    required this.feed
   });
 
   @override
@@ -76,7 +74,6 @@ class _FeedPageState extends State<FeedPage>{
       body : FeedView(
         page : page,
         url : widget.url,
-        feed : widget.feed
       )
     );
   }
@@ -84,12 +81,10 @@ class _FeedPageState extends State<FeedPage>{
 class FeedView extends StatefulWidget {
   final int page;
   final String url;
-  final Feed feed;
   const FeedView({
     super.key ,
     required this.page,
     required this.url,
-    required this.feed,
   });
   
   @override
@@ -98,8 +93,8 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   final GlobalKey<FormState> commentTopKey = GlobalKey<FormState>();
-  final TempFeed vcon = Get.put(TempFeed());
-  final TempFeed con = Get.put(TempFeed());
+  final FeedListModel vcon = Get.put(FeedListModel());
+  final CommentPageModel con = Get.put(CommentPageModel());
   int maxPage = 5;
   int pageKey = 0;
 
@@ -109,9 +104,9 @@ class _FeedViewState extends State<FeedView> {
     String commentOpt = "maxSize=$maxPage";
     PageState.page.setView(widget.url,"/${widget.page}");
     PageState.page.setComment(commentUrl, commentOpt);
-    /*PageUrl url = ViewPageState.page.comment.value;
-    con.getCommentFirst(url.url,url.opt);*/
-    //vcon.getFeedPage(widget.page);
+    PageUrl url = PageState.page.comment.value;
+    con.getCommentFirst(url.url,url.opt);
+    vcon.getFeedPage(widget.page);
   }
 
   @override
@@ -126,7 +121,7 @@ class _FeedViewState extends State<FeedView> {
       color : Theme.of(context).colorScheme.onPrimary,
     );
     return Obx((){
-        final Feed feed = widget.feed;
+        final Feed feed = vcon.content.value;
         PageUrl url = PageState.page.comment.value;
         if (vcon.isFetching.isFalse){
           return CustomRefreshIndicator(

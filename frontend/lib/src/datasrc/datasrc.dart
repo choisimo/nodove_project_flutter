@@ -21,10 +21,10 @@ class DataSrc{
   ));
   
   
-  Future<List<Feed>?> getFeedList(int page,String url,String opt) async{
+  Future<List<Feed>?> getFeedList(int page,String url,String? opt) async{
     try{
       dio.interceptors.add(ApiInterceptors());
-      final res = await dio.get("$url/$page?$opt");
+      final res = await dio.get("$url/$page${(opt != null)?"?$opt":""}");
       return res.data.map<Feed>((json)=>Feed.fromJson(json)).toList();
     }catch(e){
       log(e.toString());
@@ -113,7 +113,9 @@ class DataSrc{
     try{
       dio.interceptors.add(ApiInterceptors());
       final res = await dio.get("$url$opt");
-      return Categories.fromJson(res.data[0]);
+      final data = res.data['body'][0];
+      print(data);
+      return Categories.fromJson(data);
     }catch(e){
       await RefreshToken();
       showToast("오류가 발생했어요😢");

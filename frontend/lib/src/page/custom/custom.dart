@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
@@ -161,15 +162,12 @@ class _ProfileSettingState extends State<ProfileSetting> {
           child : IconButton(
             style: IconButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              side: rowBorderLine()
             ),
             onPressed: ()=>profileUpload(),
-            icon: SvgPicture.asset(
-              "assets/icons/post/picture.svg",
+            icon: const CustomSvg(
+              "post/edit.svg",
               width : 24 , height : 24,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.onPrimaryFixed,
-                BlendMode.srcIn
-              ),
             ),
           )
         )

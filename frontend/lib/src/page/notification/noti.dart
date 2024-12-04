@@ -26,15 +26,12 @@ class NotiPage extends StatelessWidget {
       title : const NavbarTitle("알림"),
       actions: [
         NavbarCommonBtn(
-          "post/delete.svg",
-          onClick : (){},
-        ),
-        NavbarCommonBtn(
           "common/setting.svg",
           onClick : ()=>Navigator.push(
             context,
             MaterialPageRoute(builder: (_)=>const NotiSettingPage())
           ),
+          iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
         ),
       ]
     );

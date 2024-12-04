@@ -14,6 +14,7 @@ import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -43,7 +44,8 @@ class _CommuListPageState extends State<CommuListPage>{
   late bool collected = false;
   int size = 10;
   bool search = false;
-  TempFeed ccon = Get.put(TempFeed());
+  FeedListModel con = Get.put(FeedListModel());
+  CateListModel ccon = Get.put(CateListModel());
   final int cateid = 16;
   
   int pageKey = 0;
@@ -52,12 +54,11 @@ class _CommuListPageState extends State<CommuListPage>{
   void initState() {
     _checksettings();
     refresh();
-    _initLoad();
     super.initState();
   }
 
   void refresh(){
-    /*final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     ccon.getCate(
       page : cateid,
       url : "/api/categories/getAllCategoriesByParentId/",
@@ -66,16 +67,13 @@ class _CommuListPageState extends State<CommuListPage>{
     ccon.getCateOne(
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
-    );*/
-  }
-
-  void _initLoad() async{
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    );
+    
     String url = "${Url.apiUrl}${Url.feedList}";
     String opt = "pageSize=$size&categoryId=$cateid";
-    pageKey = 0;
     PageState.page.setView(url, opt);
-    //con.getFeedFirst(url,opt);
+    pageKey = 0;
+    con.getFeedFirst(url,opt);
   }
 
   void _checksettings() async{
@@ -101,7 +99,8 @@ class _CommuListPageState extends State<CommuListPage>{
             ()=>const WritePage(),
             fullscreenDialog: true,
             arguments: {
-              'postCategory' : cateid
+              'postCategory' : cateid,
+              'community' : true
             }
           ),
         ),
@@ -167,24 +166,24 @@ class _CommuListPageState extends State<CommuListPage>{
             SliverFillRemaining(
               child: PageView(
                 controller: pageController,
-                children: ccon.comm.map((e) => 
+                children: [
                   CustomScrollView(
                     slivers: [
                       FeedList(
                         collected: collected,
-                        feed : e,
+                        feed : con.feedList,
                         shortContent: false,
                         onFeedClick: (id)=>showCustomModal(
                           context,
-                          CommentListModal(page: id,feed: e.singleWhere((el)=>el.id == id,orElse: ()=>Feed.defaultState()))
+                          CommentListModal(page: id,feed: con.feedList.singleWhere((el)=>el.id == id,orElse: ()=>Feed.defaultState()))
                         ),
                       ),
                       const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
                     ],
-                  )).toList(),
-                )
-                
+                  ),
+                ]
               ),
+            )
           ],
         ),
       ),

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/setting.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
+import 'package:nodove_flutter/state/page.dart';
 
 List<Widget> pageWidget = [
   const JoinForm(),
@@ -20,48 +23,209 @@ List<Widget> pageWidget = [
 ];
 UserInfoModel con = Get.put(UserInfoModel());
 
-class JoinPage extends StatelessWidget {
-  final int page;
-  const JoinPage({
-    super.key,
-    required this.page
-  });
+class JoinPage extends StatefulWidget {
+  const JoinPage({super.key});
+
+  @override
+  State<JoinPage> createState() => _JoinPageState();
+}
+
+class _JoinPageState extends State<JoinPage> {
+  PageController pageController = PageController(
+    initialPage: 0,
+  );
+  int currentPage = 0;
+
+  @override
+  void initState(){
+    currentPage = 0;
+    pageController.addListener((){
+      setState(() {
+        currentPage = pageController.page!.toInt();
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose(){
+    con.resetJoinForm();
+    pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool canPop = true;
     NavbarContent navbarOpt = NavbarContent();
     return PopScope(
-      canPop: canPop,
+      canPop: (currentPage < 1),
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop){
+          if (currentPage >= 1){
+            pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOutQuad);
+          }
+        }
+      },
       child: GestureDetector(
         onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          appBar: NavbarTop(navbarOpt, centerTitle : false),
-          body : SingleChildScrollView(
-            child:pageWidget[page],
+          appBar: NavbarTop(navbarOpt),
+          body : PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children: pageWidget,
+          ),
+          bottomNavigationBar: SafeArea(
+            child: SizedBox(
+              width : double.infinity,
+              height : 96,
+              child : Column(
+                children: [
+                  SizedBox(
+                    width : double.infinity,
+                    height : 32,
+                    child: PageIndicator(
+                      pageSize : pageWidget.length,
+                      indicatorBtnColor : Theme.of(context).colorScheme.secondary
+                    )
+                  ),
+                  FormCommitButton(
+                    height: 54,
+                    width : MediaQuery.of(context).size.width * 0.75,
+                    title: "다음",
+                    onPressed: ()=>pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOutQuad)
+                  ),
+                ],
+              )
+            ),
           ),
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
+        )
       ),
     );
   }
 }
 
-void next(int page){
-  int nextPage = page + 1;
-  if (page<pageWidget.length - 2){
-    Get.to(
-      ()=>JoinPage(page: nextPage,),
-      preventDuplicates: false
+
+class PageIndicator extends StatefulWidget {
+  final int pageSize;
+  final void Function(int index)? onIndicatorTap;
+  final void Function(int index)? onDireBtnTap;
+  final int initialPage;
+  final double width;
+  final double height;
+  final Color indicatorBtnColor;
+  final double indicatorDefaultOpac;
+  final double indicatorActivedOpac;
+  final int delay;
+  const PageIndicator({
+    super.key,
+    this.pageSize = 1,
+    this.onIndicatorTap,
+    this.onDireBtnTap,
+    this.initialPage = 0,
+    this.width = 320,
+    this.height = 16,
+    this.indicatorBtnColor = Colors.white,
+    this.indicatorDefaultOpac = 0.5,
+    this.indicatorActivedOpac = 1,
+    this.delay = 500,
+  });
+
+  @override
+  State<PageIndicator> createState() => _PageIndicatorState();
+}
+
+class _PageIndicatorState extends State<PageIndicator> {
+  RxInt currentPage = 0.obs;
+
+  @override
+  void initState(){
+    setState((){currentPage.value = widget.initialPage;});
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: widget.width,
+      ),
+      height : widget.height,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children : [
+          (widget.onDireBtnTap != null)?
+          IconButton(
+            onPressed: () async{
+              await Future.delayed(Duration(milliseconds: widget.delay)).then((_){
+                if (currentPage > 0){
+                  setState((){currentPage -= 1;});
+                  widget.onDireBtnTap?.call(currentPage.value);
+                }
+              });
+            },
+            icon: SvgPicture.asset(
+              "assets/icons/common/left.svg",
+              width: widget.height, height : widget.height,
+            ),
+          ):const SizedBox.shrink(),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: widget.width / 2,
+              maxHeight: widget.height
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemBuilder:(context, index) => Obx(()=>indicatorBtn(context, index , currentPage.value)),
+              itemCount: widget.pageSize,
+              scrollDirection: Axis.horizontal,
+            ),
+          ),
+          (widget.onDireBtnTap != null)?
+          IconButton(
+            onPressed: () async{
+              await Future.delayed(Duration(milliseconds: widget.delay)).then((_){
+                if (currentPage < widget.pageSize - 1){
+                  setState((){currentPage += 1;});
+                  widget.onDireBtnTap?.call(currentPage.value);
+                }
+              });
+            },
+            icon: SvgPicture.asset(
+              "assets/icons/common/right.svg",
+              width: widget.height, height : widget.height,
+            ),
+          ):const SizedBox.shrink(),
+        ]
+      ),
     );
-  } else{
-    con.postJoin().then((res){
-      if (res){
-        Get.off(()=>JoinPage(page : nextPage));
-      } else{
-        showToast("가입에 실패했어요..");
-      }
-    });
+  }
+
+  Widget indicatorBtn(BuildContext context,int index , int currentIndex){
+    return GestureDetector(
+      onTap: () async{
+        await Future.delayed(Duration(milliseconds: widget.delay)).then((_){
+          setState((){currentPage.value = index;});
+          widget.onDireBtnTap?.call(currentPage.value);
+        });
+      },
+      child: Opacity(
+        opacity: (index == currentIndex)?
+          widget.indicatorActivedOpac
+          :widget.indicatorDefaultOpac,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(100)),
+            color : widget.indicatorBtnColor,
+          ),
+        width : widget.height,
+        height : widget.height,
+        child : const SizedBox.shrink()
+        ),
+      ),
+    );
   }
 }
 
@@ -73,12 +237,6 @@ class JoinForm extends StatefulWidget {
 }
 
 class _JoinFormState extends State<JoinForm> {
-  @override
-  void dispose(){
-    con.resetJoinForm();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -94,12 +252,6 @@ class _JoinFormState extends State<JoinForm> {
             userIdForm(context),
             const SizedBox(height : 32),
             passwordForm(context),
-            const SizedBox(height : 32),
-            FormCommitButton(
-              onPressed: ()=>next(0),
-              title : "다음",
-              width : MediaQuery.of(context).size.width*0.9,
-            )
           ],
         ),
       ),
@@ -312,11 +464,6 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
               placeholder: (sendMail)?"메일로 온 코드를 적어주세요":"이메일을 적고 코드 발송을 눌러주세요"
             ),
             const SizedBox(height : 32),
-            FormCommitButton(
-              onPressed: ()=>next(1),
-              title : "다음",
-              width : MediaQuery.of(context).size.width*0.9,
-            )
           ],
         ),
       ),
@@ -327,7 +474,6 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
 
 class JoinFormProfile extends StatelessWidget {
   const JoinFormProfile({super.key});
-
   
   @override
   Widget build(BuildContext context) {
@@ -361,7 +507,7 @@ class JoinFormProfile extends StatelessWidget {
                       fontSize: 16
                     ),
                   ),
-                  Switch(
+                  SettingSwitch(
                     value: con.joinForm['isPrivate'],
                     onChanged: (b){
                       private = !private;
@@ -370,12 +516,6 @@ class JoinFormProfile extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height : 32),
-              FormCommitButton(
-                onPressed: ()=>next(2),
-                title : "생성",
-                width : MediaQuery.of(context).size.width*0.9,
-              )
             ],
           ),
         ),
@@ -387,7 +527,6 @@ class JoinFormProfile extends StatelessWidget {
 
 class JoinCompleted extends StatelessWidget {
   const JoinCompleted({super.key});
-
   
   @override
   Widget build(BuildContext context) {
@@ -405,7 +544,7 @@ class JoinCompleted extends StatelessWidget {
               ),
             ),
             const Text(
-              "입력하셨던 아이디와 비밀번호로 다시 로그인하시면 돼요",
+              "입력하셨던 아이디와 비밀번호로 다시 로그인 해주세요",
               style: TextStyle(
                 fontSize: 18,
               ),

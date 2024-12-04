@@ -94,12 +94,8 @@ class Themes{
         foregroundColor: LightStyle.backStr
       )
     ),
-    switchTheme: SwitchThemeData(
-      trackColor: WidgetStateProperty.resolveWith((state){
-        return state.contains(WidgetState.selected)
-        ? CommonStyle.first
-        : null;
-      }),
+    switchTheme: const SwitchThemeData(
+      trackColor: WidgetStatePropertyAll(CommonStyle.third),
     ),
     cardColor: LightStyle.white,
     colorScheme: const ColorScheme(

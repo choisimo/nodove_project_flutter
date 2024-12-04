@@ -197,7 +197,7 @@ class _MainTagListState extends State<MainTagList> {
             itemBuilder: (context,index){
               return CollectedVList(
                 feed : con.tagList[widget.tagList[index]]!, 
-                onFeedClick: (id)=>Get.to(()=>FeedPage(feed: con.tagList[widget.tagList[index]]!.singleWhere((el)=>el.id == id))),
+                //onFeedClick: (id)=>Get.to(()=>FeedPage()),
               );
             }
           ),

@@ -11,7 +11,6 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/recruit/view.dart';
 import 'package:nodove_flutter/src/page/tag/tagrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
-import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/src/vmodel/vrecruit.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:shimmer/shimmer.dart';
@@ -119,10 +118,12 @@ class RecruitBottomSheet extends StatelessWidget {
 class RecruitListView extends StatelessWidget {
   final List<RecruitFeed> feed;
   final bool isLoading;
+  final bool minimalView;
   const RecruitListView({
     super.key,
     required this.feed,
-    this.isLoading = true
+    this.isLoading = true,
+    this.minimalView = false
   });
 
    @override
@@ -143,7 +144,7 @@ class RecruitListView extends StatelessWidget {
       );
     } else {
       return SliverList.builder(
-        itemBuilder: (context, index) => FeedRow(feed : feed[index]),
+        itemBuilder: (context, index) => FeedRow(feed : feed[index],minimalView : minimalView),
         itemCount: feed.length,
       );
     }
@@ -152,9 +153,11 @@ class RecruitListView extends StatelessWidget {
 
 class FeedRow extends StatelessWidget {
   final RecruitFeed feed;
+  final bool minimalView;
   const FeedRow({
     super.key,
-    required this.feed
+    required this.feed,
+    this.minimalView = false
   });
 
   @override
@@ -211,22 +214,28 @@ class FeedRow extends StatelessWidget {
                 ],
               )
             ),
+            (!minimalView)?
             Container(
-              height : 32,
+              width : double.infinity,
               decoration: BoxDecoration(
                 borderRadius: RowContainer.radius,
                 color: Theme.of(context).colorScheme.onSecondary
               ),
-              child: Row(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
                     "${getFutureDiff(feed.to.toString())} 까지",
                     style : RowTextStyle.subContent
                   ),
+                  Text(
+                    getDateDiff(feed.createdAt),
+                    textAlign: TextAlign.end,
+                  ),
                 ],
               ),
-            )
+            ):const SizedBox.shrink()
           ],
         )
       ),

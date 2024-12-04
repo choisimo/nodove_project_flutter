@@ -29,30 +29,31 @@ class CommentListPage extends StatefulWidget {
 class _CommentListPageState extends State<CommentListPage> {
   Dio dio = Dio();
   final maxPage = 5;
-  final TempFeed con = Get.put(TempFeed());
+  final CommentPageModel con = Get.put(CommentPageModel());
   int pageKey = 0;
+  ScrollController _scrollController = ScrollController();
 
   void _initLoad() async{
     String commentUrl = "${Url.serverUrl}${Url.apiUrl}/commentListByPostId/${widget.page}";
     String commentOpt = "maxSize=$maxPage";
     PageState.page.setComment(commentUrl,commentOpt);
-    //con.getCommentFirst(commentUrl,commentOpt);
+    con.getCommentFirst(commentUrl,commentOpt);
   }
 
   @override
   void initState() {
     _initLoad();
-    //_scrollController = ScrollController()..addListener(fetchPage);
+    _scrollController = ScrollController()..addListener(fetchPage);
     super.initState();
   }
   @override
   void dispose() {
-    //_scrollController.removeListener(fetchPage);
+    _scrollController.removeListener(fetchPage);
     super.dispose();
   }
   
-  /*void fetchPage() async {
-    PageUrl url = ViewPageState.page.comment.value;
+  void fetchPage() async {
+    PageUrl url = PageState.page.comment.value;
     if (!con.isFetching.value && 
     !con.isFragFetching.value &&
     _scrollController.position.extentAfter < 100){
@@ -71,7 +72,7 @@ class _CommentListPageState extends State<CommentListPage> {
         print(error);
       }
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +91,9 @@ class _CommentListPageState extends State<CommentListPage> {
     } else {
       return SliverList.builder(
         itemBuilder:(context, index) {
-          return CommentRow(props: con.commComment[widget.page][index]);
+          return CommentRow(props: con.commentList[index]);
         },
-        itemCount: con.commComment[widget.page].length,
+        itemCount: con.commentList.length,
       );
     }
   }
@@ -368,10 +369,9 @@ class _CustomWriteState extends State<CustomWrite> {
                   height : 48,
                   child: IconButton(
                     onPressed: imageUpload,
-                    icon: CustomSvg(
-                      'post/picture.svg',
-                      width : 24, height : 24,
-                      iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                    icon: const CustomSvg(
+                      'post/file.svg',
+                      width : 18, height : 18,
                     ),
                   ),
                 ),

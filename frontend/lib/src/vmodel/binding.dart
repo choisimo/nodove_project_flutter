@@ -11,7 +11,7 @@ class InitViewModel implements Bindings{
   void dependencies(){
     Get.create<FeedListModel>(()=>FeedListModel());
     Get.put<UserState>(UserState(),permanent: true);
-    Get.lazyPut<CommentPageModel>(()=> CommentPageModel());
+    Get.create<CommentPageModel>(()=> CommentPageModel());
     Get.create<UserInfoModel>(()=> UserInfoModel());
     Get.lazyPut<FeedImageModel>(()=>FeedImageModel());
     Get.put<PageState>(PageState(),permanent: true);

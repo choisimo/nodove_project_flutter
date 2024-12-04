@@ -22,6 +22,7 @@ class EditUserPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
+      leading: BackBtn(onPressed: ()=>Navigator.of(context).pop(),),
       actions : [
         NextBtn(
           displayText: "수정",
@@ -32,7 +33,6 @@ class EditUserPage extends StatelessWidget {
     return GestureDetector(
       onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: NavbarTop(navbarOpt, centerTitle : false),
         body : const EditUser(),
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -86,55 +86,25 @@ class _EditUserState extends State<EditUser> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "유저",
+                      "프로필",
                       style: TextStyle(
-                        color : Theme.of(context).colorScheme.onSurface,
+                        color : Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                       ),
                     )
                   ),
                 ),
-                ClipPath(
-                  clipper: const CustomClip(
-                    vertical: 96
-                  ),
-                  child: Container(
-                    constraints: const BoxConstraints(
-                        maxHeight: 240,
-                    ),
-                    width : maxWidth * 0.8,
-                    padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimaryFixed
-                    ),
-                    child : CommonTextInput(
-                      bColor: Colors.transparent,
-                      keyboard: TextInputType.multiline,
-                      maxLines: null,
-                      style : statusStyle,
-                      customkey : "상태메세지",
-                      initialValue: "상태메세지",
-                      placeholder: "나에 대한 한마디를 추가해보세요",
-                      placeholderStyle: statusStyle
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: (){
-                    
-                  },
-                  child : ProfileSetting(
-                    current : user.profile,
-                    onUpdated: (image){
+                ProfileSetting(
+                  current : user.profile,
+                  onUpdated: (image){
 
-                    }
-                  )
+                  }
                 ),
                 const SizedBox(height : 8),
                 SizedBox(
-                  width : maxWidth * 0.9,
+                  width : maxWidth * 0.8,
                   child: CommonTextInput(
-                    customkey : user.nickname,
+                    bColor: Theme.of(context).colorScheme.secondary,
                     initialValue: user.nickname,
                     placeholder: "닉네임을 적어주세요",
                   ),
@@ -144,7 +114,7 @@ class _EditUserState extends State<EditUser> {
                   width : double.infinity,
                   height : 0.5,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface
+                    color: Theme.of(context).colorScheme.onSecondary
                   ),
                 ),
                 Padding(
@@ -152,9 +122,9 @@ class _EditUserState extends State<EditUser> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "정보",
+                      "인적사항",
                       style: TextStyle(
-                        color : Theme.of(context).colorScheme.onSurface,
+                        color : Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                       ),
                     )
@@ -178,7 +148,7 @@ class _EditUserState extends State<EditUser> {
                   offset: const Offset(0,42),
                   shape : TooltipShape(
                     vertical : 92,
-                    borderColor : Theme.of(context).colorScheme.shadow
+                    borderColor : Theme.of(context).colorScheme.secondary
                   ),
                   itemBuilder: (BuildContext context) {
                     return [
@@ -217,7 +187,7 @@ class _EditUserState extends State<EditUser> {
                       borderRadius: RowContainer.radius,
                       border : Border.all(
                         width : 0.5,
-                        color : Theme.of(context).colorScheme.onSurface
+                        color : Theme.of(context).colorScheme.secondary
                       )
                     ),
                     child : Text("성별 : ${
@@ -229,9 +199,10 @@ class _EditUserState extends State<EditUser> {
                 ),
                 const SizedBox(height : 8),
                 SizedBox(
-                  width : maxWidth * 0.9,
+                  width : maxWidth * 0.8,
                   child : CommonTextInput(
                     keyboard: TextInputType.phone,
+                    bColor: Theme.of(context).colorScheme.secondary,
                     maxLength: 17,
                     filter: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
@@ -241,10 +212,11 @@ class _EditUserState extends State<EditUser> {
                 ),
                 const SizedBox(height : 8),
                 SizedBox(
-                  width : maxWidth * 0.9,
-                  child : const CommonTextInput(
+                  width : maxWidth * 0.8,
+                  child : CommonTextInput(
                     keyboard: TextInputType.emailAddress,
                     maxLength: 17,
+                    bColor: Theme.of(context).colorScheme.secondary,
                     placeholder: "이메일을 적어주세요"
                   ),
                 ),
@@ -253,7 +225,7 @@ class _EditUserState extends State<EditUser> {
                   width : double.infinity,
                   height : 0.5,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface
+                    color: Theme.of(context).colorScheme.onSecondary
                   ),
                 ),
               ]

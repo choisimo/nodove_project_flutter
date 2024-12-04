@@ -5,7 +5,7 @@ class SettingRow extends StatelessWidget {
   final Widget? title;
   final Widget? leading;
   final Widget? actions;
-  final Function? onClick;
+  final void Function()? onClick;
   const SettingRow({
     super.key,
     this.title,
@@ -16,36 +16,39 @@ class SettingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height : 42,
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: rowBorderLine()
+    return GestureDetector(
+      onTap: onClick,
+      child: Container(
+        height : 42,
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: rowBorderLine()
+          ),
+          color : Theme.of(context).colorScheme.onPrimary,
         ),
-        color : Theme.of(context).colorScheme.onPrimary,
+        child : LayoutBuilder(
+          builder : (context,constraint){
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width : constraint.maxWidth * 0.33,
+                  child: Center(child: leading),
+                ),
+                SizedBox(
+                  width : constraint.maxWidth * 0.33,
+                  child: Center(child: title),
+                ),
+                SizedBox(
+                  width : constraint.maxWidth * 0.33,
+                  child : Center(child: actions)
+                )
+              ],
+            );
+          }
+        )
       ),
-      child : LayoutBuilder(
-        builder : (context,constraint){
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child: Center(child: leading),
-              ),
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child: Center(child: title),
-              ),
-              SizedBox(
-                width : constraint.maxWidth * 0.33,
-                child : Center(child: actions)
-              )
-            ],
-          );
-        }
-      )
     );
   }
 }
@@ -102,16 +105,21 @@ class SettingSwitch extends StatelessWidget {
     return Switch(
       value : value,
       onChanged: onChanged,
+      trackColor: WidgetStateProperty.resolveWith((state){
+        return state.contains(WidgetState.selected)?
+          Theme.of(context).colorScheme.onPrimaryFixed
+          :Colors.transparent;
+      }),
       trackOutlineWidth: const WidgetStatePropertyAll(1),
       trackOutlineColor: WidgetStateProperty.resolveWith((state){
         return state.contains(WidgetState.selected)?
         Colors.transparent
-        :Theme.of(context).colorScheme.onSecondary;
+        :Theme.of(context).colorScheme.secondary;
       }),
       thumbColor: WidgetStateProperty.resolveWith((state){
         return state.contains(WidgetState.selected)?
-          Colors.white
-          :Theme.of(context).colorScheme.onPrimaryFixed;
+        Theme.of(context).colorScheme.onPrimary
+        :Theme.of(context).colorScheme.secondary;
       }),
     );
   }

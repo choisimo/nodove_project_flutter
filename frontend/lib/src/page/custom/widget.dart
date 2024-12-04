@@ -60,10 +60,8 @@ class CommonTextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = bColor??Theme.of(context).colorScheme.onSurface;
-    final TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-    );
+    final borderColor = bColor??Theme.of(context).colorScheme.secondary;
+    final disabledBorderColor = Theme.of(context).colorScheme.onSecondary;
     return TextFormField(
       initialValue: initialValue,
       keyboardType: keyboard,
@@ -79,6 +77,9 @@ class CommonTextInput extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
             borderRadius: RowContainer.radius,
             borderSide: BorderSide(color: borderColor, width: borderWidth)),
+        disabledBorder: OutlineInputBorder(
+            borderRadius: RowContainer.radius,
+            borderSide: BorderSide(color: disabledBorderColor, width: borderWidth)),
         counterText: "",
         focusedBorder:
         OutlineInputBorder(
@@ -90,7 +91,7 @@ class CommonTextInput extends StatelessWidget {
         ),
         hintText: placeholder,
         contentPadding: const EdgeInsets.symmetric(vertical: 0,horizontal: 16),
-        hintStyle: placeholderStyle??textStyle,
+        hintStyle: placeholderStyle,
         border: 
         OutlineInputBorder(
           borderRadius: RowContainer.radius,
@@ -238,8 +239,8 @@ class FormCommitButton extends StatelessWidget {
     this.width,
     this.height = 48,
     this.borderRadius,
-    this.fontSize = 20,
-    this.fontColor = Colors.white
+    this.fontSize = 18,
+    this.fontColor
   });
 
   @override
@@ -249,7 +250,7 @@ class FormCommitButton extends StatelessWidget {
       height : height,
       child: TextButton(
         style : TextButton.styleFrom(
-          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+          backgroundColor: backgroundColor??Theme.of(context).colorScheme.onSecondary,
           shape: const RoundedRectangleBorder(
             borderRadius: RowContainer.radius
           ),
@@ -259,7 +260,7 @@ class FormCommitButton extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize : fontSize,
-            color : fontColor
+            color : fontColor??Theme.of(context).colorScheme.onPrimaryFixed
           ),
         ),
       ),

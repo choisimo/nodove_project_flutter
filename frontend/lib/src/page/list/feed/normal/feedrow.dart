@@ -258,10 +258,7 @@ class Profile extends StatelessWidget {
           fit: BoxFit.cover
         ),
         borderRadius: BorderRadius.all(Radius.circular(width)),
-        border : Border.all(
-          color : Theme.of(context).colorScheme.onSecondary,
-          width : borderRadius??1.0
-        )
+        border : rowBorderLineAll()
       ),
     );
   }

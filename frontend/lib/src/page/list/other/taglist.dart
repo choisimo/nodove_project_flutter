@@ -148,7 +148,7 @@ class _TagListPageState extends State<TagListPage>{
             key : Key("tag-page-key-$tag"),
             collected: collected,
             feed: ccon.tagList[tag]??[Feed.defaultState()],
-            onFeedClick: (id)=>Get.to(()=>FeedPage(feed: ccon.tagList[tag]![id],)),
+            //onFeedClick: (id)=>Get.to(()=>FeedPage(feed: ccon.tagList[tag]![id],)),
           ),
         ],
       ),

@@ -12,18 +12,24 @@ import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
+import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FeedListPage extends StatefulWidget{
   final int? page;
+  final String url;
+  final String? opt;
   const FeedListPage({
     super.key,
-    this.page
+    this.page,
+    this.url = "${Url.apiUrl}${Url.feedList}",
+    this.opt
   });
 
   @override
@@ -35,7 +41,8 @@ class _FeedListPageState extends State<FeedListPage>{
   late bool collected = false;
   int size = 10;
   bool search = false;
-  TempFeed ccon = Get.put(TempFeed());
+  FeedListModel con = Get.put(FeedListModel());
+  CateListModel ccon = Get.put(CateListModel());
 
   @override
   void initState() {
@@ -47,7 +54,7 @@ class _FeedListPageState extends State<FeedListPage>{
   }
 
   void refresh(){
-    /*final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
     ccon.getCate(
       page : cateid,
       url : "/api/categories/getAllCategoriesByParentId/",
@@ -56,22 +63,22 @@ class _FeedListPageState extends State<FeedListPage>{
     ccon.getCateOne(
       url : "/api/categories/getAllCategoriesByParentId/",
       opt : cateid.toString(),
-    );*/
+    );
   }
 
   ScrollController scrollController = ScrollController();
   int pageKey = 0;
 
   void fetchPage() async {
-    /*String url = widget.url;
-    String opt = widget.opt;
+    String url = widget.url;
+    String? opt = widget.opt;
     if (!con.isFetching.value && 
     !con.isFragFetching.value &&
     con.isLastAppend.isFalse&&
-    _scrollController.position.extentAfter < 100){
+    scrollController.position.extentAfter < 100){
       try {
         pageKey += 1;
-        final newData = await con.getFeedList(pageKey,url,opt);
+        final newData = await con.getFeedList(pageKey,url,opt!);
         final isLastPage = newData.isEmpty;
         if (!mounted) return;
         if (isLastPage) {
@@ -82,7 +89,7 @@ class _FeedListPageState extends State<FeedListPage>{
       } catch (error) {
         print(error);
       }
-    }*/
+    }
   }
 
 
@@ -92,7 +99,7 @@ class _FeedListPageState extends State<FeedListPage>{
     String opt = "pageSize=$size&categoryId=$cateid";
     pageKey = 0;
     PageState.page.setView(url, opt);
-    //con.getFeedFirst(url,opt);
+    con.getFeedFirst(url,opt);
   }
 
   @override
@@ -112,11 +119,8 @@ class _FeedListPageState extends State<FeedListPage>{
 
   @override
   Widget build(BuildContext context){
-    Get.put(PageState());
-    
     final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
-    final feed = (cateid == 0)?ccon.feedList:(cateid == 1)?ccon.feedListb:ccon.feedListc;
-    
+    final feed = con.feedList;
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
       leading : BackBtn(onPressed: ()=>Navigator.of(context).pop()),
@@ -196,10 +200,10 @@ class _FeedListPageState extends State<FeedListPage>{
               collected: collected,
               feed: feed,
               onCommentClick: (id)=>showCustomModal(context, CommentListModal(page: id,)),
-              onFeedClick: (id)=>Get.to(()=>FeedPage(feed: feed[id],)),
+              onFeedClick: (id)=>Get.toNamed("/view/$id")
             ),
             const SliverPadding(padding: EdgeInsets.all(32))
-          ],//Get.toNamed("/view/$id")
+          ],//
         ),
       ),
     );
@@ -226,52 +230,43 @@ class FeedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TempFeed con = Get.put(TempFeed());
-    if(con.isFetching.isTrue){
-      return  SliverList.builder(
-        itemCount: 3,
-        itemBuilder:(context, index){
-          return const SkelFeedRow();
-        },
-      );
-    } else if (feed.isEmpty){
-      return const SliverToBoxAdapter(
-        child: Center(
-          child: Text("피드가 없어요"),
-        ),
-      );
-    } else{
-      if (collected){
-        return SliverGrid.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2
-          ),
-          itemBuilder:  (context, index)=>CollectedRow(feed : feed[index]),
-          itemCount: feed.length,
+    return Obx((){
+      if(con.isFetching.isTrue){
+        return  SliverList.builder(
+          itemCount: 3,
+          itemBuilder:(context, index){
+            return const SkelFeedRow();
+          },
         );
-      } else {
-        return SliverList.builder(
-          itemBuilder : (context, index) => 
-          FeedRow(
-            feed : feed[index],
-            onCommentClick: onCommentClick,
-            onFeedClick: onFeedClick,
-            shortContent: shortContent,
+      } else if (feed.isEmpty){
+        return const SliverToBoxAdapter(
+          child: Center(
+            child: Text("피드가 없어요"),
           ),
-          itemCount: feed.length,
         );
-      }
-    }
-    /*return CustomRefreshIndicator(
-      enabled : true,
-      onRefresh: ()=>Future.sync(()=>_initLoad()),
-      child : Obx((){
+      } else{
         if (collected){
-          return collectedRow();
-        } else{
-          return normalRow();
+          return SliverGrid.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2
+            ),
+            itemBuilder:  (context, index)=>CollectedRow(feed : feed[index]),
+            itemCount: feed.length,
+          );
+        } else {
+          return SliverList.builder(
+            itemBuilder : (context, index) => 
+            FeedRow(
+              feed : feed[index],
+              onCommentClick: onCommentClick,
+              onFeedClick: onFeedClick,
+              shortContent: shortContent,
+            ),
+            itemCount: feed.length,
+          );
         }
-      })
-    );*/
+      }
+    });
   }
 }
 
@@ -295,9 +290,9 @@ class CollectedVList extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             title??"",
-            style : TextStyle(
+            style : const TextStyle(
               fontSize : 16,
-              color: Theme.of(context).colorScheme.onPrimaryFixed
+              fontWeight:FontWeight.bold
             )
           )
         ):const SizedBox.shrink(),

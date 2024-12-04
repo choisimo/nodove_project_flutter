@@ -76,6 +76,7 @@ class _AddRoomViewState extends State<AddRoomView> {
                 const Text(
                   "설정",
                 ),
+                
               ],
             );
           }

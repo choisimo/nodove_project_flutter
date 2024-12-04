@@ -118,7 +118,7 @@ class CateList extends StatefulWidget {
 
 class _CateListState extends State<CateList> {
   late List<Categories> list;
-  TempFeed con = Get.put(TempFeed());
+  CateListModel con = Get.put(CateListModel());
 
   @override
   void initState(){
@@ -126,11 +126,11 @@ class _CateListState extends State<CateList> {
     super.initState();
   }
   Future<void> refresh() async{
-    /*con.getCate(
+    con.getCate(
       page : widget.page,
       url : widget.url,
       opt : widget.opt
-    );*/
+    );
   }
 
   @override
@@ -197,7 +197,10 @@ class _CateRowState extends State<CateRow> {
       )
     ),*/
     return GestureDetector(
-      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>FeedListPage(page : cate.categoryId))),
+      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(
+        builder: (_)=>
+        FeedListPage(page : cate.categoryId)
+      )),
       child : Container(
       height : 64,
       decoration: BoxDecoration(

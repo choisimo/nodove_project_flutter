@@ -3,21 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
-import 'package:nodove_flutter/src/page/list/other/taglist.dart';
 import 'package:nodove_flutter/src/page/messenger/room/room.dart';
 import 'package:nodove_flutter/src/page/recruit/main.dart';
-import 'package:nodove_flutter/src/page/recruit/view.dart';
+import 'package:nodove_flutter/src/page/setting/setting.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
-import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/page/view/view.dart';
 import 'package:nodove_flutter/src/vmodel/binding.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
@@ -77,6 +75,8 @@ class MyApp extends StatelessWidget{
       },
       getPages: [
         GetPage(name: "/", page: ()=>const MainPage()),
+        GetPage(name : "/view/:page" , page : ()=>const FeedPage()),
+        GetPage(name : "/setting/:page" , page : ()=>const SettingPage())
       ],
       initialBinding: InitViewModel(),
     );

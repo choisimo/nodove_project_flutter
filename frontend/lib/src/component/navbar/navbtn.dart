@@ -52,8 +52,9 @@ class BackBtn extends StatelessWidget {
           color : Theme.of(context).colorScheme.onPrimaryFixed
         ),
       )
-      :const CustomSvg(
+      :CustomSvg(
         'common/left.svg',
+        iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
       )
     );
   }
@@ -61,10 +62,12 @@ class BackBtn extends StatelessWidget {
 class NextBtn extends StatelessWidget {
   final String? displayText;
   final Function? onPressed;
+  final double textSize;
   const NextBtn({
     super.key,
     this.displayText,
     this.onPressed,
+    this.textSize = 18
   });
 
   @override
@@ -78,7 +81,7 @@ class NextBtn extends StatelessWidget {
     Text(
       displayText.toString(),
       style: TextStyle(
-        fontSize: 20,
+        fontSize: textSize,
         color : Theme.of(context).colorScheme.onPrimaryFixed
       ),
     ):const CustomSvg(
