@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';

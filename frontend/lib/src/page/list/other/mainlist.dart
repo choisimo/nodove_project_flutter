@@ -9,7 +9,7 @@ import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/notification/noti.dart';
-import 'package:nodove_flutter/src/page/view/view.dart';
+import 'package:nodove_flutter/src/page/search/search.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/state/color.dart';
 
@@ -60,8 +60,10 @@ class _FeedMainListState extends State<FeedMainList> {
           SliverNavbarTop(
             navbarOpt,
           ),
-          const SliverToBoxAdapter(
-            child: SearchPart(),
+          SliverToBoxAdapter(
+            child: SearchPreview(
+              onPressed: ()=>push(const SearchPage()),
+            ),
           ),
           const SliverToBoxAdapter(
             child: MainCommList(),
@@ -232,42 +234,6 @@ class TitleRow extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SearchPart extends StatelessWidget {
-  const SearchPart({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: 42,
-        margin: const EdgeInsets.only(top: 8),
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSecondary,
-            borderRadius: const BorderRadius.all(Radius.circular(100))),
-        child: LayoutBuilder(builder: (context, layout) {
-          return Row(
-            children: [
-              SizedBox(
-                  width: layout.maxWidth - 54,
-                  child: CommonTextInput(
-                      fillColor: Colors.transparent,
-                      placeholder: "검색어를 입력해주세요",
-                      placeholderStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary))),
-              NavbarCommonBtn(
-                "navbar/search.svg",
-                onClick: () {},
-                iconColor: Theme.of(context).colorScheme.primary,
-              ),
-            ],
-          );
-        }),
       ),
     );
   }

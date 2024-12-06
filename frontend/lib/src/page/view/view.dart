@@ -6,7 +6,6 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
-import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/src/component/media/carousel.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';

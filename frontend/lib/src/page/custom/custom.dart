@@ -1,16 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/graphic/image.dart';
-import 'package:nodove_flutter/src/model/recruit.dart';
-import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -172,4 +166,19 @@ class _ProfileSettingState extends State<ProfileSetting> {
       ],
     );
   }
+}
+
+
+void pop(){
+  BuildContext context = GlobalContext.navigatorState.currentContext!;
+
+  Navigator.of(context).pop();
+}
+
+void push(Widget page){
+  BuildContext context = GlobalContext.navigatorState.currentContext!;
+
+  Navigator.of(context).push(
+    MaterialPageRoute(builder: (_)=>page)
+  );
 }

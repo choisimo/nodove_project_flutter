@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/src/vmodel/vrecruit.dart';
+import 'package:nodove_flutter/src/vmodel/vsetting.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/user.dart';
 
@@ -19,5 +20,6 @@ class InitViewModel implements Bindings{
     Get.create<TagListModel>(()=>TagListModel());
     Get.create<TempFeed>(()=>TempFeed());
     Get.put<RecruitModel>(RecruitModel(),permanent: true);
+    Get.put<FeedSettingModel>(FeedSettingModel(),permanent: true);
   }
 }

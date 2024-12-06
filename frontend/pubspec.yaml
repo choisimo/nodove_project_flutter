@@ -65,6 +65,8 @@ dependencies:
   kakao_flutter_sdk_talk: ^1.9.5
   flutter_naver_login: ^1.6.0
   permission_handler: ^11.1.0
+  device_info_plus: ^11.1.1
+  package_info_plus: ^8.1.1
 
 dev_dependencies:
   flutter_test:

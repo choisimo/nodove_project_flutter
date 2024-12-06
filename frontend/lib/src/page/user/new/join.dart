@@ -10,12 +10,10 @@ import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/setting.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
-import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
-import 'package:nodove_flutter/state/page.dart';
 
 List<Widget> pageWidget = [
   const JoinForm(),

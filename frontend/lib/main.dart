@@ -5,9 +5,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
-import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
-import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/permission.dart';
 import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
@@ -75,7 +73,6 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: "/", page: () => const MainPage()),
         GetPage(name: "/view/:page", page: () => const FeedPage()),
-        GetPage(name: "/setting/:page", page: () => const SettingPage())
       ],
       initialBinding: InitViewModel(),
     );

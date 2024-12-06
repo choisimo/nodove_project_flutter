@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/state/color.dart';
 
 class SettingRow extends StatelessWidget {
   final Widget? title;
@@ -32,17 +33,14 @@ class SettingRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width : constraint.maxWidth * 0.33,
+                Expanded(
                   child: Center(child: leading),
                 ),
-                SizedBox(
-                  width : constraint.maxWidth * 0.33,
+                Expanded(
                   child: Center(child: title),
                 ),
-                SizedBox(
-                  width : constraint.maxWidth * 0.33,
-                  child : Center(child: actions)
+                Expanded(
+                  child: Center(child: actions)
                 )
               ],
             );
@@ -81,6 +79,7 @@ class SettingContent extends StatelessWidget {
     return Container(
       width : double.infinity,
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
         border: Border(
           top : rowBorderLine()
         )
@@ -126,3 +125,27 @@ class SettingSwitch extends StatelessWidget {
   }
 }
 
+class SettingToggle extends StatelessWidget {
+  final List<bool> isSelected;
+  final void Function(int index)? onPressed;
+  final List<Widget> children;
+  const SettingToggle({
+    super.key,
+    required this.isSelected,
+    required this.children,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ToggleButtons(
+      borderColor: Theme.of(context).colorScheme.onSecondary,
+      selectedColor: Theme.of(context).colorScheme.onPrimaryFixed,
+      splashColor: Colors.transparent,
+      borderRadius: RowContainer.radius,
+      isSelected: isSelected,
+      onPressed: onPressed,
+      children: children,
+    );
+  }
+}

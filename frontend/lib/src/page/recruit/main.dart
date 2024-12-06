@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +9,6 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/map/map.dart';
 import 'package:nodove_flutter/src/page/recruit/list.dart';
-import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/vmodel/vrecruit.dart';
 import 'package:nodove_flutter/state/color.dart';
 

@@ -10,7 +10,6 @@ import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';

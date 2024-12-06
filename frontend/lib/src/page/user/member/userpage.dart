@@ -13,9 +13,7 @@ import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/page/post/share.dart';
 import 'package:nodove_flutter/src/page/setting/setting.dart';
-import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 import 'package:nodove_flutter/src/page/user/new/main.dart';
-import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/url.dart';
@@ -202,7 +200,9 @@ Widget customSliverAppbar(BuildContext context, String userId, String? id) {
         ? NavbarCommonBtn(
             "common/setting.svg",
             iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
-            onClick: () => Get.toNamed("/setting/0"),
+            onClick: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_)=>const SettingPage())
+            ),
           )
         : const SizedBox.shrink(),
     NavbarCommonBtn(

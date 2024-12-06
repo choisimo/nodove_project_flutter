@@ -9,7 +9,6 @@ import 'package:nodove_flutter/src/model/chatting.dart';
 import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/notification.dart';
-import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/repo/repo.dart';

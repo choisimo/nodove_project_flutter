@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/setting.dart';
+import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/user/member/editpage.dart';
 
 class SettingPage extends StatelessWidget {
@@ -22,35 +23,12 @@ class SettingPage extends StatelessWidget {
   }
 }
 
-const pages = [
-  MainSettingView(),
-  SizedBox.shrink(),
-  SizedBox.shrink(),
-  SizedBox.shrink(),
-  EditUserPage(),
-  AppInfoView(),
-];
-
 class SettingView extends StatelessWidget {
   const SettingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    int page = int.parse(Get.parameters['page']??'0');
-    return IndexedStack(
-      index: page,
-      children: pages.map((page){
-        return Navigator(
-          onGenerateRoute: (_){
-            return MaterialPageRoute(
-              builder: (builder){
-                return page;
-              },
-            );
-          },
-        );
-      }).toList(),
-    );
+    return const MainSettingView();
   }
 }
 
@@ -73,8 +51,11 @@ class MainSettingView extends StatelessWidget {
               
               SettingRow(
                 title : Text(
-                  "블록",
+                  "피드",
                   style: content,
+                ),
+                onClick: ()=>Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_)=>const FeedSettingPage())
                 ),
               ),
               SettingRow(
@@ -94,8 +75,8 @@ class MainSettingView extends StatelessWidget {
                   "계정",
                   style: content,
                 ),
-                onClick: ()=>Get.toNamed(
-                  "/setting/4"
+                onClick: ()=>Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_)=>const EditUserPage())
                 ),
               ),
               SettingRow(
@@ -103,8 +84,8 @@ class MainSettingView extends StatelessWidget {
                   "앱 정보",
                   style: content,
                 ),
-                onClick: ()=>Get.toNamed(
-                  "/setting/5"
+                onClick: ()=>Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_)=>const AppInfoView())
                 ),
               ),
             ],
@@ -124,54 +105,62 @@ class AppInfoView extends StatelessWidget {
       fontSize: 16,
       fontWeight: FontWeight.normal,
     );
-    return SingleChildScrollView(
-      child : Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SettingTitle(
-            title: "앱 정보"
-          ),
-          SettingContent(
-            children: [
-              SettingRow(
-                leading : Text(
-                  "앱 이름",
-                  style: content,
+    NavbarContent navbarOpt = NavbarContent(
+      leading : BackBtn(onPressed: ()=>Navigator.of(context).pop(),),
+      title: const NavbarTitle("앱 정보")
+    );
+    return Scaffold(
+      appBar: NavbarTop(navbarOpt,centerTitle: true,),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: SingleChildScrollView(
+        child : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SettingTitle(
+              title: "앱 정보"
+            ),
+            SettingContent(
+              children: [
+                SettingRow(
+                  leading : Text(
+                    "앱 이름",
+                    style: content,
+                  ),
+                  actions: const Text("커리어블록"),
                 ),
-                actions: const Text("커리어블록"),
-              ),
-              SettingRow(
-                leading : Text(
-                  "앱 버전",
-                  style: content,
+                SettingRow(
+                  leading : Text(
+                    "앱 버전",
+                    style: content,
+                  ),
+                  actions: const Text("1.0.0"),
                 ),
-                actions: const Text("1.0.0"),
-              ),
-              
-            ],
-          ),
-          const SettingTitle(
-            title: "기타 정보"
-          ),
-          SettingContent(
-            children: [
-              SettingRow(
-                title : Text(
-                  "도움말",
-                  style: content,
+                
+              ],
+            ),
+            const SettingTitle(
+              title: "기타 정보"
+            ),
+            SettingContent(
+              children: [
+                SettingRow(
+                  title : Text(
+                    "도움말",
+                    style: content,
+                  ),
                 ),
-              ),
-              SettingRow(
-                title : Text(
-                  "개인정보처리방침",
-                  style: content,
+                SettingRow(
+                  title : Text(
+                    "개인정보처리방침",
+                    style: content,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      )
+              ],
+            ),
+          ],
+        )
+      ),
     );
   }
 }

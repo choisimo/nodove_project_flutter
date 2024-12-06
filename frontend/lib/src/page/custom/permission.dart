@@ -1,14 +1,73 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
+import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 late LocationSettings locationSettings;
+
+Future<bool> imagePermission(BuildContext context) async {
+  final ImagePicker picker = ImagePicker();
+  FeedImageModel con = Get.put(FeedImageModel());
+  late PermissionStatus permission;
+  late int androidVersion;
+
+  final DeviceInfoPlugin info = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    final AndroidDeviceInfo androidInfo = await info.androidInfo;
+    androidVersion = int.parse(androidInfo.version.release);
+    if (androidVersion >= 13) {
+      permission = await Permission.photos.request();
+    } else {
+      permission = await Permission.storage.request();
+    }
+  } else if (Platform.isIOS) {
+    permission = await Permission.photos.request();
+  }
+
+  if (permission.isGranted || permission.isLimited) {
+    try {
+      return true;
+    } catch (e) {
+      showToast("갤러리 열기에 실패했습니다");
+      return false;
+    }
+  } else {
+    showDialog(
+      // ignore: use_build_context_synchronously
+      context: context,
+      builder: (context) => CustomDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [DialogCloseBtn(onPressed: () => Get.back())],
+          ),
+          content: const Column(
+            children: [
+              DialogStrTitle("권한을 설정해주세요"),
+              DialogStrContent("갤러리에 있는 사진을 선택하려면 권한이 필요합니다")
+            ],
+          ),
+          bottomBtns: [
+            DialogBottomBtn(
+              title : "설정 열기",
+                onPressed: () async {
+              openAppSettings();
+            })
+          ]),
+    );
+  }
+
+  return false;
+}
 
 Future<Pos> locationPermission() async {
   BuildContext? context = GlobalContext.navigatorState.currentContext;

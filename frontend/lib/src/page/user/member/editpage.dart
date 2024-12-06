@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/dateTime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
-import 'package:nodove_flutter/graphic/painter.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/user.dart';
@@ -25,12 +24,11 @@ class EditUserPage extends StatelessWidget {
         leading: BackBtn(
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          NextBtn(displayText: "수정", onPressed: () {}),
-        ]);
+        title: const NavbarTitle("계정"),);
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        appBar: NavbarTop(navbarOpt,centerTitle: true,),
         body: const EditUser(),
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
@@ -67,9 +65,7 @@ class _EditUserState extends State<EditUser> {
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
-    return CustomRefreshIndicator(
-        onRefresh: () => refreshState(),
-        child: Obx(() {
+    return Obx(() {
           final user = _con.userInfo.value;
           return SizedBox(
             width: maxWidth,
@@ -92,6 +88,15 @@ class _EditUserState extends State<EditUser> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      const SettingRow(
+                        title : Text(
+                          "수정",
+                           style: TextStyle(
+                              fontSize: 18,
+                            ),
+                        )
+                      ),
+                      
                     ]),
                     const SettingTitle(title: "인적사항"),
                     SettingContent(
@@ -179,6 +184,15 @@ class _EditUserState extends State<EditUser> {
                               placeholder: "이메일을 적어주세요"),
                         ),
                         const SizedBox(height: 16),
+                        const SettingRow(
+                          title : Text(
+                            "수정",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          )
+                        ),
+                        
                       ],
                     ),
                     const SettingTitle(
@@ -204,6 +218,6 @@ class _EditUserState extends State<EditUser> {
                   ]),
             ),
           );
-        }));
+        });
   }
 }
