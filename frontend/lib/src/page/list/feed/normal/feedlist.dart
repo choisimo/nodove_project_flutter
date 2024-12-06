@@ -21,22 +21,21 @@ import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/url.dart';
 import 'package:shimmer/shimmer.dart';
 
-class FeedListPage extends StatefulWidget{
+class FeedListPage extends StatefulWidget {
   final int? page;
   final String url;
   final String? opt;
-  const FeedListPage({
-    super.key,
-    this.page,
-    this.url = "${Url.apiUrl}${Url.feedList}",
-    this.opt
-  });
+  const FeedListPage(
+      {super.key,
+      this.page,
+      this.url = "${Url.apiUrl}${Url.feedList}",
+      this.opt});
 
   @override
   State<FeedListPage> createState() => _FeedListPageState();
 }
 
-class _FeedListPageState extends State<FeedListPage>{
+class _FeedListPageState extends State<FeedListPage> {
   final storage = const FlutterSecureStorage();
   late bool collected = false;
   int size = 10;
@@ -53,16 +52,16 @@ class _FeedListPageState extends State<FeedListPage>{
     super.initState();
   }
 
-  void refresh(){
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+  void refresh() {
+    final int cateid = widget.page ?? int.parse(Get.parameters['page'] ?? '0');
     ccon.getCate(
-      page : cateid,
-      url : "/api/categories/getAllCategoriesByParentId/",
-      opt : cateid.toString(),
+      page: cateid,
+      url: "/api/categories/getAllCategoriesByParentId/",
+      opt: cateid.toString(),
     );
     ccon.getCateOne(
-      url : "/api/categories/getAllCategoriesByParentId/",
-      opt : cateid.toString(),
+      url: "/api/categories/getAllCategoriesByParentId/",
+      opt: cateid.toString(),
     );
   }
 
@@ -72,13 +71,13 @@ class _FeedListPageState extends State<FeedListPage>{
   void fetchPage() async {
     String url = widget.url;
     String? opt = widget.opt;
-    if (!con.isFetching.value && 
-    !con.isFragFetching.value &&
-    con.isLastAppend.isFalse&&
-    scrollController.position.extentAfter < 100){
+    if (!con.isFetching.value &&
+        !con.isFragFetching.value &&
+        con.isLastAppend.isFalse &&
+        scrollController.position.extentAfter < 100) {
       try {
         pageKey += 1;
-        final newData = await con.getFeedList(pageKey,url,opt!);
+        final newData = await con.getFeedList(pageKey, url, opt!);
         final isLastPage = newData.isEmpty;
         if (!mounted) return;
         if (isLastPage) {
@@ -92,14 +91,13 @@ class _FeedListPageState extends State<FeedListPage>{
     }
   }
 
-
-  void _initLoad() async{
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+  void _initLoad() async {
+    final int cateid = widget.page ?? int.parse(Get.parameters['page'] ?? '0');
     String url = "${Url.apiUrl}${Url.feedList}";
     String opt = "pageSize=$size&categoryId=$cateid";
     pageKey = 0;
     PageState.page.setView(url, opt);
-    con.getFeedFirst(url,opt);
+    con.getFeedFirst(url, opt);
   }
 
   @override
@@ -108,60 +106,51 @@ class _FeedListPageState extends State<FeedListPage>{
     super.dispose();
   }
 
-  void _checksettings() async{
+  void _checksettings() async {
     String? c = await storage.read(key: 'collectedView');
     String? s = await storage.read(key: 'ContentSize');
-    setState((){
-      collected = ((c == null)||(c == 'false'))?false:true;
-      size = (s != null)?int.parse(s):10;
+    setState(() {
+      collected = ((c == null) || (c == 'false')) ? false : true;
+      size = (s != null) ? int.parse(s) : 10;
     });
   }
 
   @override
-  Widget build(BuildContext context){
-    final int cateid = widget.page??int.parse(Get.parameters['page']??'0');
+  Widget build(BuildContext context) {
+    final int cateid = widget.page ?? int.parse(Get.parameters['page'] ?? '0');
     final feed = con.feedList;
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt = NavbarContent(
-      leading : BackBtn(onPressed: ()=>Navigator.of(context).pop()),
-      actions: [
-        NavbarCommonBtn(
-          "post/edit.svg",
-          onClick: ()=>Get.to(
-            ()=>const WritePage(),
-            fullscreenDialog: true,
-            arguments: {
-              'postCategory' : cateid
-            }
+        leading: BackBtn(onPressed: () => Navigator.of(context).pop()),
+        actions: [
+          NavbarCommonBtn(
+            "post/edit.svg",
+            onClick: () => Get.to(() => const WritePage(),
+                fullscreenDialog: true, arguments: {'postCategory': cateid}),
           ),
-        ),
-        NavbarCommonBtn(
-          "navbar/search.svg",
-          onClick : (){
-            setState((){
-              search = true;
-            });
-          },
-        ),
-        NavbarCommonBtn(
-          "common/setting.svg",
-          iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
-          onClick : ()=>Navigator.of(context).push(
-            MaterialPageRoute(builder: (_)=>const FeedSettingPage())
+          NavbarCommonBtn(
+            "navbar/search.svg",
+            onClick: () {
+              setState(() {
+                search = true;
+              });
+            },
           ),
-        ),
-      ]
-    );
-    
+          NavbarCommonBtn(
+            "common/setting.svg",
+            iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
+            onClick: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FeedSettingPage())),
+          ),
+        ]);
+
     return Scaffold(
       key: key,
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      bottomNavigationBar: FeedBottomNavbar(cate : ccon.currentCate.value),
-      body : 
-      CustomRefreshIndicator(
-        edgeOffset : 54,
+      body: CustomRefreshIndicator(
+        edgeOffset: 54,
         displacement: 54,
-        onRefresh: ()=>refresh(),
+        onRefresh: () => refresh(),
         child: CustomScrollView(
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -176,13 +165,13 @@ class _FeedListPageState extends State<FeedListPage>{
               elevation: 0.0,
               scrolledUnderElevation: 0.0,
               flexibleSpace: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: const FlexibleSpaceBar(
-                  centerTitle: true,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: const FlexibleSpaceBar(
+                    centerTitle: true,
+                  ),
                 ),
               ),
-            ),
             ),
             /*SliverPersistentHeader(
               delegate: SliverCustomBarDelegate(
@@ -197,13 +186,16 @@ class _FeedListPageState extends State<FeedListPage>{
               ),
             ),*/
             FeedList(
-              collected: collected,
-              feed: feed,
-              onCommentClick: (id)=>showCustomModal(context, CommentListModal(page: id,)),
-              onFeedClick: (id)=>Get.toNamed("/view/$id")
-            ),
+                collected: collected,
+                feed: feed,
+                onCommentClick: (id) => showCustomModal(
+                    context,
+                    CommentListModal(
+                      page: id,
+                    )),
+                onFeedClick: (id) => Get.toNamed("/view/$id")),
             const SliverPadding(padding: EdgeInsets.all(32))
-          ],//
+          ], //
         ),
       ),
     );
@@ -218,46 +210,43 @@ class FeedList extends StatelessWidget {
   final Function(int id)? onFeedClick;
   final Function(int id)? onCommentClick;
   const FeedList({
-    super.key ,
+    super.key,
     required this.collected,
     required this.feed,
     this.shortContent = true,
     this.onCommentClick,
     this.onFeedClick,
   });
-  
 
   @override
   Widget build(BuildContext context) {
     TempFeed con = Get.put(TempFeed());
-    return Obx((){
-      if(con.isFetching.isTrue){
-        return  SliverList.builder(
+    return Obx(() {
+      if (con.isFetching.isTrue) {
+        return SliverList.builder(
           itemCount: 3,
-          itemBuilder:(context, index){
+          itemBuilder: (context, index) {
             return const SkelFeedRow();
           },
         );
-      } else if (feed.isEmpty){
+      } else if (feed.isEmpty) {
         return const SliverToBoxAdapter(
           child: Center(
             child: Text("피드가 없어요"),
           ),
         );
-      } else{
-        if (collected){
+      } else {
+        if (collected) {
           return SliverGrid.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2
-            ),
-            itemBuilder:  (context, index)=>CollectedRow(feed : feed[index]),
+                crossAxisCount: 2),
+            itemBuilder: (context, index) => CollectedRow(feed: feed[index]),
             itemCount: feed.length,
           );
         } else {
           return SliverList.builder(
-            itemBuilder : (context, index) => 
-            FeedRow(
-              feed : feed[index],
+            itemBuilder: (context, index) => FeedRow(
+              feed: feed[index],
               onCommentClick: onCommentClick,
               onFeedClick: onFeedClick,
               shortContent: shortContent,
@@ -274,66 +263,53 @@ class CollectedVList extends StatelessWidget {
   final List<Feed> feed;
   final String? title;
   final Function(int id)? onFeedClick;
-  const CollectedVList({
-    super.key,
-    required this.feed,
-    this.title,
-    this.onFeedClick
-  });
+  const CollectedVList(
+      {super.key, required this.feed, this.title, this.onFeedClick});
 
   @override
   Widget build(BuildContext context) {
     TempFeed con = Get.find();
     return Column(
       children: [
-        (title != null)?Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title??"",
-            style : const TextStyle(
-              fontSize : 16,
-              fontWeight:FontWeight.bold
-            )
-          )
-        ):const SizedBox.shrink(),
-        Obx((){
-          if(con.isFetching.isTrue){
+        (title != null)
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Text(title ?? "",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)))
+            : const SizedBox.shrink(),
+        Obx(() {
+          if (con.isFetching.isTrue) {
             return SizedBox(
-              height : 200,
+              height: 200,
               child: ListView.builder(
-                itemCount: 5,
-                scrollDirection: Axis.horizontal,
-                itemBuilder:(context,index){
-                  return Shimmer.fromColors(
-                    baseColor: Theme.of(context).colorScheme.surface,
-                    highlightColor: Theme.of(context).colorScheme.onPrimary,
-                    child: const CollectedVRowSkel()
-                  );
-                }
-              ),
+                  itemCount: 5,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Shimmer.fromColors(
+                        baseColor: Theme.of(context).colorScheme.surface,
+                        highlightColor: Theme.of(context).colorScheme.onPrimary,
+                        child: const CollectedVRowSkel());
+                  }),
             );
-          } else if(feed.isEmpty){
+          } else if (feed.isEmpty) {
             return const SizedBox(
-              height : 200,
-              child : Center(child: Text("피드가 없어요..."))
-            );
-          }
-          else{
+                height: 200, child: Center(child: Text("피드가 없어요...")));
+          } else {
             return SizedBox(
-              height : 200,
+              height: 200,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: ListView.builder(
-                  shrinkWrap : true,
-                  itemCount: feed.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder:(context,index){
-                    return CollectedVRow(
-                      feed: feed[index],
-                      onFeedClick: onFeedClick,
-                    );
-                  }
-                ),
+                    shrinkWrap: true,
+                    itemCount: feed.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return CollectedVRow(
+                        feed: feed[index],
+                        onFeedClick: onFeedClick,
+                      );
+                    }),
               ),
             );
           }

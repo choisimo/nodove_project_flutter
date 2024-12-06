@@ -19,79 +19,79 @@ import "dart:math" as math;
 
 class CatePage extends StatefulWidget {
   final int page;
-  const CatePage({super.key,required this.page});
+  const CatePage({super.key, required this.page});
 
   @override
   State<CatePage> createState() => _CatePageState();
 }
 
-class _CatePageState extends State<CatePage> with SingleTickerProviderStateMixin {
-  late TabController tabController =
-  TabController(
+class _CatePageState extends State<CatePage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController = TabController(
     length: 2,
     vsync: this,
     initialIndex: 0,
   );
   final ScrollController _scrollController = ScrollController();
   CateListModel con = Get.put(CateListModel());
-  Future<void> refresh() async{
+  Future<void> refresh() async {
     con.getCate(
-      page : widget.page,
+      page: widget.page,
     );
   }
+
   @override
   Widget build(BuildContext context) {
     Get.put(PageState());
-    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     final arg = arguments['backName'];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: CustomFloatingButton(
-        onClick: ()=>Get.to(()=>const WriteCatePage(),fullscreenDialog: true),
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-        child : SvgPicture.asset(
-          'assets/icons/post/edit.svg',
-          width : 24,
-          height : 24,
-          colorFilter: const ColorFilter.mode(Colors.white,BlendMode.srcIn),
-        )
-      ),
-      body : CustomScrollView(
-        controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            centerTitle: false,
-            leading : BackBtn(onPressed: ()=>Navigator.of(context).pop()),
-            title : (arg !=null )?
-            NavbarTitle(arg)
-            :const NavbarTitle("카테고리"),
-            actions : [
-              NavbarCommonBtn(
-                "navbar/search.svg",
-                onClick : (){},
-              ),
-            ]
-          ),
-          SliverFillRemaining(
-            child: TabBarView(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        floatingActionButton: CustomFloatingButton(
+            onClick: () =>
+                Get.to(() => const WriteCatePage(), fullscreenDialog: true),
+            backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+            child: SvgPicture.asset(
+              'assets/icons/post/edit.svg',
+              width: 24,
+              height: 24,
+              colorFilter:
+                  const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            )),
+        body: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+                centerTitle: false,
+                leading: BackBtn(onPressed: () => Navigator.of(context).pop()),
+                title: (arg != null)
+                    ? NavbarTitle(arg)
+                    : const NavbarTitle("카테고리"),
+                actions: [
+                  NavbarCommonBtn(
+                    "navbar/search.svg",
+                    onClick: () {},
+                  ),
+                ]),
+            SliverFillRemaining(
+                child: TabBarView(
               controller: tabController,
               children: [
                 CustomRefreshIndicator(
-                  onRefresh: ()=>refresh(),
+                  onRefresh: () => refresh(),
                   child: CateList(
-                    page : widget.page,
+                    page: widget.page,
                     scroll: false,
                   ),
                 ),
                 const Text("빈 텍스트")
               ],
-            )
-          )
-        ],
-      )
-    );
+            ))
+          ],
+        ));
   }
 }
 
@@ -102,15 +102,14 @@ class CateList extends StatefulWidget {
   final int? selection;
   final bool scroll;
   final bool collected;
-  const CateList({
-    super.key,
-    required this.page,
-    this.url,
-    this.opt,
-    this.selection,
-    this.scroll = true,
-    this.collected = false
-  });
+  const CateList(
+      {super.key,
+      required this.page,
+      this.url,
+      this.opt,
+      this.selection,
+      this.scroll = true,
+      this.collected = false});
 
   @override
   State<CateList> createState() => _CateListState();
@@ -121,64 +120,61 @@ class _CateListState extends State<CateList> {
   CateListModel con = Get.put(CateListModel());
 
   @override
-  void initState(){
+  void initState() {
     refresh();
     super.initState();
   }
-  Future<void> refresh() async{
-    con.getCate(
-      page : widget.page,
-      url : widget.url,
-      opt : widget.opt
-    );
+
+  Future<void> refresh() async {
+    con.getCate(page: widget.page, url: widget.url, opt: widget.opt);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx((){
+    return Obx(() {
       list = con.catelist;
-      if (widget.collected){
+      if (widget.collected) {
         return const SizedBox.shrink();
       } else {
-        if (con.isFetching.isTrue){
+        if (con.isFetching.isTrue) {
           return ListView.builder(
-            shrinkWrap: (widget.selection != null),
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 7,
-            itemBuilder: (context,index){
-              return const CateRowSkel();
-            }
-          );
-        } else if (list.isEmpty){
+              shrinkWrap: (widget.selection != null),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 7,
+              itemBuilder: (context, index) {
+                return const CateRowSkel();
+              });
+        } else if (list.isEmpty) {
           return ListView.builder(
-            padding: const EdgeInsets.all(0),
-            shrinkWrap: (widget.selection != null),
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 1,
-            itemBuilder: (context,index){
-              return const Text("카테고리가 없어요");
-            }
-          );
-        } else{
+              padding: const EdgeInsets.all(0),
+              shrinkWrap: (widget.selection != null),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 1,
+              itemBuilder: (context, index) {
+                return const Text("카테고리가 없어요");
+              });
+        } else {
           return ListView.builder(
             padding: const EdgeInsets.all(0),
             shrinkWrap: (widget.selection != null),
-            physics: (widget.selection != null||!widget.scroll)?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
-            itemCount: math.min(widget.selection??list.length,list.length),
-            itemBuilder :(context, index) {
-              return CateRow(cate: list[index],key : Key("${list[index].categoryId}"));
+            physics: (widget.selection != null || !widget.scroll)
+                ? const NeverScrollableScrollPhysics()
+                : const AlwaysScrollableScrollPhysics(),
+            itemCount: math.min(widget.selection ?? list.length, list.length),
+            itemBuilder: (context, index) {
+              return CateRow(
+                  cate: list[index], key: Key("${list[index].categoryId}"));
             },
           );
         }
       }
-    }
-  );
+    });
   }
 }
 
 class CateRow extends StatefulWidget {
   final Categories cate;
-  const CateRow({super.key,required this.cate});
+  const CateRow({super.key, required this.cate});
 
   @override
   State<CateRow> createState() => _CateRowState();
@@ -189,7 +185,7 @@ class _CateRowState extends State<CateRow> {
   @override
   Widget build(BuildContext context) {
     Categories cate = widget.cate;
-      /* ()=>Navigator.push(
+    /* ()=>Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context)=>FeedListPage(cate : cate.categoryId),
@@ -197,61 +193,49 @@ class _CateRowState extends State<CateRow> {
       )
     ),*/
     return GestureDetector(
-      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(
-        builder: (_)=>
-        FeedListPage(page : cate.categoryId)
-      )),
-      child : Container(
-      height : 64,
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: rowBorderLine()
-        ),
-        color : Theme.of(context).colorScheme.onPrimary,
-      ),
-      child : LayoutBuilder(
-        builder : (context,constraint){
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Profile(
-                profile: cate.categoryImage??"",
-                width: 42,
-                height: 42
-              ),
-              Expanded(
-                child: SizedBox(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        cate.categoryName,
-                        maxLines: 1,
-                        textAlign: TextAlign.start,
-                        style : const TextStyle(
-                          fontSize : 16,
-                        )
-                      ),
-                      Text(
-                        '"${cate.categoryDescription}"',
-                        maxLines: 2,
-                        textAlign: TextAlign.start,
-                        style : TextStyle(
-                          fontSize : 12,
-                          color : Theme.of(context).colorScheme.secondary,
-                        )
-                      ),
-                    ],
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => FeedListPage(page: cate.categoryId))),
+      child: Container(
+          height: 72,
+          decoration: BoxDecoration(
+            border: Border(bottom: rowBorderLine()),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          child: LayoutBuilder(builder: (context, constraint) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Profile(
+                    profile: cate.categoryImage ?? "", width: 42, height: 42),
+                Expanded(
+                  child: SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(cate.categoryName,
+                            maxLines: 1,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontSize: 16,
+                            )),
+                        Text('"${cate.categoryDescription}"',
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.secondary,
+                            )),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width : constraint.minWidth * 0.15,
-                height : 32,
-                child : /*(false)?
+                SizedBox(
+                  width: constraint.minWidth * 0.15,
+                  height: 32,
+                  child: /*(false)?
                 TextButton(
                   onPressed: (){},
                   style : TextButton.styleFrom(
@@ -268,86 +252,76 @@ class _CateRowState extends State<CateRow> {
                     ),
                   ),
                 )
-                :*/TextButton(
-                  onPressed: (){},
-                  style : TextButton.styleFrom(
-                    padding: const EdgeInsets.all(0),
-                    backgroundColor: Theme.of(context).colorScheme.onSecondary,
-                    shape : const RoundedRectangleBorder(
-                      borderRadius: RowContainer.radius,
-                    )
-                  ),
-                  child: Text(
-                    "구독",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimaryFixed
+                :*/
+                      TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onSecondary,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: RowContainer.radius,
+                        )),
+                    child: Text(
+                      "구독",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimaryFixed),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width : constraint.minWidth * 0.1,
-                height : 42,
-                child: 
-                IconButton(
-                  style : IconButton.styleFrom(
-                    shape : const RoundedRectangleBorder(
-                      borderRadius: RowContainer.radius
-                    )
-                  ),
-                  icon: const CustomSvg(
-                    "common/right.svg",
-                    width : 12 , height : 12,
-                  ),
-                  onPressed: ()=>Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:(context) => CatePage(page : cate.categoryId),
-                      settings: RouteSettings(
-                        arguments: {
-                          "backName" : cate.categoryName
-                        },
-                      )
-                    )
-                  ),
-                )
-              ),
-            ],
-          );
-        }
-      )
-    ),
+                SizedBox(
+                    width: constraint.minWidth * 0.1,
+                    height: 42,
+                    child: IconButton(
+                      style: IconButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: RowContainer.radius)),
+                      icon: const CustomSvg(
+                        "common/right.svg",
+                        width: 12,
+                        height: 12,
+                      ),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CatePage(page: cate.categoryId),
+                              settings: RouteSettings(
+                                arguments: {"backName": cate.categoryName},
+                              ))),
+                    )),
+              ],
+            );
+          })),
     );
   }
 }
 
 class MinimalCateRow extends StatelessWidget {
   final Categories cate;
-  const MinimalCateRow({super.key,required this.cate});
+  const MinimalCateRow({super.key, required this.cate});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap : ()=>Navigator.of(context).push(MaterialPageRoute(builder: (_)=>FeedListPage(page : cate.categoryId))),
-      child : SizedBox(
-      child : Column(
-        children: [
-          const Profile(
-            profile: "https://top.jbnu.ac.kr/sites/archinst/atchmnfl/bbs/5131/thumbnail/temp_1707368024381100.png",
-            width: 42,
-            height: 42
-          ),
-          Text(
-            cate.categoryName,
-            maxLines: 1,
-            textAlign: TextAlign.start,
-            style : const TextStyle(
-              fontSize : 16,
-            )
-          ),
-        ],
-      ))
-    );
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => FeedListPage(page: cate.categoryId))),
+        child: SizedBox(
+            child: Column(
+          children: [
+            const Profile(
+                profile:
+                    "https://top.jbnu.ac.kr/sites/archinst/atchmnfl/bbs/5131/thumbnail/temp_1707368024381100.png",
+                width: 42,
+                height: 42),
+            Text(cate.categoryName,
+                maxLines: 1,
+                textAlign: TextAlign.start,
+                style: const TextStyle(
+                  fontSize: 16,
+                )),
+          ],
+        )));
   }
 }
 
@@ -357,30 +331,25 @@ class CateRowSkel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height : 96,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color : Theme.of(context).colorScheme.shadow,
-            offset: RowContainer.offset,
-            blurRadius: RowContainer.blurRadius
-          )
-        ],
-        color : Theme.of(context).colorScheme.onPrimary,
-      ),
-      child : Shimmer.fromColors(
-        baseColor: Theme.of(context).colorScheme.surface,
-        highlightColor: Theme.of(context).colorScheme.onPrimary,
-        child: LayoutBuilder(
-          builder : (context,constraint){
+        height: 96,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+                color: Theme.of(context).colorScheme.shadow,
+                offset: RowContainer.offset,
+                blurRadius: RowContainer.blurRadius)
+          ],
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        child: Shimmer.fromColors(
+          baseColor: Theme.of(context).colorScheme.surface,
+          highlightColor: Theme.of(context).colorScheme.onPrimary,
+          child: LayoutBuilder(builder: (context, constraint) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const ProfileSkel(
-                  width: 56,
-                  height: 56
-                ),
+                const ProfileSkel(width: 56, height: 56),
                 Expanded(
                   child: SizedBox(
                     child: Column(
@@ -390,34 +359,32 @@ class CateRowSkel extends StatelessWidget {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: RowContainer.radius,
-                            color: Theme.of(context).colorScheme.onPrimaryFixed
-                          ),
-                          height : 18,
-                          width : constraint.maxWidth * 0.3,
+                              borderRadius: RowContainer.radius,
+                              color:
+                                  Theme.of(context).colorScheme.onPrimaryFixed),
+                          height: 18,
+                          width: constraint.maxWidth * 0.3,
                         ),
-                        const SizedBox(height : 4),
+                        const SizedBox(height: 4),
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: RowContainer.radius,
-                            color: Theme.of(context).colorScheme.onPrimaryFixed
-                          ),
-                          height : 18,
-                          width : constraint.maxWidth * 0.5,
+                              borderRadius: RowContainer.radius,
+                              color:
+                                  Theme.of(context).colorScheme.onPrimaryFixed),
+                          height: 18,
+                          width: constraint.maxWidth * 0.5,
                         )
                       ],
                     ),
                   ),
                 ),
                 SizedBox(
-                  width : constraint.minWidth * 0.3,
-                  height : constraint.maxHeight, 
+                  width: constraint.minWidth * 0.3,
+                  height: constraint.maxHeight,
                 ),
               ],
             );
-          }
-        ),
-      )
-    );
+          }),
+        ));
   }
 }

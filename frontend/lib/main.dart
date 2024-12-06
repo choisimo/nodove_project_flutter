@@ -5,8 +5,10 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
+import 'package:nodove_flutter/graphic/image.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/permission.dart';
 import 'package:nodove_flutter/src/page/list/feed/community/commulist.dart';
 import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/messenger/room/room.dart';
@@ -21,45 +23,42 @@ import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 import 'package:nodove_flutter/state/user.dart';
 
-void main() async{
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await _initialize();
-  
+
   FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
 
-Future<void> _initialize() async{
+Future<void> _initialize() async {
   await NaverMapSdk.instance.initialize(
     clientId: "g69k6e2jkr",
     onAuthFailed: (ex) => print("네이버 로그인 실패$ex"),
   );
   KakaoSdk.init(
-      nativeAppKey: '05ac89039fc5530d6aecefd15965ffab',
-      javaScriptAppKey: '6ca98145dce6e237061047f91555b459',
+    nativeAppKey: '05ac89039fc5530d6aecefd15965ffab',
+    javaScriptAppKey: '6ca98145dce6e237061047f91555b459',
   );
   final Pos pos = await locationPermission();
   UserState().setPos(pos);
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
-  @override
-  Widget build(BuildContext context){
 
+  @override
+  Widget build(BuildContext context) {
     return GetMaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate
       ],
-      supportedLocales: const [
-        Locale('ko',"KO")
-      ],
-      home : const LoginMainPage(),
-      theme : Themes.light,
+      supportedLocales: const [Locale('ko', "KO")],
+      home: const LoginMainPage(),
+      theme: Themes.light,
       darkTheme: Themes.dark,
       themeMode: ThemeMode.system,
       navigatorKey: GlobalContext.navigatorState,
@@ -74,79 +73,72 @@ class MyApp extends StatelessWidget{
         );
       },
       getPages: [
-        GetPage(name: "/", page: ()=>const MainPage()),
-        GetPage(name : "/view/:page" , page : ()=>const FeedPage()),
-        GetPage(name : "/setting/:page" , page : ()=>const SettingPage())
+        GetPage(name: "/", page: () => const MainPage()),
+        GetPage(name: "/view/:page", page: () => const FeedPage()),
+        GetPage(name: "/setting/:page", page: () => const SettingPage())
       ],
       initialBinding: InitViewModel(),
     );
   }
 }
 
-
-class MyHome extends StatefulWidget{
+class MyHome extends StatefulWidget {
   const MyHome({super.key});
 
   @override
   State<MyHome> createState() => _MyHomeState();
 }
-List<Widget> pages = [
-  const MainPage(key : Key("mainPage")),
-  const RoomPage(key : Key('messengerPage')),
-  const CommuListPage(),
-  const RecruitMainPage(key : Key("RecruitMainPage")),
-  const UserPage(key : Key('userPage')),
-];
-class _MyHomeState extends State<MyHome>{
+
+class _MyHomeState extends State<MyHome> {
   late List<GlobalKey<NavigatorState>> navigatorKeyList;
+  PageController pageController = PageController();
   int selectedIndex = 0;
+  List<Widget> pages = [
+    const MainPage(key: Key('mainPage')),
+    const RoomPage(key: Key('messengerPage')),
+    const CommuListPage(),
+    const RecruitMainPage(key: Key("RecruitMainPage")),
+    const UserPage(key: Key('userPage')),
+  ];
 
   @override
   void initState() {
     navigatorKeyList =
         List.generate(pages.length, (index) => GlobalKey<NavigatorState>());
+
     super.initState();
   }
 
-  void systemBackButtonPressed(bool didPop,_) {
+  void systemBackButtonPressed(bool didPop, _) {
     if (navigatorKeyList[PageState.page.index.value].currentState!.canPop()) {
-      navigatorKeyList[PageState.page.index.value]
-          .currentState!
-          .pop();
+      navigatorKeyList[PageState.page.index.value].currentState!.pop();
     } else {
-      SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+      if (PageState.page.index.value == 0) {
+        SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+      } else {
+        PageState.page.setIndex(0);
+      }
     }
   }
 
-
   @override
-  Widget build(BuildContext context){
-    Get.put(PageState());
-    return Scaffold(
-      key: navigatorKeyList[PageState.page.index.value],
-      bottomNavigationBar: const BottomNavbar(),
-      extendBody: true,
-      body : 
-      Obx((){
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: systemBackButtonPressed,
-          child: IndexedStack(
-            index: PageState.page.index.value,
-            children: pages.map((page){
-              return Navigator(
-                onGenerateRoute: (_){
-                  return MaterialPageRoute(
-                    builder: (builder){
-                      return page;
-                    },
+  Widget build(BuildContext context) {
+    return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: systemBackButtonPressed,
+        child: Obx(() => Scaffold(
+              bottomNavigationBar: const BottomNavbar(),
+              body: IndexedStack(
+                index: PageState.page.index.value,
+                children: pages.map((page) {
+                  int index = pages.indexOf(page);
+                  return Navigator(
+                    key: navigatorKeyList[index],
+                    onGenerateInitialRoutes: (navigator, initialRoute) =>
+                        [MaterialPageRoute(builder: (context) => page)],
                   );
-                },
-              );
-            }).toList(),
-          ),
-        );
-      }),
-    );
+                }).toList(),
+              ),
+            )));
   }
 }

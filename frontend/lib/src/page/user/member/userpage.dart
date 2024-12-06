@@ -24,26 +24,26 @@ import 'package:shimmer/shimmer.dart';
 
 class UserPage extends StatelessWidget {
   final String? id;
-  const UserPage({super.key , this.id});
+  const UserPage({super.key, this.id});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body : UserInfo(id : id)
-    );
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: UserInfo(id: id));
   }
 }
 
 class UserInfo extends StatefulWidget {
   final String? id;
-  const UserInfo({super.key,this.id});
+  const UserInfo({super.key, this.id});
 
   @override
   State<UserInfo> createState() => _UserInfoState();
 }
 
-class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin {
+class _UserInfoState extends State<UserInfo>
+    with SingleTickerProviderStateMixin {
   final FeedListModel con = Get.put(FeedListModel());
   final UserInfoModel _con = Get.put(UserInfoModel());
   late Future<User> userInfo;
@@ -69,167 +69,153 @@ class _UserInfoState extends State<UserInfo> with SingleTickerProviderStateMixin
     super.initState();
   }
 
-  Future<void> refreshState() async{
-    
+  Future<void> refreshState() async {
     String? widgetId = widget.id;
     String myid = userState.id.value;
-    _con.getUserInfo(widgetId??myid);
+    _con.getUserInfo(widgetId ?? myid);
     initLoad();
   }
 
-  void initLoad() async{
+  void initLoad() async {
     String url = "${Url.apiUrl}${Url.userFeed}/${_con.userInfo.value.userId}";
     String opt = "pageSize=$size";
     pageKey = 0;
-    con.getFeedFirst(url,opt);
+    con.getFeedFirst(url, opt);
   }
-  
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color : Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
-      child : Obx((){
-          final user = _con.userInfo.value;
-          List<Widget> sliverList;
-          print("${_con.isFetching}${user.userId.isNotEmpty}");
-          if (_con.isFetching.isFalse&&user.userId.isNotEmpty){
-            sliverList = [
-              customSliverAppbar(context,user.userId,widget.id),
-              SliverToBoxAdapter(
-                child : userInfoWithProfile(context,user)
-              ),
-              SliverToBoxAdapter(
-                child : userButtons(context,user)
-              ),
-              SliverPersistentHeader(
-                delegate: SliverTabBarDelegate(
-                  TabBar(
-                    labelStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    dividerColor: Theme.of(context).colorScheme.onSecondary,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    controller: tabController,
-                    labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                    indicatorWeight: 0.5,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSecondary,
-                    tabs: tabList,
+      child: Obx(() {
+        final user = _con.userInfo.value;
+        List<Widget> sliverList;
+        print("${_con.isFetching}${user.userId.isNotEmpty}");
+        if (_con.isFetching.isFalse && user.userId.isNotEmpty) {
+          sliverList = [
+            customSliverAppbar(context, user.userId, widget.id),
+            SliverToBoxAdapter(child: userInfoWithProfile(context, user)),
+            SliverToBoxAdapter(child: userButtons(context, user)),
+            SliverPersistentHeader(
+              delegate: SliverTabBarDelegate(
+                TabBar(
+                  labelStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                pinned: true,
-              ),
-            ];
-          } else {
-            sliverList = [
-              customSliverAppbar(context,"",null),
-              SliverToBoxAdapter(
-                child : userInfoWithProfileSkel(context),
-              ),
-              SliverPersistentHeader(
-                delegate: SliverTabBarDelegate(
-                  TabBar(
-                    labelStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    controller: tabController,
-                    labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
-                    indicatorWeight: 0.5,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSecondary,
-                    tabs: tabList,
+                  indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
+                  dividerColor: Theme.of(context).colorScheme.onSecondary,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  controller: tabController,
+                  labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  indicatorWeight: 0.5,
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onSecondary,
+                  tabs: tabList,
                 ),
-                pinned: true,
               ),
-            ];
-          }
-          return CustomRefreshIndicator(
-            edgeOffset: 54,
-            displacement: 40,
-            onRefresh: (){},
-            child: NestedScrollView(
+              pinned: true,
+            ),
+          ];
+        } else {
+          sliverList = [
+            customSliverAppbar(context, "", null),
+            SliverToBoxAdapter(
+              child: userInfoWithProfileSkel(context),
+            ),
+            SliverPersistentHeader(
+              delegate: SliverTabBarDelegate(
+                TabBar(
+                  labelStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  dividerColor: Theme.of(context).colorScheme.onSecondary,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  controller: tabController,
+                  labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  indicatorWeight: 0.5,
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onSecondary,
+                  tabs: tabList,
+                ),
+              ),
+              pinned: true,
+            ),
+          ];
+        }
+        return CustomRefreshIndicator(
+          edgeOffset: 54,
+          displacement: 40,
+          onRefresh: () {},
+          child: NestedScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               controller: scrollController,
-              headerSliverBuilder :(context, innerBoxIsScrolled) => sliverList,
-              body : (user.userId.isNotEmpty)?
-              TabBarView(
-                controller: tabController,
-                children: [
-                  CustomScrollView(
-                    slivers: [
-                      
-                      SliverToBoxAdapter(
-                        child: CollectedVList(
-                          title : "내가 쓴 글",
-                          feed: con.feedList
+              headerSliverBuilder: (context, innerBoxIsScrolled) => sliverList,
+              body: (user.userId.isNotEmpty)
+                  ? TabBarView(
+                      controller: tabController,
+                      children: [
+                        CustomScrollView(
+                          slivers: [
+                            SliverToBoxAdapter(
+                              child: CollectedVList(
+                                  title: "내가 쓴 글", feed: con.feedList),
+                            ),
+                            SliverToBoxAdapter(
+                              child: CollectedVList(
+                                  title: "구독", feed: con.feedList),
+                            )
+                          ],
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: CollectedVList(
-                          title : "구독",
-                          feed: con.feedList
-                        ),
-                      )
-                    ],
-                  ),
-                  CustomScrollView(
-                    slivers: [
-                      FeedList(
-                        collected: true,
-                        feed: con.feedList
-                      ),
-                      const SliverPadding(padding: EdgeInsets.all(RowContainer.paddingSize))
-                    ]
-                  ),
-                  const Text("tab3"),
-                  const Text("tab4"),
-                ],
-              ):const SizedBox.shrink()
-            ),
-          );
-        }
-      ),
+                        CustomScrollView(slivers: [
+                          FeedList(collected: true, feed: con.feedList),
+                          const SliverPadding(
+                              padding: EdgeInsets.all(RowContainer.paddingSize))
+                        ]),
+                        const Text("tab3"),
+                        const Text("tab4"),
+                      ],
+                    )
+                  : const SizedBox.shrink()),
+        );
+      }),
     );
   }
 }
 
-Widget customSliverAppbar(BuildContext context ,String userId,String? id){
-  NavbarContent navbarOpt = NavbarContent(
-    title : NavbarTitle("@$userId"),
-    actions : [
-      (id == null)?
-      NavbarCommonBtn(
-        "common/setting.svg",
-        iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
-        onClick: ()=>Get.toNamed("/setting/0"),
-      ):const SizedBox.shrink(),
-      NavbarCommonBtn(
-        "post/share.svg",
-        onClick: ()=>showModalBottomSheet(
+Widget customSliverAppbar(BuildContext context, String userId, String? id) {
+  NavbarContent navbarOpt =
+      NavbarContent(title: NavbarTitle("@$userId"), actions: [
+    (id == null)
+        ? NavbarCommonBtn(
+            "common/setting.svg",
+            iconColor: Theme.of(context).colorScheme.onPrimaryFixed,
+            onClick: () => Get.toNamed("/setting/0"),
+          )
+        : const SizedBox.shrink(),
+    NavbarCommonBtn(
+      "post/share.svg",
+      onClick: () => showModalBottomSheet(
           useRootNavigator: true,
           context: context,
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          builder: (BuildContext context){
-            return ShareModal(url : "${Url.clientUser}?user=$userId");
-        }),
-      )
-    ]
-  );
+          builder: (BuildContext context) {
+            return ShareModal(url: "${Url.clientUser}?user=$userId");
+          }),
+    )
+  ]);
   return SliverAppBar(
     floating: true,
     pinned: true,
@@ -245,63 +231,61 @@ Widget customSliverAppbar(BuildContext context ,String userId,String? id){
     centerTitle: false,
     automaticallyImplyLeading: true,
     backgroundColor: Theme.of(context).colorScheme.onPrimary,
-    title : navbarOpt.title??const SizedBox.shrink(),
-    actions : navbarOpt.actions??[const SizedBox.shrink()],
+    title: navbarOpt.title ?? const SizedBox.shrink(),
+    actions: navbarOpt.actions ?? [const SizedBox.shrink()],
   );
 }
 
 class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-    SliverTabBarDelegate(this._tabBar);
+  SliverTabBarDelegate(this._tabBar);
 
-    final TabBar _tabBar;
+  final TabBar _tabBar;
 
-    @override
-    double get minExtent => _tabBar.preferredSize.height;
-    @override
-    double get maxExtent => _tabBar.preferredSize.height;
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
 
-    @override
-    Widget build(
-        BuildContext context, double shrinkOffset, bool overlapsContent) {
-      return Container(
-        color : Theme.of(context).colorScheme.onPrimary,
-        child: _tabBar,
-      );
-    }
-
-    @override
-    bool shouldRebuild(SliverTabBarDelegate oldDelegate) {
-      return false;
-    }
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).colorScheme.onPrimary,
+      child: _tabBar,
+    );
   }
 
-  class SliverCustomBarDelegate extends SliverPersistentHeaderDelegate {
-    final Widget widget;
-    final double maxHeight;
-    final double minHeight;
-
-    SliverCustomBarDelegate({
-      required this.widget,
-      this.maxHeight = 54,
-      this.minHeight = 54
-    });
-
-    @override
-    double get minExtent => minHeight;
-    @override
-    double get maxExtent => maxHeight;
-
-    @override
-    Widget build(
-        BuildContext context, double shrinkOffset, bool overlapsContent) {
-      return widget;
-    }
-
-    @override
-    bool shouldRebuild(SliverCustomBarDelegate oldDelegate) {
-      return false;
-    }
+  @override
+  bool shouldRebuild(SliverTabBarDelegate oldDelegate) {
+    return false;
   }
+}
+
+class SliverCustomBarDelegate extends SliverPersistentHeaderDelegate {
+  final Widget widget;
+  final double maxHeight;
+  final double minHeight;
+
+  SliverCustomBarDelegate(
+      {required this.widget, this.maxHeight = 54, this.minHeight = 54});
+
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return widget;
+  }
+
+  @override
+  bool shouldRebuild(SliverCustomBarDelegate oldDelegate) {
+    return false;
+  }
+}
+
 /*
 ClipPath(
   clipper: const CustomClip(
@@ -321,14 +305,15 @@ ClipPath(
   ),
 ),
 */
-Widget userInfoWithProfile(BuildContext context, User info){
+Widget userInfoWithProfile(BuildContext context, User info) {
   return Row(
     children: [
       Padding(
         padding: const EdgeInsets.all(16.0),
         child: Profile(
           profile: info.profile,
-          width: 84, height: 84,
+          width: 84,
+          height: 84,
           borderRadius: 1.0,
         ),
       ),
@@ -336,28 +321,24 @@ Widget userInfoWithProfile(BuildContext context, User info){
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(info.nickname,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
           Text(
-            info.nickname,
-            style: const TextStyle(
-              fontSize : 20,
-              fontWeight: FontWeight.bold,
-            )
-          ),
-          Text(
-            ((info.groups.isNotEmpty)
-            ?info.groups.toString()
-            :"소속 없음"),
+            ((info.groups.isNotEmpty) ? info.groups.toString() : "소속 없음"),
             style: TextStyle(
               fontSize: 16,
-              color : Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
-          const SizedBox(height : 4),
+          const SizedBox(height: 4),
           Text(
             "2024년 7월 가입",
             style: TextStyle(
               fontSize: 12,
-              color : Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ],
@@ -366,108 +347,86 @@ Widget userInfoWithProfile(BuildContext context, User info){
   );
 }
 
-Widget userButtons(BuildContext context,User info){
+Widget userButtons(BuildContext context, User info) {
   final myid = UserState.page.id;
-  return Obx((){
-  if (info.userId.obs == myid){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        const SizedBox(
-          width : 16
-        ),
-        Expanded(
-          child: TextButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.onSecondary,
-              shape: const RoundedRectangleBorder(
-                borderRadius: RowContainer.radius
-              ),
-            ),
-            onPressed: (){
-
-            },
-            child: Text(
-              "활동 관리",
-              style : TextStyle(
-                fontSize: 16,
-                color : Theme.of(context).colorScheme.onPrimaryFixed
-              )
-            )
+  return Obx(() {
+    if (info.userId.obs == myid) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius),
+                ),
+                onPressed: () {},
+                child: Text("활동 관리",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onPrimaryFixed))),
           ),
-        ),
-        const SizedBox(
-          width : 16
-        ),
-      ],
-    );
-  } else {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        const SizedBox(
-          width : 16
-        ),
-        Expanded(
-          child: TextButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-              shape: const RoundedRectangleBorder(
-                borderRadius: RowContainer.radius
-              ),
-            ),
-            onPressed: (){
-
-            },
-            child: Text(
-              "팔로우",
-              style : TextStyle(
-                fontSize: 16,
-                color : Theme.of(context).colorScheme.onPrimary
-              )
-            )
+          const SizedBox(width: 16),
+        ],
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: RowContainer.radius),
+                ),
+                onPressed: () {},
+                child: Text("팔로우",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onPrimary))),
           ),
-        ),
-        const SizedBox(
-          width : 16
-        ),
-      ],
-    );
-  }
-  });
-}
-
-void showUserDialog (BuildContext context){
-  showDialog(
-    context: context, 
-    builder:(context){
-      return CustomDialog(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title : const DialogStrTitle("로그아웃할까요?"),
-        content : const DialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
-        bottomBtns: [
-          DialogBottomBtn(
-            backgroundColor: Theme.of(context).colorScheme.onSecondary,
-            onPressed: () async{
-              const storage = FlutterSecureStorage();
-              await storage.delete(key: 'userToken');
-              await storage.delete(key: 'cookie');
-              showToast("로그아웃 되었어요");
-              await Get.offAll(()=>const LoginMainPage());
-            },
-            title : "로그아웃"
-          ),
+          const SizedBox(width: 16),
         ],
       );
     }
-  );
+  });
 }
 
-Widget customSliverAppbarSkel(BuildContext context,String? id){
+void showUserDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return CustomDialog(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          title: const DialogStrTitle("로그아웃할까요?"),
+          content: const DialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
+          bottomBtns: [
+            DialogBottomBtn(
+                backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                onPressed: () async {
+                  const storage = FlutterSecureStorage();
+                  await storage.delete(key: 'userToken');
+                  await storage.delete(key: 'cookie');
+                  showToast("로그아웃 되었어요");
+                  await Get.offAll(() => const LoginMainPage());
+                },
+                title: "로그아웃"),
+          ],
+        );
+      });
+}
+
+Widget customSliverAppbarSkel(BuildContext context, String? id) {
   return SliverAppBar(
-    leading: (id!= null)?BackButton(onPressed: ()=>Get.back()):const SizedBox.shrink(),
+    leading: (id != null)
+        ? BackButton(onPressed: () => Get.back())
+        : const SizedBox.shrink(),
     floating: true,
     pinned: true,
     snap: true,
@@ -477,78 +436,69 @@ Widget customSliverAppbarSkel(BuildContext context,String? id){
   );
 }
 
-Widget userInfoWithProfileSkel(BuildContext context){
-  return LayoutBuilder(
-    builder: (context,constraints) {
-      return Column(
-        children: [
-          const SizedBox(height : 4),
-          ClipPath(
-            clipper: const CustomClip(
-              vertical: 72
-            ),
-            child: Shimmer.fromColors(
-              baseColor: Theme.of(context).colorScheme.surface,
-              highlightColor: Theme.of(context).colorScheme.onPrimary,
-              child: Container(
-                height : 42,
-                width : constraints.maxWidth * 0.8,
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
-                decoration: BoxDecoration(
-                  borderRadius: RowContainer.radius,
-                  color: Theme.of(context).colorScheme.onPrimaryFixed
-                ),
-              ),
-            ),
-          ),
-          Shimmer.fromColors(
-              baseColor: Theme.of(context).colorScheme.surface,
-              highlightColor: Theme.of(context).colorScheme.onPrimary,
-              child: const ProfileSkel(
-                width: 104, height: 104,
-              ),
-          ),
-          const SizedBox(height : 4),
-          Shimmer.fromColors(
-              baseColor: Theme.of(context).colorScheme.surface,
-              highlightColor: Theme.of(context).colorScheme.onPrimary,
-              child: Container(
-                height : 16,
-                width : constraints.maxWidth * 0.3,
-                decoration: BoxDecoration(
-                  borderRadius: RowContainer.radius,
-                  color: Theme.of(context).colorScheme.onPrimaryFixed
-                ),
-              )
-          ),
-          const SizedBox(height : 4),
-          Shimmer.fromColors(
+Widget userInfoWithProfileSkel(BuildContext context) {
+  return LayoutBuilder(builder: (context, constraints) {
+    return Column(
+      children: [
+        const SizedBox(height: 4),
+        ClipPath(
+          clipper: const CustomClip(vertical: 72),
+          child: Shimmer.fromColors(
             baseColor: Theme.of(context).colorScheme.surface,
             highlightColor: Theme.of(context).colorScheme.onPrimary,
             child: Container(
-              height : 16,
-              width : constraints.maxWidth * 0.5,
+              height: 42,
+              width: constraints.maxWidth * 0.8,
+              padding:
+                  const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
               decoration: BoxDecoration(
-                borderRadius: RowContainer.radius,
-                color: Theme.of(context).colorScheme.onPrimaryFixed
-              ),
-            )
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed),
+            ),
           ),
-          const SizedBox(height : 4),
-          Shimmer.fromColors(
+        ),
+        Shimmer.fromColors(
+          baseColor: Theme.of(context).colorScheme.surface,
+          highlightColor: Theme.of(context).colorScheme.onPrimary,
+          child: const ProfileSkel(
+            width: 104,
+            height: 104,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Shimmer.fromColors(
             baseColor: Theme.of(context).colorScheme.surface,
             highlightColor: Theme.of(context).colorScheme.onPrimary,
             child: Container(
-              height : 16,
-              width : constraints.maxWidth * 0.3,
+              height: 16,
+              width: constraints.maxWidth * 0.3,
               decoration: BoxDecoration(
-                borderRadius: RowContainer.radius,
-                color: Theme.of(context).colorScheme.onPrimaryFixed
-              ),
-            )
-          )
-        ],
-      );
-    }
-  );
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed),
+            )),
+        const SizedBox(height: 4),
+        Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.onPrimary,
+            child: Container(
+              height: 16,
+              width: constraints.maxWidth * 0.5,
+              decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed),
+            )),
+        const SizedBox(height: 4),
+        Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.onPrimary,
+            child: Container(
+              height: 16,
+              width: constraints.maxWidth * 0.3,
+              decoration: BoxDecoration(
+                  borderRadius: RowContainer.radius,
+                  color: Theme.of(context).colorScheme.onPrimaryFixed),
+            ))
+      ],
+    );
+  });
 }

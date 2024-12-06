@@ -7,11 +7,10 @@ import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:nodove_flutter/state/page.dart';
 
-class NavbarContent{
+class NavbarContent {
   final Widget? title;
   final Widget? leading;
   final List<Widget>? actions;
-  
 
   NavbarContent({
     this.title,
@@ -27,13 +26,12 @@ class NavbarTop extends StatefulWidget implements PreferredSizeWidget {
   final Color shadowColor;
   final double elevation;
 
-  const NavbarTop(this.content,{
-    super.key,
-    this.centerTitle = false,
-    this.color,
-    this.shadowColor = Colors.transparent,
-    this.elevation = 0.0
-  });
+  const NavbarTop(this.content,
+      {super.key,
+      this.centerTitle = false,
+      this.color,
+      this.shadowColor = Colors.transparent,
+      this.elevation = 0.0});
 
   @override
   State<NavbarTop> createState() => _NavbarTopState();
@@ -45,34 +43,34 @@ class NavbarTop extends StatefulWidget implements PreferredSizeWidget {
 class _NavbarTopState extends State<NavbarTop> {
   @override
   Widget build(BuildContext context) {
-    return 
-    (widget.centerTitle)?
-    AppBar(
-      scrolledUnderElevation: 0.0,
-      centerTitle: widget.centerTitle,
-      automaticallyImplyLeading: !widget.centerTitle,
-      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
-      leading: widget.content.leading,
-      title : widget.content.title??const SizedBox.shrink(),
-      actions : widget.content.actions??[const SizedBox.shrink()],
-      shadowColor : widget.shadowColor,
-      elevation: widget.elevation,
-      iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.onPrimaryFixed
-      ),
-    ):AppBar(
-      scrolledUnderElevation: 0.0,
-      centerTitle: widget.centerTitle,
-      automaticallyImplyLeading: !widget.centerTitle,
-      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
-      title : widget.content.title??const SizedBox.shrink(),
-      actions : widget.content.actions??[const SizedBox.shrink()],
-      shadowColor : widget.shadowColor,
-      elevation: widget.elevation,
-      iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.onPrimaryFixed
-      ),
-    );
+    return (widget.centerTitle)
+        ? AppBar(
+            scrolledUnderElevation: 0.0,
+            centerTitle: widget.centerTitle,
+            automaticallyImplyLeading: !widget.centerTitle,
+            backgroundColor:
+                widget.color ?? Theme.of(context).colorScheme.onPrimary,
+            leading: widget.content.leading,
+            title: widget.content.title ?? const SizedBox.shrink(),
+            actions: widget.content.actions ?? [const SizedBox.shrink()],
+            shadowColor: widget.shadowColor,
+            elevation: widget.elevation,
+            iconTheme: IconThemeData(
+                color: Theme.of(context).colorScheme.onPrimaryFixed),
+          )
+        : AppBar(
+            scrolledUnderElevation: 0.0,
+            centerTitle: widget.centerTitle,
+            automaticallyImplyLeading: !widget.centerTitle,
+            backgroundColor:
+                widget.color ?? Theme.of(context).colorScheme.onPrimary,
+            title: widget.content.title ?? const SizedBox.shrink(),
+            actions: widget.content.actions ?? [const SizedBox.shrink()],
+            shadowColor: widget.shadowColor,
+            elevation: widget.elevation,
+            iconTheme: IconThemeData(
+                color: Theme.of(context).colorScheme.onPrimaryFixed),
+          );
   }
 }
 
@@ -83,13 +81,12 @@ class SliverNavbarTop extends StatefulWidget implements PreferredSizeWidget {
   final Color shadowColor;
   final double elevation;
 
-  const SliverNavbarTop(this.content,{
-    super.key,
-    this.centerTitle = false,
-    this.color,
-    this.shadowColor = Colors.transparent,
-    this.elevation = 0.0
-  });
+  const SliverNavbarTop(this.content,
+      {super.key,
+      this.centerTitle = false,
+      this.color,
+      this.shadowColor = Colors.transparent,
+      this.elevation = 0.0});
 
   @override
   State<SliverNavbarTop> createState() => _SliverNavbarTopState();
@@ -101,133 +98,119 @@ class SliverNavbarTop extends StatefulWidget implements PreferredSizeWidget {
 class _SliverNavbarTopState extends State<SliverNavbarTop> {
   @override
   Widget build(BuildContext context) {
-    return 
-    (widget.centerTitle)?
-    SliverAppBar(
-      scrolledUnderElevation: 0.0,
-      centerTitle: widget.centerTitle,
-      automaticallyImplyLeading: !widget.centerTitle,
-      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
-      leading: widget.content.leading,
-      title : widget.content.title??const SizedBox.shrink(),
-      actions : widget.content.actions??[const SizedBox.shrink()],
-      shadowColor : widget.shadowColor,
-      elevation: widget.elevation,
-      iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.onPrimaryFixed
-      ),
-    ):SliverAppBar(
-      scrolledUnderElevation: 0.0,
-      centerTitle: widget.centerTitle,
-      automaticallyImplyLeading: !widget.centerTitle,
-      backgroundColor: widget.color??Theme.of(context).colorScheme.onPrimary,
-      title : widget.content.title??const SizedBox.shrink(),
-      actions : widget.content.actions??[const SizedBox.shrink()],
-      shadowColor : widget.shadowColor,
-      elevation: widget.elevation,
-      iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.onPrimaryFixed
-      ),
-    );
+    return (widget.centerTitle)
+        ? SliverAppBar(
+            scrolledUnderElevation: 0.0,
+            centerTitle: widget.centerTitle,
+            automaticallyImplyLeading: !widget.centerTitle,
+            backgroundColor:
+                widget.color ?? Theme.of(context).colorScheme.onPrimary,
+            leading: widget.content.leading,
+            title: widget.content.title ?? const SizedBox.shrink(),
+            actions: widget.content.actions ?? [const SizedBox.shrink()],
+            shadowColor: widget.shadowColor,
+            elevation: widget.elevation,
+            iconTheme: IconThemeData(
+                color: Theme.of(context).colorScheme.onPrimaryFixed),
+          )
+        : SliverAppBar(
+            scrolledUnderElevation: 0.0,
+            centerTitle: widget.centerTitle,
+            automaticallyImplyLeading: !widget.centerTitle,
+            backgroundColor:
+                widget.color ?? Theme.of(context).colorScheme.onPrimary,
+            title: widget.content.title ?? const SizedBox.shrink(),
+            actions: widget.content.actions ?? [const SizedBox.shrink()],
+            shadowColor: widget.shadowColor,
+            elevation: widget.elevation,
+            iconTheme: IconThemeData(
+                color: Theme.of(context).colorScheme.onPrimaryFixed),
+          );
   }
 }
 
-
-class BottomNavbar extends GetView<PageState>{
+class BottomNavbar extends GetView<PageState> {
   const BottomNavbar({super.key});
 
   @override
-  Widget build(context){
-    return 
-      ClipRRect(
-        borderRadius: const BorderRadius.only(
+  Widget build(context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(RowContainer.bottomBarRadius),
-          topRight: Radius.circular(RowContainer.bottomBarRadius)
-        ),
-        child: Obx(()=>BottomNavigationBar(
+          topRight: Radius.circular(RowContainer.bottomBarRadius)),
+      child: Obx(
+        () => BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.onSecondary,
           type: BottomNavigationBarType.fixed,
-          unselectedItemColor:Theme.of(context).colorScheme.secondary,
+          unselectedItemColor: Theme.of(context).colorScheme.secondary,
           selectedItemColor: Theme.of(context).colorScheme.primary,
           currentIndex: controller.index.value,
-          onTap : controller.setIndex,
+          onTap: controller.setIndex,
           unselectedLabelStyle: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.primary
-          ),
+              fontSize: 12, color: Theme.of(context).colorScheme.primary),
           selectedLabelStyle: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.primary
-          ),
+              fontSize: 12, color: Theme.of(context).colorScheme.primary),
           items: [
             BottomNavigationBarItem(
               label: "홈",
-              icon: CustomSvg(
-                'navbar/home.svg',
-                width : 18,
-                height : 18,
-                iconColor : Theme.of(context).colorScheme.secondary
-              ),
+              icon: CustomSvg('navbar/home.svg',
+                  width: 18,
+                  height: 18,
+                  iconColor: Theme.of(context).colorScheme.secondary),
               activeIcon: const CustomSvg(
                 'navbar/home.svg',
-                width : 18,
-                height : 18,
+                width: 18,
+                height: 18,
               ),
             ),
             BottomNavigationBarItem(
               label: '메신저',
-              icon: CustomSvg(
-                'navbar/msg.svg',
-                width : 18,
-                height : 18,
-                iconColor : Theme.of(context).colorScheme.secondary
-              ),
+              icon: CustomSvg('navbar/msg.svg',
+                  width: 18,
+                  height: 18,
+                  iconColor: Theme.of(context).colorScheme.secondary),
               activeIcon: const CustomSvg(
                 'navbar/msg.svg',
-                width : 18,
-                height : 18,
+                width: 18,
+                height: 18,
               ),
             ),
             BottomNavigationBarItem(
               label: '블록',
-              icon: CustomSvg(
-                'navbar/summarize.svg',
-                width : 18,
-                height : 18,
-                iconColor : Theme.of(context).colorScheme.secondary
-              ),
+              icon: CustomSvg('navbar/summarize.svg',
+                  width: 18,
+                  height: 18,
+                  iconColor: Theme.of(context).colorScheme.secondary),
               activeIcon: const CustomSvg(
                 'navbar/summarize.svg',
-                width : 18,
-                height : 18,
+                width: 18,
+                height: 18,
               ),
             ),
             BottomNavigationBarItem(
               label: '채용',
-              icon: CustomSvg(
-                'user/company.svg',
-                width : 18,
-                height :18,
-                iconColor : Theme.of(context).colorScheme.secondary
-              ),
+              icon: CustomSvg('user/company.svg',
+                  width: 18,
+                  height: 18,
+                  iconColor: Theme.of(context).colorScheme.secondary),
               activeIcon: const CustomSvg(
                 'user/company.svg',
-                width : 18,
-                height : 18,
+                width: 18,
+                height: 18,
               ),
             ),
             BottomNavigationBarItem(
               label: '유저',
               icon: CustomSvg(
                 'navbar/user.svg',
-                width : 24,
-                height : 18,
+                width: 24,
+                height: 18,
                 iconColor: Theme.of(context).colorScheme.secondary,
               ),
               activeIcon: const CustomSvg(
                 'navbar/user.svg',
-                width : 24,
-                height : 18,
+                width: 24,
+                height: 18,
               ),
             ),
           ],
@@ -239,26 +222,29 @@ class BottomNavbar extends GetView<PageState>{
 
 class FeedBottomNavbar extends StatelessWidget {
   final Categories cate;
-  const FeedBottomNavbar({super.key,required this.cate});
+  const FeedBottomNavbar({super.key, required this.cate});
 
-  void onTap(BuildContext context, int index){
+  void onTap(BuildContext context, int index) {
     print(index);
-    switch(index){
-      case 0 : break;
-      case 1 : Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:(context) => CatePage(page : cate.categoryId),
-          settings: RouteSettings(
-            arguments: {
-              "backName" : cate.categoryName
-            },
-          )
-        )
-      ); break;
-      case 2: break;
-      case 3 : Get.to(()=> const FeedSettingPage()); break;
-      default : break;
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CatePage(page: cate.categoryId),
+                settings: RouteSettings(
+                  arguments: {"backName": cate.categoryName},
+                )));
+        break;
+      case 2:
+        break;
+      case 3:
+        Get.to(() => const FeedSettingPage());
+        break;
+      default:
+        break;
     }
   }
 
@@ -266,47 +252,46 @@ class FeedBottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(RowContainer.bottomBarRadius),
-          topRight: Radius.circular(RowContainer.bottomBarRadius)
-        ),
+            topLeft: Radius.circular(RowContainer.bottomBarRadius),
+            topRight: Radius.circular(RowContainer.bottomBarRadius)),
         child: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.onSecondary,
-        type: BottomNavigationBarType.fixed,
-        onTap : (int index)=>onTap(context,index),
-        items: const [
-          BottomNavigationBarItem(
-            label: '구독',
-            icon: CustomSvg(
-              'common/subscribe.svg',
-              width : 18,
-              height :18,
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
+          type: BottomNavigationBarType.fixed,
+          onTap: (int index) => onTap(context, index),
+          items: const [
+            BottomNavigationBarItem(
+              label: '구독',
+              icon: CustomSvg(
+                'common/subscribe.svg',
+                width: 18,
+                height: 18,
+              ),
             ),
-          ),
-          BottomNavigationBarItem(
-            label: '카테고리',
-            icon: CustomSvg(
-              'navbar/summarize.svg',
-              width : 18,
-              height : 18,
+            BottomNavigationBarItem(
+              label: '카테고리',
+              icon: CustomSvg(
+                'navbar/summarize.svg',
+                width: 18,
+                height: 18,
+              ),
             ),
-          ),
-          BottomNavigationBarItem(
-            label: '해시태그',
-            icon: CustomSvg(
-              'navbar/hashtag.svg',
-              width : 18,
-              height : 18,
+            BottomNavigationBarItem(
+              label: '해시태그',
+              icon: CustomSvg(
+                'navbar/hashtag.svg',
+                width: 18,
+                height: 18,
+              ),
             ),
-          ),
-          BottomNavigationBarItem(
-            label: '설정',
-            icon: CustomSvg(
-              'common/setting.svg',
-              width : 18,
-              height : 18,
+            BottomNavigationBarItem(
+              label: '설정',
+              icon: CustomSvg(
+                'common/setting.svg',
+                width: 18,
+                height: 18,
+              ),
             ),
-          ),
-        ],
-    ));
+          ],
+        ));
   }
 }
