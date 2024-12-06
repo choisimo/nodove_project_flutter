@@ -91,7 +91,7 @@ class MainSettingView extends StatelessWidget {
               ),
               SettingRow(
                 title : Text(
-                  "유저",
+                  "계정",
                   style: content,
                 ),
                 onClick: ()=>Get.toNamed(
@@ -100,7 +100,7 @@ class MainSettingView extends StatelessWidget {
               ),
               SettingRow(
                 title : Text(
-                  "앱",
+                  "앱 정보",
                   style: content,
                 ),
                 onClick: ()=>Get.toNamed(

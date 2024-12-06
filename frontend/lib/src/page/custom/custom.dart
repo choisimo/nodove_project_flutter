@@ -229,10 +229,11 @@ Future<Pos> locationPermission() async {
             ],
           ),
           bottomBtns: [
-            DialogBottomBtn(child: const Text("설정 열기"),
-                onPressed: () async {
-              openAppSettings();
-            })
+            DialogBottomBtn(
+              title:"설정 열기",
+              onPressed: () async {
+                openAppSettings();
+              })
           ]),
     );
 

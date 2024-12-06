@@ -99,12 +99,16 @@ class CustomDialog extends StatelessWidget {
   final Widget title;
   final Widget content;
   final List<Widget> bottomBtns;
+  final bool hasCloseBtn;
+  final void Function()? onClose;
   const CustomDialog({
     super.key,
     this.backgroundColor,
     this.title = const SizedBox.shrink(),
     this.content = const SizedBox.shrink(),
-    this.bottomBtns = const [SizedBox.shrink()]
+    this.bottomBtns = const [SizedBox.shrink()],
+    this.hasCloseBtn = true,
+    this.onClose
   });
 
   @override
@@ -131,6 +135,16 @@ class CustomDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
+              (hasCloseBtn)?
+              Align(
+                alignment: Alignment.topLeft,
+                child : DialogCloseBtn(
+                  onPressed: (){
+                    onClose?.call();
+                    Navigator.of(context).pop();
+                  },
+                )
+              ):const SizedBox.shrink(),
               title,
               content,
               Column(
@@ -192,32 +206,39 @@ class DialogCloseBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: ()=>onPressed?.call(),
-      icon: CustomSvg(
+      icon: const CustomSvg(
         "common/close.svg",
         width : 16,height : 16,
-        iconColor: iconColor??Theme.of(context).colorScheme.secondary,
       ),
     );
   }
 }
 
 class DialogBottomBtn extends StatelessWidget {
-  final Widget? child;
+  final String? title;
   final Function? onPressed;
   final Color? backgroundColor;
+  final Color? fontColor;
   const DialogBottomBtn({super.key,
-  this.child,
+  this.title,
   this.onPressed,
-  this.backgroundColor,});
+  this.backgroundColor,
+  this.fontColor
+  });
 
   @override
   Widget build(BuildContext context) {
     return FilledButton(
       style : FilledButton.styleFrom(
-        backgroundColor: backgroundColor??Theme.of(context).colorScheme.onPrimaryFixed,
+        backgroundColor: backgroundColor??Theme.of(context).colorScheme.onSecondary,
       ),
       onPressed: ()=>onPressed?.call(),
-      child : child
+      child : Text(
+        title.toString(),
+        style: TextStyle(
+          color: fontColor??Theme.of(context).colorScheme.onPrimaryFixed,
+        ),
+      )
     );
   }
 }

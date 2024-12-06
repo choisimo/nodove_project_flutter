@@ -491,12 +491,7 @@ void feedDeleteConfirm(BuildContext context,int postId){
               con.feedList.refresh();
               Get.back();
             },
-            child : const Text(
-              "삭제",
-              style: TextStyle(
-                fontSize : 18,
-              ),
-            )
+            title : "삭제"
           ),
         ],
         backgroundColor: Theme.of(context).colorScheme.onPrimary,

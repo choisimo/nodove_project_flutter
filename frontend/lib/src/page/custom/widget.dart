@@ -74,31 +74,27 @@ class CommonTextInput extends StatelessWidget {
       inputFormatters: filter,
       obscureText : obscureText,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.onSecondary,
+        enabledBorder: const OutlineInputBorder(
             borderRadius: RowContainer.radius,
-            borderSide: BorderSide(color: borderColor, width: borderWidth)),
-        disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide.none),
+        disabledBorder: const OutlineInputBorder(
             borderRadius: RowContainer.radius,
-            borderSide: BorderSide(color: disabledBorderColor, width: borderWidth)),
+            borderSide: BorderSide.none),
         counterText: "",
         focusedBorder:
-        OutlineInputBorder(
+        const OutlineInputBorder(
           borderRadius: RowContainer.radius,
-          borderSide: BorderSide(
-            color : borderColor,
-            width : borderWidth
-          )
+          borderSide: BorderSide.none
         ),
         hintText: placeholder,
         contentPadding: const EdgeInsets.symmetric(vertical: 0,horizontal: 16),
         hintStyle: placeholderStyle,
         border: 
-        OutlineInputBorder(
+        const OutlineInputBorder(
           borderRadius: RowContainer.radius,
-          borderSide: BorderSide(
-            color : borderColor,
-            width : borderWidth
-          )
+          borderSide: BorderSide.none
         ),
         focusColor: Colors.transparent,
       ),

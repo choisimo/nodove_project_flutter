@@ -214,14 +214,14 @@ class NavbarCommonBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return 
-    (onClick != null)?
-    IconButton(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      onPressed: ()=>onClick?.call(),
-      icon : icon(context)
-    ):icon(context);
+      (onClick != null)?
+      IconButton(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        onPressed: ()=>onClick?.call(),
+        icon : icon(context)
+      ):icon(context);
   }
 
   Widget icon(BuildContext context){

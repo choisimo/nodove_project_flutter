@@ -17,7 +17,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   static const storage = FlutterSecureStorage();
   Future<String?> token = storage.read(key: "userToken");
-  Future<String?> cookie = storage.read(key : 'refreshToken');
+  String id = "";
+  String pw = "";
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +28,43 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: NavbarTop(navbarOpt),
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      bottomNavigationBar: SafeArea(
+        child: SizedBox(
+          width : double.infinity,
+          height : 96,
+          child : Column(
+            children: [
+              const SizedBox(
+                width : double.infinity,
+                height : 32,
+              ),
+              FormCommitButton(
+                height: 54,
+                width : MediaQuery.of(context).size.width * 0.75,
+                title: "로그인",
+                onPressed: () async{
+                  if(id.isNotEmpty&&pw.isNotEmpty){
+                    await AuthDataSrc().postLogin({
+                      'userId' : id,
+                      'password' : pw,
+                    });
+                  }
+                },
+              ),
+            ],
+          )
+        ),
+      ),
       body : Stack(
         children: [
           FutureBuilder(
             future : token,
             builder: (BuildContext context,AsyncSnapshot snapshot) {
-              return const SafeArea(child: 
-                LoginForm()
+              return SafeArea(child: 
+                LoginForm(
+                  onIdChanged: (String fid)=>id = fid,
+                  onPwChanged: (String fpw)=>pw = fpw,
+                )
               );
             }
           ),
@@ -44,12 +75,13 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({super.key});
+  final void Function(String id)? onIdChanged;
+  final void Function(String pw)? onPwChanged;
+  const LoginForm({super.key,this.onIdChanged,this.onPwChanged});
 
   @override
   Widget build(BuildContext context) {
-    String id = "";
-    String pw = "";
+    
     return Center(
       child: SingleChildScrollView(
         child: SizedBox(
@@ -59,35 +91,18 @@ class LoginForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CommonTextInput(
-                onChanged: (str){
-                  id = str;
-                },
+                onChanged: (str)=>onIdChanged?.call(str),
                 placeholder: "아이디",
                 keyboard: TextInputType.text,
               ),
               const SizedBox(height : 32),
               CommonTextInput(
-                onChanged: (str){
-                  pw = str;
-                },
+                onChanged: (str)=>onPwChanged?.call(str),
                 placeholder: "비밀번호",
                 obscureText : true,
               ),
               const SizedBox(height : 32),
               const Text("혹시 아이디나 비밀번호를 잊어버리셨나요?"),
-              const SizedBox(height : 64),
-              FormCommitButton(
-                width : double.infinity,
-                title : "로그인",
-                onPressed: () async{
-                  if(id.isNotEmpty&&pw.isNotEmpty){
-                    await AuthDataSrc().postLogin({
-                      'userId' : id,
-                      'password' : pw,
-                    });
-                  }
-                },
-              )
             ],
           ),
         ),

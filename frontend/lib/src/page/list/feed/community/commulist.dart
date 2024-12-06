@@ -46,7 +46,7 @@ class _CommuListPageState extends State<CommuListPage>{
   bool search = false;
   FeedListModel con = Get.put(FeedListModel());
   CateListModel ccon = Get.put(CateListModel());
-  final int cateid = 16;
+  final int cateid = 2;
   
   int pageKey = 0;
 

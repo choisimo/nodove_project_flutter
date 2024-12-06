@@ -122,3 +122,5 @@ flutter_native_splash:
     image_dark : "assets/images/splash_logo_dark.png"
     branding : "assets/images/brand_image.png"
     branding_dark : "assets/images/brand_image_dark.png"
+  android: true
+  ios: true

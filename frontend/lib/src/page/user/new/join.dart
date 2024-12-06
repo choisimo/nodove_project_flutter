@@ -7,8 +7,10 @@ import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/setting.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
+import 'package:nodove_flutter/src/page/list/other/mainlist.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -58,11 +60,30 @@ class _JoinPageState extends State<JoinPage> {
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent();
     return PopScope(
-      canPop: (currentPage < 1),
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop){
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result){
+        print(didPop);
+        if (!didPop&&mounted){
           if (currentPage >= 1){
             pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOutQuad);
+          } else {
+            Future.delayed(const Duration(milliseconds: 300))
+            .then((value)=>showDialog(
+              context: context,
+              builder:(context) => CustomDialog(
+                title : const DialogStrTitle("회원가입을 취소할까요?"),
+                content: const DialogStrContent("기입했던 내용이 모두 사라져요"),
+                bottomBtns: [
+                  DialogBottomBtn(
+                    onPressed: (){
+                      Get.back();
+                      Get.back();
+                    },
+                    title: "취소",
+                  )
+                ],
+              ),
+            ));
           }
         }
       },

@@ -112,7 +112,7 @@ class _MyHomeState extends State<MyHome>{
     if (navigatorKeyList[PageState.page.index.value].currentState!.canPop()) {
       navigatorKeyList[PageState.page.index.value]
           .currentState!
-          .pop(navigatorKeyList[PageState.page.index.value].currentContext);
+          .pop();
     } else {
       SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
     }

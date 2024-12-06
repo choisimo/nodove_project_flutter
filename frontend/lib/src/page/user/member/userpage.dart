@@ -445,20 +445,8 @@ void showUserDialog (BuildContext context){
     builder:(context){
       return CustomDialog(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title : Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            DialogCloseBtn(
-              onPressed: ()=>Get.back(),
-            ),
-          ],
-        ),
-        content : const Column(
-          children: [
-            DialogStrTitle("로그아웃할까요?"),
-            DialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
-          ],
-        ),
+        title : const DialogStrTitle("로그아웃할까요?"),
+        content : const DialogStrContent("다시 로그인 전까지 자동 로그인을 사용 할 수 없어요"),
         bottomBtns: [
           DialogBottomBtn(
             backgroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -469,13 +457,7 @@ void showUserDialog (BuildContext context){
               showToast("로그아웃 되었어요");
               await Get.offAll(()=>const LoginMainPage());
             },
-            child : Text(
-              "로그아웃",
-              style: TextStyle(
-                fontSize : 18,
-                color: Theme.of(context).colorScheme.error
-              ),
-            )
+            title : "로그아웃"
           ),
         ],
       );
