@@ -59,10 +59,11 @@ class _FeedMainListState extends State<FeedMainList> {
         slivers: [
           SliverNavbarTop(
             navbarOpt,
+            centerTitle: false,
           ),
           SliverToBoxAdapter(
             child: SearchPreview(
-              onPressed: ()=>push(const SearchPage()),
+              onPressed: ()=>Navigator.of(context).push(MaterialPageRoute(builder : (_)=>const SearchPage())),
             ),
           ),
           const SliverToBoxAdapter(
@@ -72,7 +73,7 @@ class _FeedMainListState extends State<FeedMainList> {
               child: PartContainer(children: [
             TitleRow(
               title: "카테고리",
-              onTap: () => Get.to(() => const CatePage(page: 0)),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CatePage(page: 0))),
             ),
             CateList(
               page: 0,
@@ -102,9 +103,9 @@ class _MainCommListState extends State<MainCommList> {
     return PartContainer(children: [
       TitleRow(
           title: "커리어블록 커뮤니티",
-          onTap: () => Get.to(() => const CatePage(page: 0))),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CatePage(page: 0))),),
       SizedBox(
-        height: 52,
+        height: 54,
         child: MinimalVList(
             list: categories,
             onClick: (index) => pageController.animateToPage(index,
@@ -156,7 +157,8 @@ class _MainTagListState extends State<MainTagList> {
     return PartContainer(children: [
       TitleRow(
           title: "추천하는 #해시태그에요",
-          onTap: () => Get.to(() => const CatePage(page: 0))),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder : (_)=>const CatePage(page: 0))),
+      ),
       SizedBox(
         height: 52,
         child: MinimalVList(
@@ -192,7 +194,7 @@ class PartContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.all(8.0),
       child: Column(
         children: children!,
       ),
@@ -213,7 +215,7 @@ class TitleRow extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        margin: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+        margin: const EdgeInsets.only(top: 4.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,

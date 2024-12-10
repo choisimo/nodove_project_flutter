@@ -41,6 +41,7 @@ class BackBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: const ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(8.0)),
         overlayColor: WidgetStatePropertyAll(Colors.transparent),
       ),
       onPressed: ()=>onPressed?.call(),

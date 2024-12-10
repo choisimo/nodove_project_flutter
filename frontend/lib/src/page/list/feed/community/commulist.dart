@@ -11,6 +11,7 @@ import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
+import 'package:nodove_flutter/src/page/search/search.dart';
 import 'package:nodove_flutter/src/page/user/member/userpage.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -79,7 +80,6 @@ class _CommuListPageState extends State<CommuListPage> {
   @override
   Widget build(BuildContext context) {
     final int cateid = widget.page ?? int.parse(Get.parameters['page'] ?? '0');
-    int page = 0;
     GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     NavbarContent navbarOpt =
         NavbarContent(title: const NavbarTitle("블록"), actions: [
@@ -91,11 +91,7 @@ class _CommuListPageState extends State<CommuListPage> {
       ),
       NavbarCommonBtn(
         "navbar/search.svg",
-        onClick: () {
-          setState(() {
-            search = true;
-          });
-        },
+        onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder : (_)=>const SearchPage())),
       ),
       NavbarCommonBtn(
         "common/setting.svg",
@@ -136,8 +132,6 @@ class _CommuListPageState extends State<CommuListPage> {
               ),
               SliverPersistentHeader(
                 delegate: SliverCustomBarDelegate(
-                    minHeight: 48,
-                    maxHeight: 48,
                     widget: MinimalVList(
                         list: categories,
                         onClick: (index) {
@@ -149,6 +143,7 @@ class _CommuListPageState extends State<CommuListPage> {
               SliverFillRemaining(
                 child: PageView(controller: pageController, children: [
                   CustomScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
                     slivers: [
                       FeedList(
                         collected: collected,

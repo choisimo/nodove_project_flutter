@@ -6,6 +6,7 @@ import 'package:nodove_flutter/src/model/comment.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/model/recruit.dart';
 import 'package:nodove_flutter/src/model/user.dart';
+import 'package:nodove_flutter/src/page/messenger/message/message.dart';
 
 class TempFeed extends GetxController{
   final RxBool isFetching = false.obs;
@@ -1347,4 +1348,23 @@ class TempFeed extends GetxController{
       ),
     ],
   ];
+
+  List<Chat> message = [
+    Chat(
+      chatId: 0,
+      content: ChatContent(chatId: 0, content: "테스트1", createdAt: "2024-12-12 12:12:!2"),
+      user: User(
+        userId: 'careerblock',
+        profile: 'https://file.career-block.com/attach/images/logo.jpg',
+        role : "소속 없음",
+        nickname : "커리어블록",
+        certifications: [],
+        groups: [],
+        hashtags: ["개발","프론트엔드"],
+        userActivities: null,
+        birthDate: DateTime.now().microsecond,
+        private : false
+      )
+    ),
+  ].obs;
 }

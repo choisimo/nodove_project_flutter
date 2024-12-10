@@ -118,7 +118,7 @@ class MinimalVList extends StatelessWidget {
         color: Theme.of(context).colorScheme.onPrimary,
       ),
       width: MediaQuery.of(context).size.width,
-      height: 64,
+      height: 56,
       child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView.builder(
@@ -149,9 +149,9 @@ class MinimalVRow extends StatelessWidget {
             horizontal: 2.0,
             vertical: 2.0,
           ),
-          side: rowBorderLine(color: Theme.of(context).colorScheme.secondary),
+          side: rowBorderLine(),
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(6))),
+              borderRadius: BorderRadius.all(Radius.circular(RowContainer.radiusV))),
         ),
         onPressed: () => onClick?.call(),
         child: Text(title),

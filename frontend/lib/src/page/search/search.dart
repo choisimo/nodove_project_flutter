@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: const SearchView()
     );
   }
@@ -35,28 +35,29 @@ class SearchView extends StatefulWidget {
   State<SearchView> createState() => _SearchViewState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SearchViewState extends State<SearchView> with SingleTickerProviderStateMixin {
   TempFeed fcon = Get.find();
+  List<Widget> tabList = const [
+    Tab(text : "피드"),
+    Tab(text : "블록")
+  ];
+  late TabController tabController = TabController(
+    length: 2,
+    vsync: this,
+    initialIndex: 0,
+  );
 
   @override
   Widget build(BuildContext context) {
-    NavbarContent navbarOpt = NavbarContent(
-      leading : BackBtn(onPressed: ()=>Navigator.of(context).pop(),),
-      actions: [
-
-      ]
-    );
     return CustomRefreshIndicator(
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: navbarOpt.leading,
-            actions : navbarOpt.actions
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: SliverCustomBarDelegate(
-              widget: Center(
+            automaticallyImplyLeading: false,
+            expandedHeight: 56,
+            flexibleSpace: SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: 42,
@@ -66,6 +67,7 @@ class _SearchViewState extends State<SearchView> {
                       borderRadius: const BorderRadius.all(Radius.circular(100))),
                   child: Row(
                       children: [
+                        SizedBox(width : 56,child: BackBtn(onPressed: ()=>Navigator.of(context).pop(),)),
                         Expanded(child: CommonTextInput(
                                 fillColor: Colors.transparent,
                                 placeholder: "검색어를 입력해주세요",
@@ -74,16 +76,38 @@ class _SearchViewState extends State<SearchView> {
                         NavbarCommonBtn(
                           "navbar/search.svg",
                           onClick: () {},
-                          iconColor: Theme.of(context).colorScheme.primary,
                         ),
                       ],
                     ),
                 ),
-              )
-            )
+              ),
+            ),
           ),
-          
-          //FeedList(collected: true, feed: fcon.feedList)
+          SliverPersistentHeader(
+            delegate: SliverTabBarDelegate(
+              TabBar(
+                labelStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                indicatorColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                dividerColor: Theme.of(context).colorScheme.onSecondary,
+                indicatorSize: TabBarIndicatorSize.tab,
+                controller: tabController,
+                labelColor: Theme.of(context).colorScheme.onPrimaryFixed,
+                indicatorWeight: 0.5,
+                unselectedLabelColor:
+                    Theme.of(context).colorScheme.onSecondary,
+                tabs: tabList,
+              ),
+            ),
+            pinned: true,
+          ),
+          FeedList(collected: true, feed: fcon.feedList)
         ],
       ),
     );
@@ -120,7 +144,6 @@ class SearchPreview extends StatelessWidget {
                 NavbarCommonBtn(
                   "navbar/search.svg",
                   onClick: () {},
-                  iconColor: Theme.of(context).colorScheme.primary,
                 ),
               ],
             );

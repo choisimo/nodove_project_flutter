@@ -5,12 +5,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nodove_flutter/func/token.dart';
 import 'package:nodove_flutter/main.dart';
-import 'package:nodove_flutter/src/component/oauth/kakao.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/user/new/join.dart';
 import 'package:nodove_flutter/src/page/user/new/login.dart';
 import 'package:nodove_flutter/state/user.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginMainPage extends StatefulWidget {
   const LoginMainPage({super.key});
@@ -51,8 +49,9 @@ class _LoginPageState extends State<LoginMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final maxwidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body : Stack(
         children: [
           /*Container(
@@ -80,7 +79,31 @@ class _LoginPageState extends State<LoginMainPage> {
             }
           ),
         ],
-      )
+      ),
+      bottomNavigationBar: SizedBox(
+        height : 172,
+        child: Column(
+          children: [
+            FormCommitButton(
+              width : maxwidth * 0.8,
+              height : 48,
+              onPressed: ()=>Get.to(
+                ()=>const JoinPage(),
+              ),
+              title : "새로 시작하기"
+            ),
+            const SizedBox(height : 16),
+            FormCommitButton(
+              width : maxwidth * 0.8,
+              height : 48,
+              onPressed: ()=>Get.to(
+                ()=>const LoginPage(),
+              ),
+              title : "로그인"
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -90,96 +113,24 @@ class LoginMainForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    KakaoLoginApi kakao = KakaoLoginApi();
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height;
     return Center(
       child: SingleChildScrollView(
         child: 
         SizedBox(
           width : maxwidth * 0.9,
-          height : maxheight * 0.5,
           child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width : MediaQuery.of(context).size.width * 0.25,
+              width : MediaQuery.of(context).size.width,
               height : MediaQuery.of(context).size.width * 0.25,
               child : Image.asset(
-                "assets/images/logo.png"
+                "assets/images/main_logo.png"
               )
             ),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                      style: const ButtonStyle(
-                        
-                      ),
-                      onPressed: (){},
-                      icon : Image.asset(
-                        "assets/icons/user/Oauth.png",
-                        width : 42 , height : 42
-                      )
-                    ),
-                    IconButton(
-                      onPressed: ()=>kakao.login(),
-                      icon : Image.asset(
-                        "assets/icons/user/Kakao.png",
-                        width : 42 , height : 42
-                      )
-                    ),
-                    IconButton(
-                      onPressed: (){},
-                      icon : Image.asset(
-                        "assets/icons/user/Naver.png",
-                        width : 42 , height : 42
-                      )
-                    ),
-                    IconButton(
-                      icon : Image.asset(
-                        "assets/icons/user/Apple.png",
-                        width : 42 , height : 42,
-                      ),
-                      onPressed: () async {
-                        await SignInWithApple.getAppleIDCredential(
-                          scopes: [
-                            AppleIDAuthorizationScopes.email,
-                            AppleIDAuthorizationScopes.fullName,
-                          ],
-                        );
-                      },
-                    ),
-                    const Text("로 로그인")
-                  ],
-                ),
-                FormCommitButton(
-                  width : maxwidth * 0.8,
-                  height : 48,
-                  onPressed: ()=>Get.to(
-                    ()=>const JoinPage(),
-                  ),
-                  title : "새로 시작하기"
-                )
-              ],
-            ),
-            Column(
-              children: [
-                FormCommitButton(
-                  height : 48,
-                  onPressed: ()=>Get.to(
-                    ()=>const LoginPage(),
-                  ),
-                  title : "로그인",
-                ),
-                const SizedBox(height : 16),
-              ],
-            ),
-            
           ],
         ),
       ),)

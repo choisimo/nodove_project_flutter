@@ -12,6 +12,7 @@ import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedsetting.dart';
 import 'package:nodove_flutter/src/page/post/write.dart';
+import 'package:nodove_flutter/src/page/search/search.dart';
 import 'package:nodove_flutter/src/page/view/comment.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
@@ -128,11 +129,7 @@ class _FeedListPageState extends State<FeedListPage> {
           ),
           NavbarCommonBtn(
             "navbar/search.svg",
-            onClick: () {
-              setState(() {
-                search = true;
-              });
-            },
+            onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder : (_)=>const SearchPage())),
           ),
           NavbarCommonBtn(
             "common/setting.svg",
@@ -259,61 +256,49 @@ class FeedList extends StatelessWidget {
 
 class CollectedVList extends StatelessWidget {
   final List<Feed> feed;
-  final String? title;
   final Function(int id)? onFeedClick;
   const CollectedVList(
-      {super.key, required this.feed, this.title, this.onFeedClick});
+      {super.key, required this.feed, this.onFeedClick});
 
   @override
   Widget build(BuildContext context) {
     TempFeed con = Get.find();
-    return Column(
-      children: [
-        (title != null)
-            ? Align(
-                alignment: Alignment.centerLeft,
-                child: Text(title ?? "",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)))
-            : const SizedBox.shrink(),
-        Obx(() {
-          if (con.isFetching.isTrue) {
-            return SizedBox(
-              height: 200,
-              child: ListView.builder(
-                  itemCount: 5,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Shimmer.fromColors(
-                        baseColor: Theme.of(context).colorScheme.surface,
-                        highlightColor: Theme.of(context).colorScheme.onPrimary,
-                        child: const CollectedVRowSkel());
-                  }),
-            );
-          } else if (feed.isEmpty) {
-            return const SizedBox(
-                height: 200, child: Center(child: Text("피드가 없어요...")));
-          } else {
-            return SizedBox(
-              height: 200,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: feed.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return CollectedVRow(
-                        feed: feed[index],
-                        onFeedClick: onFeedClick,
-                      );
-                    }),
-              ),
-            );
-          }
-        })
-      ],
-    );
+    return Obx(() {
+      if (con.isFetching.isTrue) {
+        return SizedBox(
+          height: 200,
+          child: ListView.builder(
+              itemCount: 5,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Shimmer.fromColors(
+                    baseColor: Theme.of(context).colorScheme.surface,
+                    highlightColor: Theme.of(context).colorScheme.onPrimary,
+                    child: const CollectedVRowSkel());
+              }),
+        );
+      } else if (feed.isEmpty) {
+        return const SizedBox(
+            height: 200, child: Center(child: Text("피드가 없어요...")));
+      } else {
+        return SizedBox(
+          height: 200,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: feed.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return CollectedVRow(
+                    feed: feed[index],
+                    onFeedClick: onFeedClick,
+                  );
+                }),
+          ),
+        );
+      }
+    });
   }
 }
 

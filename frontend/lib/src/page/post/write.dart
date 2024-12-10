@@ -11,6 +11,8 @@ import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/model/feed.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/setting.dart';
+import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,92 +46,89 @@ class _WritePageState extends State<WritePage> {
         })
       ]
     );
-    List<Widget> contentPage = [
-      Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        appBar: NavbarTop(navbarOpt, centerTitle : true),
-        body : WriteContent(controller: _controller,),
-        bottomNavigationBar:Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            border : Border(top: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary))
-          ),
-          child: SafeArea(
-            child: QuillToolbar(
-              child : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child : Row(
-                  children: [
-                    QuillToolbarToggleStyleButton(
-                      options: QuillToolbarToggleStyleButtonOptions(
-                        iconTheme: QuillIconTheme(
-                          iconButtonSelectedData: IconButtonData(
-                            color : Theme.of(context).colorScheme.onPrimary,
-                          )
-                        ),
-                        tooltip: "굵게"
-                      ),
-                      controller: _controller,
-                      attribute: Attribute.bold,
-                    ),
-                    QuillToolbarToggleStyleButton(
-                      options: QuillToolbarToggleStyleButtonOptions(
-                        iconTheme: QuillIconTheme(
-                          iconButtonSelectedData: IconButtonData(
-                            color : Theme.of(context).colorScheme.onPrimary,
-                          )
-                        ),
-                        tooltip: "이텔릭"
-                      ),
-                      controller: _controller,
-                      attribute: Attribute.italic,
-                    ),
-                    QuillToolbarToggleStyleButton(
-                      options: QuillToolbarToggleStyleButtonOptions(
-                        iconTheme: QuillIconTheme(
-                          iconButtonSelectedData: IconButtonData(
-                            color : Theme.of(context).colorScheme.onPrimary,
-                          )
-                        ),
-                        tooltip: "밑줄"
-                      ),
-                      controller: _controller,
-                      attribute: Attribute.underline,
-                    ),
-                    QuillToolbarToggleStyleButton(
-                      options: QuillToolbarToggleStyleButtonOptions(
-                        iconTheme: QuillIconTheme(
-                          iconButtonSelectedData: IconButtonData(
-                            color : Theme.of(context).colorScheme.onPrimary,
-                          )
-                        ),
-                        tooltip: "인용 블록"
-                      ),
-                      controller: _controller,
-                      attribute: Attribute.blockQuote,
-                    ),
-                    QuillToolbarFontSizeButton(
-                      controller: _controller,
-                      options: QuillToolbarFontSizeButtonOptions(
-                        defaultDisplayText: "폰트",
-                        rawItemsMap: const {"작게" : "small" , "중간" : "large" , "크게" : "huge"},
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary
-                        )
-                      ),
-                    ),
-                  ],
-                )
-              )
-            ),
-          ),
-        )
-      ),
-    ];
     return GestureDetector(
       onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        body: contentPage[page]
+        body: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          appBar: NavbarTop(navbarOpt, centerTitle : true),
+          body : WriteContent(controller: _controller,),
+          bottomNavigationBar:Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onPrimary,
+              border : Border(top: BorderSide(width: 0.5 , color : Theme.of(context).colorScheme.onSecondary))
+            ),
+            child: SafeArea(
+              child: QuillToolbar(
+                child : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child : Row(
+                    children: [
+                      QuillToolbarToggleStyleButton(
+                        options: QuillToolbarToggleStyleButtonOptions(
+                          iconTheme: QuillIconTheme(
+                            iconButtonSelectedData: IconButtonData(
+                              color : Theme.of(context).colorScheme.onPrimary,
+                            )
+                          ),
+                          tooltip: "굵게"
+                        ),
+                        controller: _controller,
+                        attribute: Attribute.bold,
+                      ),
+                      QuillToolbarToggleStyleButton(
+                        options: QuillToolbarToggleStyleButtonOptions(
+                          iconTheme: QuillIconTheme(
+                            iconButtonSelectedData: IconButtonData(
+                              color : Theme.of(context).colorScheme.onPrimary,
+                            )
+                          ),
+                          tooltip: "이텔릭"
+                        ),
+                        controller: _controller,
+                        attribute: Attribute.italic,
+                      ),
+                      QuillToolbarToggleStyleButton(
+                        options: QuillToolbarToggleStyleButtonOptions(
+                          iconTheme: QuillIconTheme(
+                            iconButtonSelectedData: IconButtonData(
+                              color : Theme.of(context).colorScheme.onPrimary,
+                            )
+                          ),
+                          tooltip: "밑줄"
+                        ),
+                        controller: _controller,
+                        attribute: Attribute.underline,
+                      ),
+                      QuillToolbarToggleStyleButton(
+                        options: QuillToolbarToggleStyleButtonOptions(
+                          iconTheme: QuillIconTheme(
+                            iconButtonSelectedData: IconButtonData(
+                              color : Theme.of(context).colorScheme.onPrimary,
+                            )
+                          ),
+                          tooltip: "인용 블록"
+                        ),
+                        controller: _controller,
+                        attribute: Attribute.blockQuote,
+                      ),
+                      QuillToolbarFontSizeButton(
+                        controller: _controller,
+                        options: QuillToolbarFontSizeButtonOptions(
+                          defaultDisplayText: "폰트",
+                          rawItemsMap: const {"작게" : "small" , "중간" : "large" , "크게" : "huge"},
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary
+                          )
+                        ),
+                      ),
+                    ],
+                  )
+                )
+              ),
+            ),
+          )
+        ),
       )
     );
   }
@@ -193,7 +192,6 @@ class _WriteContentState extends State<WriteContent> {
         child: Text(
           title.toString(),
           style: TextStyle(
-            fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.secondary
           ),
         ),
@@ -207,50 +205,37 @@ class _WriteContentState extends State<WriteContent> {
       color: Theme.of(context).colorScheme.primary
     );
     var controller = TextEditingController(text : formData.writeForm['title']);
-    return SingleChildScrollView(
-      child: 
-      (community)?
-      Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            writeTitle(context,title : "내용"),
-            Container(
-              height : 320,
-              margin : const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: RowContainer.radius,
-                border : Border.all(
-                  width : 0.5,
-                  color : Theme.of(context).colorScheme.secondary
-                )
-              ),
-              child: QuillEditor.basic(
-                controller: widget.controller,
-                configurations: QuillEditorConfigurations(
-                  customStyles: DefaultStyles(
-                    placeHolder: DefaultListBlockStyle(
-                      TextStyle(
-                        fontSize : 18,
-                        color: Theme.of(context).colorScheme.secondary
-                      ),
-                      HorizontalSpacing.zero,
-                      VerticalSpacing.zero,
-                      VerticalSpacing.zero,
-                      null,
-                      null
-                    )
-                  ),
-                  padding : const EdgeInsets.all(4),
-                  placeholder: "피드 내용을 입력해주세요",
-                  scrollPhysics: const AlwaysScrollableScrollPhysics(),
-                  expands: true
+    return (community)?
+      Container(
+        margin : const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          borderRadius: RowContainer.radius,
+          color: Theme.of(context).colorScheme.onSecondary
+        ),
+        child: QuillEditor.basic(
+          controller: widget.controller,
+          configurations: QuillEditorConfigurations(
+            customStyles: DefaultStyles(
+              placeHolder: DefaultListBlockStyle(
+                TextStyle(
+                  fontSize : 18,
+                  color: Theme.of(context).colorScheme.secondary
                 ),
+                HorizontalSpacing.zero,
+                VerticalSpacing.zero,
+                VerticalSpacing.zero,
+                null,
+                null
               )
             ),
-        ],
+            padding : const EdgeInsets.all(4),
+            placeholder: "피드 내용을 입력해주세요",
+            expands: true
+          ),
+        )
       )
-      :Column(
+      :SingleChildScrollView(
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -305,10 +290,7 @@ class _WriteContentState extends State<WriteContent> {
                     margin : const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       borderRadius: RowContainer.radius,
-                      border : Border.all(
-                        color : Theme.of(context).colorScheme.secondary,
-                        width : 0.5,
-                      )
+                      color: Theme.of(context).colorScheme.onSecondary
                     ),
                     child : Obx((){
                       if (_imageModel.imageList.isNotEmpty){
@@ -398,10 +380,7 @@ class _WriteContentState extends State<WriteContent> {
               padding : const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 borderRadius: RowContainer.radius,
-                border : Border.all(
-                  width: 0.5,
-                  color : Theme.of(context).colorScheme.secondary
-                )
+                color: Theme.of(context).colorScheme.onSecondary
               ),
               child: TextField(
                 autocorrect: false,
@@ -425,10 +404,7 @@ class _WriteContentState extends State<WriteContent> {
               margin : const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: RowContainer.radius,
-                border : Border.all(
-                  width : 0.5,
-                  color : Theme.of(context).colorScheme.secondary
-                )
+                color: Theme.of(context).colorScheme.onSecondary
               ),
               child: QuillEditor.basic(
                 controller: widget.controller,
@@ -448,7 +424,6 @@ class _WriteContentState extends State<WriteContent> {
                   ),
                   padding : const EdgeInsets.all(4),
                   placeholder: "피드 내용을 입력해주세요",
-                  scrollPhysics: const AlwaysScrollableScrollPhysics(),
                   expands: true
                 ),
               )
@@ -487,18 +462,8 @@ class _WriteEtcState extends State<WriteEtc>{
             ExpansionTile(
               collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              title : Row(
-                children: [
-                  SvgPicture.asset(
-                    "assets/icons/navbar/navi.svg",
-                    width : 16,height : 16,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                  ),
-                  const SizedBox(width : 4),
-                  Text(
-                    "시간과 장소",style : textStyle
-                  ),
-                ]
+              title : Text(
+                "시간과 장소",style : textStyle
               ),
               children: [
                 const Text("어떤 시간에 활동하셨나요?"),
@@ -514,26 +479,19 @@ class _WriteEtcState extends State<WriteEtc>{
                   ),
                 ),
                 const Text("어떤 곳에서 활동하셨나요?"),
-                OutlinedButton(
+                FormCommitButton(
+                  height : 42,
+                  fontSize: 16,
+                  fontColor: Theme.of(context).colorScheme.primary,
                   onPressed: (){},
-                  child : const Text("장소"),
+                  title : "장소 선택",
                 )
               ],
             ),
             ExpansionTile(
               collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              title : Row(
-                children: [
-                  SvgPicture.asset(
-                    "assets/icons/navbar/hashtag.svg",
-                    width : 16,height : 16,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                  ),
-                  const SizedBox(width : 4),
-                  Text("해시태그",style : textStyle),
-                ]
-              ),
+              title : Text("해시태그",style : textStyle),
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -552,32 +510,19 @@ class _WriteEtcState extends State<WriteEtc>{
             ExpansionTile(
               collapsedBackgroundColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              title : Row(
-                children: [
-                  SvgPicture.asset(
-                    "assets/icons/common/setting.svg",
-                    width : 16,height : 16,
-                    colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface,BlendMode.srcIn),
-                  ),
-                  const SizedBox(width : 4),
-                  Text("설정",style : textStyle),
-                ],
-              ),
+              title : Text("기타 설정",style : textStyle),
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("나만 볼수 있는 피드로 할까요?"),
-                    Switch(
-                      value: private,
-                      onChanged: (b){
-                        setState((){
-                          private = !private;
-                        });
-                        formData.setForm('isPrivate', private);
-                      }
-                    ),
-                  ],
+                SettingRow(
+                  leading: const Text("비공개 피드"),
+                  actions: SettingSwitch(
+                    value: private,
+                    onChanged: (b){
+                      setState((){
+                        private = !private;
+                      });
+                      formData.setForm('isPrivate', private);
+                    }
+                  ),
                 )
               ],
             ),
@@ -594,38 +539,40 @@ class _WriteEtcState extends State<WriteEtc>{
       child: Column(
         children: [
           TagRow(hashtags: tagModel.tagList),
-          TextField(
-            maxLength: 96,
-            onTapOutside: ((event) {
-              FocusScope.of(context).unfocus();
-            }),
-            textInputAction: TextInputAction.go,
-            onSubmitted: (text){
-              if (text.isNotEmpty){
-                tagModel.addTag(text);
-              }
-            },
-            controller : controller,
-            decoration: InputDecoration(
-              hintText: "태그를 입력해주세요",
-              suffixIcon: IconButton(
-                icon : Rotate(
-                  angle : 90,
-                  child: SvgPicture.asset(
-                    "assets/icons/common/left.svg",
-                    width : 16,height:16,
-                    colorFilter : ColorFilter.mode(Theme.of(context).colorScheme.onSecondary, BlendMode.srcIn)
-                  ),
-                ),
-                onPressed: (){
-                  if (controller.text.isNotEmpty){
-                    tagModel.addTag(controller.text);
-                    formData.setForm('postHashtags', tagModel);
-                    controller.text = "";
-                  }
-                },
-              )
+          Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            height: 42,
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSecondary,
+                borderRadius: RowContainer.radius
             ),
+            child: LayoutBuilder(builder: (context, layout) {
+              return Row(
+                children: [
+                  SizedBox(
+                      width: layout.maxWidth - 54,
+                      child: CommonTextInput(
+                        maxLength: 96,
+                        controller : controller,
+                        enabled: true,
+                        fillColor: Colors.transparent,
+                        placeholder: "태그를 입력해주세요",
+                        placeholderStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary))),
+                  NavbarCommonBtn(
+                    "post/edit.svg",
+                    onClick: (){
+                      if (controller.text.isNotEmpty){
+                        tagModel.addTag(controller.text);
+                        formData.setForm('postHashtags', tagModel);
+                        controller.text = "";
+                      }
+                    },
+                  ),
+                ],
+              );
+            }),
           ),
         ],
       ),
@@ -650,7 +597,9 @@ class SelectedDateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
     height : 42,
-    child: OutlinedButton(
+    child: FormCommitButton(
+      fontSize: 16,
+      fontColor: Theme.of(context).colorScheme.primary,
       onPressed: (){
         showCupertinoModalPopup(
           context: context,
@@ -663,17 +612,9 @@ class SelectedDateButton extends StatelessWidget {
           }
         );
       },
-      style: OutlinedButton.styleFrom(
-        shape : RoundedRectangleBorder(
-          side : rowBorderLine(),
-          borderRadius: RowContainer.radius
-        )
-      ),
-      child : Text(
-        "${(title!=null)?title:"날짜:"}${
+      title: "${(title!=null)?title:"날짜:"}${
           DateFormat("yyyy년 MM월 dd일").format(date??DateTime.now())
-        }"
-      ),
+        }",
     ),
   );
   }

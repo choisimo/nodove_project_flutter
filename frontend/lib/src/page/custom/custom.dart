@@ -73,29 +73,25 @@ class ToastWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            borderRadius: RowContainer.radius,
-            border: rowBorderLineAll()),
-        width: MediaQuery.of(context).size.width * 0.75,
-        child: SafeArea(
-          child: Center(
-            child: SizedBox(
-              height: 42,
-              child: Center(
-                child: Text(
-                  msg,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
-                      decoration: TextDecoration.none),
-                ),
+    return SafeArea(
+      child: Center(
+        child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+                borderRadius: RowContainer.radius,
+                border: rowBorderLineAll()),
+            width: MediaQuery.of(context).size.width * 0.75,
+            height : 42,
+            child: Center(
+              child: Text(
+                msg,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 18,
+                    decoration: TextDecoration.none),
               ),
             ),
           ),
-        ),
       ),
     );
   }
@@ -166,19 +162,4 @@ class _ProfileSettingState extends State<ProfileSetting> {
       ],
     );
   }
-}
-
-
-void pop(){
-  BuildContext context = GlobalContext.navigatorState.currentContext!;
-
-  Navigator.of(context).pop();
-}
-
-void push(Widget page){
-  BuildContext context = GlobalContext.navigatorState.currentContext!;
-
-  Navigator.of(context).push(
-    MaterialPageRoute(builder: (_)=>page)
-  );
 }

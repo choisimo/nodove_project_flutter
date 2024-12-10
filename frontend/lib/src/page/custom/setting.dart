@@ -22,9 +22,6 @@ class SettingRow extends StatelessWidget {
       child: Container(
         height : 42,
         decoration: BoxDecoration(
-          border: Border(
-            bottom: rowBorderLine()
-          ),
           color : Theme.of(context).colorScheme.onPrimary,
         ),
         child : LayoutBuilder(
@@ -62,7 +59,7 @@ class SettingTitle extends StatelessWidget {
       color: Theme.of(context).colorScheme.onSurface
     );
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8,horizontal: 8.0),
       child: Text(
         title,
         style: titleStyle,
@@ -81,7 +78,7 @@ class SettingContent extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         border: Border(
-          top : rowBorderLine()
+          bottom : rowBorderLine()
         )
       ),
       child: Column(

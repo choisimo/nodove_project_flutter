@@ -65,7 +65,7 @@ class _RecruitListPageState extends State<RecruitListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: Obx(()=>
         CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

@@ -30,7 +30,7 @@ class EditUserPage extends StatelessWidget {
       child: Scaffold(
         appBar: NavbarTop(navbarOpt,centerTitle: true,),
         body: const EditUser(),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
     );
   }

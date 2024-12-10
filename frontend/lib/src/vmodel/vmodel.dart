@@ -30,7 +30,6 @@ class FeedListModel extends GetxController {
 
   Future<void> setForm(String type,dynamic value) async{
     writeForm[type] = value;
-    print(writeForm);
   }
 
   Future<void> postWrite(Map<String,dynamic> writeForm) async {

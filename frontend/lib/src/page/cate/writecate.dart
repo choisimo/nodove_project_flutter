@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 
 class WriteCatePage extends StatelessWidget {
@@ -11,6 +12,7 @@ class WriteCatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavbarContent navbarOpt = NavbarContent(
+      leading: DialogCloseBtn(onPressed: ()=>Navigator.of(context).pop(),),
       actions : [
         NextBtn(
           displayText: "작성",

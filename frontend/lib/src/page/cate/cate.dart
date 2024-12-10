@@ -10,6 +10,7 @@ import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedlist.dart';
 import 'package:nodove_flutter/src/page/list/feed/normal/feedrow.dart';
+import 'package:nodove_flutter/src/page/search/search.dart';
 import 'package:nodove_flutter/src/vmodel/vfeed.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 import 'package:nodove_flutter/state/color.dart';
@@ -48,18 +49,7 @@ class _CatePageState extends State<CatePage>
     final arg = arguments['backName'];
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        floatingActionButton: CustomFloatingButton(
-            onClick: () =>
-                Get.to(() => const WriteCatePage(), fullscreenDialog: true),
-            backgroundColor: Theme.of(context).colorScheme.onPrimaryFixed,
-            child: SvgPicture.asset(
-              'assets/icons/post/edit.svg',
-              width: 24,
-              height: 24,
-              colorFilter:
-                  const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-            )),
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
         body: CustomScrollView(
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -72,8 +62,14 @@ class _CatePageState extends State<CatePage>
                     : const NavbarTitle("카테고리"),
                 actions: [
                   NavbarCommonBtn(
+                    "post/edit.svg",
+                    onClick: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_)=>const WriteCatePage(),fullscreenDialog: true)
+                    ),
+                  ),
+                  NavbarCommonBtn(
                     "navbar/search.svg",
-                    onClick: () {},
+                    onClick: ()=>Navigator.of(context).push(MaterialPageRoute(builder : (_)=>const SearchPage())),
                   ),
                 ]),
             SliverFillRemaining(
@@ -198,7 +194,6 @@ class _CateRowState extends State<CateRow> {
       child: Container(
           height: 72,
           decoration: BoxDecoration(
-            border: Border(bottom: rowBorderLine()),
             color: Theme.of(context).colorScheme.onPrimary,
           ),
           child: LayoutBuilder(builder: (context, constraint) {

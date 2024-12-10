@@ -94,8 +94,9 @@ ImageProvider customImgProvider(
         );
       },
     ).image:
+    (src != "")?
     Image.asset(
-      "assets/images/logo.png",
+      src,
       fit: fit??BoxFit.contain,
       width : width,
       height : height,
@@ -106,6 +107,12 @@ ImageProvider customImgProvider(
           width : 64 , height : 64
         );
       },
+    ).image
+    : Image.asset(
+      "assets/images/logo.png",
+      fit: BoxFit.contain,
+      width : width,
+      height : height,
     ).image;
 }
 

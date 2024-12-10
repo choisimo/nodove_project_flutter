@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
 import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
+import 'package:nodove_flutter/src/page/custom/modal.dart';
 import 'package:nodove_flutter/src/page/custom/widget.dart';
 import 'package:nodove_flutter/src/vmodel/vmodel.dart';
 
@@ -14,7 +15,7 @@ class AddRoomPage extends StatelessWidget {
     AddRoomModel con = Get.put(AddRoomModel());
     RoomListModel lcon = Get.put(RoomListModel());
     NavbarContent navbarOpt = NavbarContent(
-      leading: BackBtn(onPressed: ()=>Get.back()),
+      leading: DialogCloseBtn(onPressed: ()=>Navigator.of(context).pop()),
       actions: [
         NextBtn(
           displayText: "시작",

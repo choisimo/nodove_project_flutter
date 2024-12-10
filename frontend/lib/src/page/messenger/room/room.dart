@@ -54,7 +54,7 @@ class RoomPage extends StatelessWidget {
       ]
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: NavbarTop(navbarOpt,centerTitle : false,),
       body : const RoomList(),
     );
@@ -146,6 +146,7 @@ class RoomRow extends StatelessWidget {
         ),
         child : LayoutBuilder(
           builder: (BuildContext context,BoxConstraints constraints) {
+            print(room.profile);
             return Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,

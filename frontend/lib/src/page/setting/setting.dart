@@ -16,7 +16,7 @@ class SettingPage extends StatelessWidget {
       title: const NavbarTitle("설정")
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: NavbarTop(navbarOpt,centerTitle : true,),
       body: const SettingView()
     );
@@ -111,7 +111,7 @@ class AppInfoView extends StatelessWidget {
     );
     return Scaffold(
       appBar: NavbarTop(navbarOpt,centerTitle: true,),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: SingleChildScrollView(
         child : Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:nodove_flutter/func/date/datetime.dart';
 import 'package:nodove_flutter/graphic/border.dart';
 import 'package:nodove_flutter/src/component/navbar/navbar.dart';
+import 'package:nodove_flutter/src/component/navbar/navbtn.dart';
 import 'package:nodove_flutter/src/datasrc/auth.dart';
 import 'package:nodove_flutter/src/page/custom/custom.dart';
 import 'package:nodove_flutter/src/page/custom/modal.dart';
@@ -56,7 +57,10 @@ class _JoinPageState extends State<JoinPage> {
 
   @override
   Widget build(BuildContext context) {
-    NavbarContent navbarOpt = NavbarContent();
+    NavbarContent navbarOpt = NavbarContent(
+      leading: BackBtn(onPressed: ()=>Navigator.of(context).pop()),
+      title : const NavbarTitle("회원가입")
+    );
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result){
@@ -88,7 +92,7 @@ class _JoinPageState extends State<JoinPage> {
       child: GestureDetector(
         onTap : ()=>FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          appBar: NavbarTop(navbarOpt),
+          appBar: NavbarTop(navbarOpt,centerTitle: true,),
           body : PageView(
             physics: const NeverScrollableScrollPhysics(),
             controller: pageController,
@@ -110,7 +114,7 @@ class _JoinPageState extends State<JoinPage> {
                   ),
                   FormCommitButton(
                     height: 54,
-                    width : MediaQuery.of(context).size.width * 0.75,
+                    width : MediaQuery.of(context).size.width * 0.9,
                     title: "다음",
                     onPressed: ()=>pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOutQuad)
                   ),
@@ -354,7 +358,7 @@ class _JoinFormPrivateInfoState extends State<JoinFormPrivateInfo> {
     );
     return Obx(()=>Center(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width*0.9,
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,

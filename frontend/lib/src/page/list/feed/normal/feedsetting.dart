@@ -16,7 +16,7 @@ class FeedSettingPage extends StatelessWidget {
       title: const NavbarTitle("피드 설정")
     );
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: NavbarTop(navbarOpt, centerTitle: true,),
       body: const FeedSettingList()
     );

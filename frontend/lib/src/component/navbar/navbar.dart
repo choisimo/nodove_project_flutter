@@ -43,34 +43,20 @@ class NavbarTop extends StatefulWidget implements PreferredSizeWidget {
 class _NavbarTopState extends State<NavbarTop> {
   @override
   Widget build(BuildContext context) {
-    return (widget.centerTitle)
-        ? AppBar(
-            scrolledUnderElevation: 0.0,
-            centerTitle: widget.centerTitle,
-            automaticallyImplyLeading: !widget.centerTitle,
-            backgroundColor:
-                widget.color ?? Theme.of(context).colorScheme.onPrimary,
-            leading: widget.content.leading,
-            title: widget.content.title ?? const SizedBox.shrink(),
-            actions: widget.content.actions ?? [const SizedBox.shrink()],
-            shadowColor: widget.shadowColor,
-            elevation: widget.elevation,
-            iconTheme: IconThemeData(
-                color: Theme.of(context).colorScheme.onPrimaryFixed),
-          )
-        : AppBar(
-            scrolledUnderElevation: 0.0,
-            centerTitle: widget.centerTitle,
-            automaticallyImplyLeading: !widget.centerTitle,
-            backgroundColor:
-                widget.color ?? Theme.of(context).colorScheme.onPrimary,
-            title: widget.content.title ?? const SizedBox.shrink(),
-            actions: widget.content.actions ?? [const SizedBox.shrink()],
-            shadowColor: widget.shadowColor,
-            elevation: widget.elevation,
-            iconTheme: IconThemeData(
-                color: Theme.of(context).colorScheme.onPrimaryFixed),
-          );
+    return AppBar(
+      scrolledUnderElevation: 0.0,
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: false,
+      backgroundColor:
+          widget.color ?? Theme.of(context).colorScheme.onPrimary,
+      leading: widget.content.leading,
+      title: widget.content.title ?? const SizedBox.shrink(),
+      actions: widget.content.actions ?? [const SizedBox.shrink()],
+      shadowColor: widget.shadowColor,
+      elevation: widget.elevation,
+      iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimaryFixed),
+    );
   }
 }
 
@@ -83,7 +69,7 @@ class SliverNavbarTop extends StatefulWidget implements PreferredSizeWidget {
 
   const SliverNavbarTop(this.content,
       {super.key,
-      this.centerTitle = false,
+      this.centerTitle = true,
       this.color,
       this.shadowColor = Colors.transparent,
       this.elevation = 0.0});
@@ -98,34 +84,20 @@ class SliverNavbarTop extends StatefulWidget implements PreferredSizeWidget {
 class _SliverNavbarTopState extends State<SliverNavbarTop> {
   @override
   Widget build(BuildContext context) {
-    return (widget.centerTitle)
-        ? SliverAppBar(
-            scrolledUnderElevation: 0.0,
-            centerTitle: widget.centerTitle,
-            automaticallyImplyLeading: !widget.centerTitle,
-            backgroundColor:
-                widget.color ?? Theme.of(context).colorScheme.onPrimary,
-            leading: widget.content.leading,
-            title: widget.content.title ?? const SizedBox.shrink(),
-            actions: widget.content.actions ?? [const SizedBox.shrink()],
-            shadowColor: widget.shadowColor,
-            elevation: widget.elevation,
-            iconTheme: IconThemeData(
-                color: Theme.of(context).colorScheme.onPrimaryFixed),
-          )
-        : SliverAppBar(
-            scrolledUnderElevation: 0.0,
-            centerTitle: widget.centerTitle,
-            automaticallyImplyLeading: !widget.centerTitle,
-            backgroundColor:
-                widget.color ?? Theme.of(context).colorScheme.onPrimary,
-            title: widget.content.title ?? const SizedBox.shrink(),
-            actions: widget.content.actions ?? [const SizedBox.shrink()],
-            shadowColor: widget.shadowColor,
-            elevation: widget.elevation,
-            iconTheme: IconThemeData(
-                color: Theme.of(context).colorScheme.onPrimaryFixed),
-          );
+    return SliverAppBar(
+      scrolledUnderElevation: 0.0,
+      centerTitle: widget.centerTitle,
+      automaticallyImplyLeading: false,
+      backgroundColor:
+          widget.color ?? Theme.of(context).colorScheme.onPrimary,
+      leading: widget.content.leading,
+      title: widget.content.title,
+      actions: widget.content.actions,
+      shadowColor: widget.shadowColor,
+      elevation: widget.elevation,
+      iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimaryFixed),
+    );
   }
 }
 
